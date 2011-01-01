@@ -15,7 +15,7 @@ You can see an example table working "here":http://table-stacker.appspot.com/exa
 
 Beware. This software is in beta testing and hasn’t been used much. But don’t let that stop you! Please try it and tell me what sucks.
 
-All of the good stuff in here was written by "ProPublica's News Application Desk":http://www.propublica.org/nerds or "Chris Amico":http://www.chrisamico.com/blog/. Blame me for whatever sucks.
+All of the good stuff in here was written by "ProPublica's News Application Desk":http://www.propublica.org/nerds and "Chris Amico":http://www.chrisamico.com/blog/. Blame me for whatever sucks.
 
 h2. Features
 
