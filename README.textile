@@ -17,6 +17,12 @@ Beware. This software is in beta testing and hasn’t been used much. But don’
 
 All of the good stuff in here was written by "ProPublica's News Application Desk":http://www.propublica.org/nerds or "Chris Amico":http://www.chrisamico.com/blog/. Blame me for whatever sucks.
 
+h2. Features
+
+* Convert a CSV file into an interactive HTML table using a simple YAML config file
+* Do it over and over again without much trouble
+* Quickly publish your tables to Google App Engine and serve them on the web for free
+
 h2. Instructions
 
 h3. 01. Register a new application with Google App Engine.
