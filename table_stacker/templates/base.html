@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>{% block title %}All Tables{% endblock %}</title>
+    <script type="text/javascript"
+            src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("jquery", "1", {uncompressed:true})
+    </script>
+    <script src='{{ MEDIA_URL }}js/jquery.tablesorter.js'></script>
+    <script src='{{ MEDIA_URL }}js/jquery.tablesorter.pager.js'></script>
+    <script src='{{ MEDIA_URL }}js/jquery.tablesorter.multipagefilter.js'></script>
+    <script src='{{ MEDIA_URL }}js/application.js'></script>
+    <link href='{{ MEDIA_URL }}css/stylesheet.css' rel='stylesheet' type='text/css' media='all' />
+
+    <script>
+      {% if table %}
+        var sortPlease = true;
+        var sortOrder = {{ table.sorted_by }};
+        var perPage = {{ table.per_page }};
+      {% else %}
+        var sortPlease = false;
+      {% endif %}
+    </script>
+
+  </head>
+  <body>
+    <div id="table_fu">
+      {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,4 @@
+settings_private.py
+*.pyc
+*.swp
+.DS_Store

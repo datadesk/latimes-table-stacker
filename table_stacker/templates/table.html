@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block content %}
+    <div id="table_title">{{ object.title }}</div>
+    
+    {% if object.deck %}<div id="deck">{{ object.deck }}</div>{% endif %}
+    
+    <div id="publication_date">{{ object.publication_date|date:"N j, Y" }}</div>
+    
+    {% if object.description %}<div id="description">{{ object.description|safe }}</div>{% endif %}
+    
+    {% if object.byline %}<div id="byline">{{ object.byline|safe }}</div>{% endif %}
+    
+    <div id="download"><a href="{{ object.csv_url }}">Download the data</a></div>
+    
+    <div id="controls">
+        <div id="filter">Filter: <input type="text"></div>
+        <div id="pager" class="pager">
+          <form>
+            <img src="/media/img/first.png" class="first">
+            <img src="/media/img/prev.png" class="prev">
+            <span class="pagedisplay"/>1 / {{ table.total_pages }}</span>
+            <img src="/media/img/next.png" class="next">
+            <img src="/media/img/last.png" class="last">
+            <select class="pagesize">
+                {% for page_size in table.page_size_list %}
+                <option {% if forloop.first %}selected="selected"{% endif %} value="{{ page_size }}">{{ page_size }}</option>
+                {% endfor %}
+            </select>
+            
+          </form>
+        </div>
+    </div>
+    
+    <table id="data" class="tabular">
+        <thead>
+            <tr>
+            {% for header in table.headers %}
+              <th style="{{ header.style }}">{{ header }}</th>
+            {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in table.rows %}
+          <tr>
+            {% for column in row.data %}
+                <td style="{{ column.style }}">{{ column|safe }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+    <tfoot></tfoot>
+    </table>
+
+    {% if object.footer %}<div id="footer">{{ object.footer|safe }}</div>{% endif %}
+    {% if object.source %}<div id="source">Source: {{ object.source|safe }}</div>{% endif %}
+    {% if object.credits %}<div id="credits">Credits: {{ object.credits|safe }}</div>{% endif %}
+    
+{% endblock %}
