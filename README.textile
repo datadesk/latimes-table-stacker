@@ -9,7 +9,7 @@ Yb,_    88              IP'`Yb      IP'`Yb              `8,,8'     I8           
    "Yb,,8P ,d8,   ,d8b,,d8b,  ,8I  ,d8b,_  `YbadP' "888,,____,dP ,d88b, ,d8,   ,d8b,,d8,_    _,d8    `Yb, `YbadP' ,dP     Y8,
      "Y8P' P"Y8888P"`Y88P'"Y88P"'  8P'"Y88888P"Y888a8P"Y88888P" 88P""Y88P"Y8888P"`Y8P""Y8888PP88P      Y8888P"Y8888P      `Y8</code></pre>
 
-Publish CSV files as interactive tables using "TableFu":https://github.com/eyeseast/python-tablefu, "Django":http://www.djangoproject.com/, "jQuery":http://jquery.com/ and "Google App Engine":http://code.google.com/appengine/.
+Publish CSV files as interactive tables using "TableFu":https://github.com/eyeseast/python-tablefu, "TableSetter":https://github.com/propublica/table-setter, "Django":http://www.djangoproject.com/, "jQuery":http://jquery.com/ and "Google App Engine":http://code.google.com/appengine/.
 
 You can see an example table working "here":http://table-stacker.appspot.com/example_formatted/.
 
