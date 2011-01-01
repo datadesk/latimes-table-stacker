@@ -30,3 +30,42 @@ I like to put things a virtualenv like this.
 $ cd table-stacker
 $ git clone git://github.com/datadesk/latimes-table-stacker.git project
 $ cd project</code></pre>
+
+h3. 03. Configure the apps.yaml file with your Google App Engine application id
+
+<pre><code>application: your-app-id-here</code></pre>
+
+h3. 04. Open a second terminal tab and fire up the development server
+
+You'll see me using python2.5, since that's what Google App Engine requires.
+<pre><code>$ python2.5 manage.py runserver</code></pre>
+
+h3. 05. Load the example table
+
+If you want to peek under the hood and see how it works, check out the YAML file in the tables directory.
+<pre><code>python manage.py loadtable example_formatted --host=localhost:8000</code></pre>
+You'll be asked to log in with your Google App Engine credentials, don't worry. That's what's supposed to happen.
+
+h3. 06. Check http://localhost:8000/ in your browser
+
+You should see our demo table, ready to serve.
+
+h3. 07. Upload your app to appspot.com
+
+<pre><code>$ python2.5 manage.py update</code></pre>
+
+h3. 08. Load the demo recipe to your live site
+
+Notice how you leave out the host option this time. These commands hit your live site by default.
+<pre><code>python2.5 manage.py loadtable example_formatted</code></pre>
+
+h3. 09. Check out your site! 
+
+You should find it at http://your-app-id-here.appspot.com You might draw Django errors for a few minutes as the app builds its indexes, but don't worry. It'll be ready after you have a cup of coffee.
+
+
+
+
+
+
+
