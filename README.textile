@@ -1,13 +1,12 @@
-<pre><code>MMMMMMMMMM        MM      `MM           6MMMMb\                         `MM                      
-/   MM   \        MM       MM          6M'    `  /                       MM                      
-    MM    ___     MM____   MM   ____   MM       /M        ___     ____   MM   __   ____  ___  __ 
-    MM  6MMMMb    MMMMMMb  MM  6MMMMb  YM.     /MMMMM   6MMMMb   6MMMMb. MM   d'  6MMMMb `MM 6MM 
-    MM 8M'  `Mb   MM'  `Mb MM 6M'  `Mb  YMMMMb  MM     8M'  `Mb 6M'   Mb MM  d'  6M'  `Mb MM69 " 
-    MM     ,oMM   MM    MM MM MM    MM      `Mb MM         ,oMM MM    `' MM d'   MM    MM MM'    
-    MM ,6MM9'MM   MM    MM MM MMMMMMMM       MM MM     ,6MM9'MM MM       MMdM.   MMMMMMMM MM     
-    MM MM'   MM   MM    MM MM MM             MM MM     MM'   MM MM       MMPYM.  MM       MM     
-    MM MM.  ,MM   MM.  ,M9 MM YM    d9 L    ,M9 YM.  , MM.  ,MM YM.   d9 MM  YM. YM    d9 MM     
-   _MM_`YMMM9'Yb._MYMMMM9 _MM_ YMMMM9  MYMMMM9   YMMM9 `YMMM9'Yb.YMMMM9 _MM_  YM._YMMMM9 _MM_    
-                                                                                                 </code></pre>
+<pre><code> ,ggggggggggggggg                                        ,gg,                                                                
+dP""""""88"""""""       ,dPYb,      ,dPYb,              i8""8i     I8                          ,dPYb,                        
+Yb,_    88              IP'`Yb      IP'`Yb              `8,,8'     I8                          IP'`Yb                        
+ `""    88              I8  8I      I8  8I               `88'   88888888                       I8  8I                        
+        88              I8  8'      I8  8'               dP"8,     I8                          I8  8bgg,                     
+        88    ,gggg,gg  I8 dP       I8 dP   ,ggg,       dP' `8a    I8      ,gggg,gg    ,gggg,  I8 dP" "8   ,ggg,    ,gggggg, 
+        88   dP"  "Y8I  I8dP   88gg I8dP   i8" "8i     dP'   `Yb   I8     dP"  "Y8I   dP"  "Yb I8d8bggP"  i8" "8i   dP""""8I 
+  gg,   88  i8'    ,8I  I8P    8I   I8P    I8, ,8I _ ,dP'     I8  ,I8,   i8'    ,8I  i8'       I8P' "Yb,  I8, ,8I  ,8'    8I 
+   "Yb,,8P ,d8,   ,d8b,,d8b,  ,8I  ,d8b,_  `YbadP' "888,,____,dP ,d88b, ,d8,   ,d8b,,d8,_    _,d8    `Yb, `YbadP' ,dP     Y8,
+     "Y8P' P"Y8888P"`Y88P'"Y88P"'  8P'"Y88888P"Y888a8P"Y88888P" 88P""Y88P"Y8888P"`Y8P""Y8888PP88P      Y8888P"Y8888P      `Y8</code></pre>
 
 Publish CSV files as interactive tables using TableFu, Django, jQuery and Google App Engine.
