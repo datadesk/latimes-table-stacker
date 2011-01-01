@@ -1,3 +1,13 @@
-h1. table-stacker
+<pre><code>MMMMMMMMMM        MM      `MM           6MMMMb\                         `MM                      
+/   MM   \        MM       MM          6M'    `  /                       MM                      
+    MM    ___     MM____   MM   ____   MM       /M        ___     ____   MM   __   ____  ___  __ 
+    MM  6MMMMb    MMMMMMb  MM  6MMMMb  YM.     /MMMMM   6MMMMb   6MMMMb. MM   d'  6MMMMb `MM 6MM 
+    MM 8M'  `Mb   MM'  `Mb MM 6M'  `Mb  YMMMMb  MM     8M'  `Mb 6M'   Mb MM  d'  6M'  `Mb MM69 " 
+    MM     ,oMM   MM    MM MM MM    MM      `Mb MM         ,oMM MM    `' MM d'   MM    MM MM'    
+    MM ,6MM9'MM   MM    MM MM MMMMMMMM       MM MM     ,6MM9'MM MM       MMdM.   MMMMMMMM MM     
+    MM MM'   MM   MM    MM MM MM             MM MM     MM'   MM MM       MMPYM.  MM       MM     
+    MM MM.  ,MM   MM.  ,M9 MM YM    d9 L    ,M9 YM.  , MM.  ,MM YM.   d9 MM  YM. YM    d9 MM     
+   _MM_`YMMM9'Yb._MYMMMM9 _MM_ YMMMM9  MYMMMM9   YMMM9 `YMMM9'Yb.YMMMM9 _MM_  YM._YMMMM9 _MM_    
+                                                                                                 </code></pre>
 
 Publish CSV files as interactive tables using TableFu, Django, jQuery and Google App Engine.
