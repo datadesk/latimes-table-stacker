@@ -18,3 +18,15 @@ Beware. This software is in beta testing and hasn’t been used much. But don’
 All of the good stuff in here was written by "ProPublica's News Application Desk":http://www.propublica.org/nerds or "Chris Amico":http://www.chrisamico.com/blog/. Blame me for whatever sucks.
 
 h2. Instructions
+
+h3. 01. Register a new application with Google App Engine.
+
+Go to "https://appengine.google.com/":https://appengine.google.com/ and follow their instructions.
+
+h3. 02. Clone the code from this repository to your development machine
+
+I like to put things a virtualenv like this.
+<pre><code>$ virtualenv --no-site-packages table-stacker
+$ cd table-stacker
+$ git clone git://github.com/datadesk/latimes-table-stacker.git project
+$ cd project</code></pre>
