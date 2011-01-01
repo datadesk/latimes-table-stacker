@@ -31,7 +31,7 @@ Go to "https://appengine.google.com/":https://appengine.google.com/ and follow t
 
 h3. 02. Clone the code from this repository to your development machine
 
-I like to put things a virtualenv like this.
+I like to put things in a virtualenv like this.
 <pre><code>$ virtualenv --no-site-packages table-stacker
 $ cd table-stacker
 $ git clone git://github.com/datadesk/latimes-table-stacker.git project
