@@ -6,8 +6,7 @@
         // clear the table body
         $.tablesorter.clearTableBody(table);
         var tableBody = $(table.tBodies[0]);
-        
-        for(var i = 0; i < table.config.collection.length; i++) {          
+        for(var i = 0; i < table.config.collection.length; i++) {
           var o = table.config.collection[i];
           var l = o.length;
           for(var j=0; j < l; j++) {
@@ -27,12 +26,15 @@
           
           var toShow = [];
           newString = $.trim(newString);
-          var words = newString.toLowerCase().split(" ");          
-          
+          var words = newString.toLowerCase().split(" ");
           // no change, don't do anything
-          if (newString === table.config.string) return false;
+          if (newString === table.config.string) {
+            return false;
+          }
           // press was just a string
-          if (newString[-1] === " ") { table.config.string = newString; return false; }
+          if (newString[-1] === " ") {
+            table.config.string = newString; return false; 
+          }
           // most of the string is old
           if (newString.indexOf(table.config.string) > -1){
             // don't change the search array but we only need the last word
@@ -56,12 +58,14 @@
           };
           table.config.collection = toShow.slice(0);
           replaceRows(table);
-          table.config.string     = newString;
+          table.config.string = newString;
         } else {
-          table.config.string     = "";
+          table.config.string = "";
           table.config.collection = table.config.rowsCopy.slice(0);
           if(table.config.container){
+            // Revert to default table
             table.config.container.show();
+            replaceRows(table);
           } else {
             replaceRows(table);
           }
@@ -92,7 +96,6 @@
           table.config.string = "";
           table.config.collection = [];
           table.config.collection = table.config.rowsCopy.slice(0)
-            
           function filterMe(){
             renderTable(table);
             return false;
