@@ -217,7 +217,7 @@ class TableFu(object):
         column_name = self.options.get('sorted_by').keys()[0]
         column_index = self.columns.index(column_name)
         # And the sort order
-        descending = self.options.get('sorted_by').get('reverse')
+         descending = self.options.get("sorted_by").values()[0].get("reverse")
         if descending:
             sort_direction = 1
         else:

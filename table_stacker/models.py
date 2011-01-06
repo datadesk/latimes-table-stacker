@@ -25,7 +25,7 @@ class Table(db.Model):
     publication_date = db.DateProperty(required=True)
     description = db.TextProperty(required=False)
     footer = db.TextProperty(required=False)
-    source = db.TextProperty(required=False)
+    sources = db.TextProperty(required=False)
     credits = db.TextProperty(required=False)
     # Meta
     tags = db.StringListProperty(required=True)

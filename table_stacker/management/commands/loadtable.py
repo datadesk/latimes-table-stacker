@@ -77,7 +77,7 @@ class Command(BaseCommand):
             obj.publication_date=yaml_data['publication_date']
             obj.description=yaml_data.get('description', '')
             obj.footer=yaml_data.get('footer', '')
-            obj.source=yaml_data.get('source', '')
+            obj.sources=yaml_data.get('source', '')
             obj.credits=yaml_data.get('credits', '')
             obj.tags=yaml_data.get('tags', [])
             obj.is_published=yaml_data.get('is_published', False)
@@ -97,7 +97,7 @@ class Command(BaseCommand):
                 publication_date=yaml_data['publication_date'],
                 description=yaml_data.get('description', ''),
                 footer=yaml_data.get('footer', ''),
-                source=yaml_data.get('source', ''),
+                sources=yaml_data.get('source', ''),
                 credits=yaml_data.get('credits', ''),
                 tags=yaml_data.get('tags', []),
                 is_published=yaml_data.get('is_published', False),
