@@ -50,5 +50,4 @@ $(document).ready(function(){
     .tablesorter({ widgets: ['columnHighlight'], sortList: sortOrder })
     .tablesorterPager({ container: $("#pager"), size: perPage, positionFixed: false })
     .tablesorterMultiPageFilter({ filterSelector: $("#filter input") });
-
 });
