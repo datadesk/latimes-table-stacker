@@ -6,6 +6,9 @@ from django.views.generic.simple import direct_to_template
 from google.appengine.ext import db
 from table_stacker.models import Table
 
+# Pagination
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
 # Cache
 from google.appengine.api import memcache
 
@@ -38,9 +41,19 @@ def table_index(request):
         object_list = Table.all().filter(
                 "is_published =", True
             ).order("-publication_date")
+        # Cut it first 10
+        paginator = Paginator(object_list, 10)
+        try:
+            page = paginator.page(1)
+        except (EmptyPage, InvalidPage):
+            raise Http404
         # Create the response
         context = {
-            'object_list': object_list,
+            'index': True,
+            'object_list': page.object_list,
+            'page_number': page.number,
+            'has_next': page.has_next(),
+            'next_page_number': page.next_page_number(),
         }
         response = direct_to_template(request, 'index.html', context)
         # Add it to the cache

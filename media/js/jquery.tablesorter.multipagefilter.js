@@ -6,18 +6,27 @@
         // clear the table body
         $.tablesorter.clearTableBody(table);
         var tableBody = $(table.tBodies[0]);
-        for(var i = 0; i < table.config.collection.length; i++) {
+        var collection_length = table.config.collection.length
+        if (table.config.reset) {
+            collection_length = table.config.size
+        }
+        for(var i = 0; i < collection_length; i++) {
           var o = table.config.collection[i];
           var l = o.length;
           for(var j=0; j < l; j++) {
             tableBody[0].appendChild(o[j]);
           }
         }
+        if (table.config.reset && table.config.page > 0) {
+            var c = table.config;
+            $(c.cssPageDisplay).text(1 + c.seperator + c.totalPages)
+            table.config.page = 0;
+        }
         $(table).trigger("applyWidgets");
       }
-      
-      
+        
       function renderTable(table){
+        table.config.reset = false;
         var newString = table.config.filterSelector[0].value;
         if(newString.length > 1){
           if(table.config.container){
@@ -65,11 +74,15 @@
           if(table.config.container){
             // Revert to default table
             table.config.container.show();
-            replaceRows(table);
+            if (newString.length === 0 && table.config.oldString.length > 0) {
+                table.config.reset = true;
+                replaceRows(table);
+            }
           } else {
             replaceRows(table);
           }
         }
+        table.config.oldString = newString;
       }
       
       this.defaults = {
@@ -94,6 +107,7 @@
             $(this).trigger("appendCache");
           }
           table.config.string = "";
+          table.config.oldString = "";
           table.config.collection = [];
           table.config.collection = table.config.rowsCopy.slice(0)
           function filterMe(){
@@ -106,9 +120,8 @@
       }
     }
   });
-  
-  
   $.fn.extend({
     tablesorterMultiPageFilter: $.tablesorterMultiPageFilter.init
   });
 }(jQuery))
+

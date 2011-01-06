@@ -13,10 +13,10 @@
     
     {% if object.byline %}<div id="byline">{{ object.byline|safe }}</div>{% endif %}
     
-    <div id="download"><a href="{{ object.csv_url }}">Download the data</a></div>
+    <div id="download"><a href="{{ object.get_csv_url }}">Download the data</a></div>
     
     <div id="controls">
-        <div id="filter">Filter: <input type="text"></div>
+        <div id="filter">Filter: <input id="filter-box" type="text"></div>
         <div id="pager" class="pager">
           <form>
             <img src="/media/img/first.png" class="first">

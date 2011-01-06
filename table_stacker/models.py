@@ -13,7 +13,7 @@ class Table(db.Model):
     Ready-to-serve CSV data.
     """
     # The source
-    csv_url = db.StringProperty(required=True)
+    csv_name = db.StringProperty(required=True)
     csv_data = db.TextProperty(required=True)
     # The config
     yaml_name = db.StringProperty(required=True)
@@ -35,11 +35,14 @@ class Table(db.Model):
         return self.title
     
     def __repr__(self):
-        return '<Table: %s>' % self.title
+        return '<Table: %s>' % self.title.encode("utf-8")
     
     def get_absolute_url(self):
         return u'/%s/' % self.slug
     
+    def get_csv_url(self):
+        return u'/csv/%s' % self.csv_name
+
     def get_tablefu_opts(self):
         return yaml.load(self.yaml_data)['column_options']
     

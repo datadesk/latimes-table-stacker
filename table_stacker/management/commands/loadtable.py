@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
         # Update the obj if it exists
         if obj:
-            obj.csv_url='http://%s/csv/%s' % (host, csv_name)
+            obj.csv_name=csv_name
             obj.csv_data=csv_data
             obj.yaml_name=yaml_name
             obj.yaml_data=yaml_raw
@@ -87,7 +87,7 @@ class Command(BaseCommand):
         else:
             obj = Table(
                 key_name=yaml_name,
-                csv_url='http://%s/csv/%s' % (host, csv_name),
+                csv_name=csv_name,
                 csv_data=csv_data,
                 yaml_name=yaml_name,
                 yaml_data=yaml_raw,
