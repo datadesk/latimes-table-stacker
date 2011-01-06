@@ -72,7 +72,7 @@ def table_detail(request, slug):
         return cached_response
     else:
         # Pull the object
-        obj = Table.get_by_key_name(slug)
+        obj = Table.all().filter("slug =", slug).get()
         if not obj:
             # Drop out if it doesn't
             raise Http404

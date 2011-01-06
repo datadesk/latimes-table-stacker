@@ -72,7 +72,7 @@ class Command(BaseCommand):
             obj.yaml_name=yaml_name
             obj.yaml_data=yaml_raw
             obj.title=yaml_data['title']
-            obj.slug=yaml_name
+            obj.slug=yaml_data.get("slug", yaml_name)
             obj.byline=yaml_data.get("byline", '')
             obj.publication_date=yaml_data['publication_date']
             obj.description=yaml_data.get('description', '')
@@ -92,7 +92,7 @@ class Command(BaseCommand):
                 yaml_name=yaml_name,
                 yaml_data=yaml_raw,
                 title=yaml_data['title'],
-                slug=yaml_name,
+                slug=yaml_data.get("slug", yaml_name),
                 byline=yaml_data.get("byline", ""),
                 publication_date=yaml_data['publication_date'],
                 description=yaml_data.get('description', ''),
