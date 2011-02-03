@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>{% block title %}All Tables{% endblock %}</title>
+    <meta name="keywords" content="{% block keywords %}{% endblock %}" >
+    <meta name="description" content="{% block description %}{% endblock %}" >
+
+    <link href='/media/css/blueprint/screen.css' rel='stylesheet' type='text/css' media='all' />
+    <link href='/media/css/blueprint/typography.css' rel='stylesheet' type='text/css' media='all' />
+    <link href='/media/css/style.css' rel='stylesheet' type='text/css' media='all' />
+    {% block extra-css %}
+    {% endblock %}
+
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("jquery", "1", {uncompressed:true})
+    </script>
+    <script src='/media/js/jquery.tablesorter.js'></script>
+    <script src='/media/js/jquery.tablesorter.pager.js'></script>
+    <script src='/media/js/jquery.tablesorter.multipagefilter.js'></script>
+    <script src='/media/js/application.js'></script>
+    {% block extra-js %}
+    {% endblock %}
+
+    <script>
+      {% if table %}
+        var sortPlease = true;
+        var sortOrder = {{ table.sorted_by }};
+        var perPage = {{ table.per_page }};
+      {% else %}
+        var sortPlease = false;
+      {% endif %}
+    </script>
+
+  </head>
+  <body>
+    <div class="container">
+        <div id="header" class="span-24 last" style="position:relative; padding-top:20px; height:50px;">  
+              {% block headline %}{% endblock %}
+        </div>
+        <hr style="margin:0;" />
+        <div id="content" class="span-24">
+          {% block content %}{% endblock %}
+        </div>
+        <div id="footer" class="span-24 last" style="padding:10px 0; font-size:12px;">  
+              {% block footer %}
+              <center>This is Table Stacker. It publishes spreadsheets. You can build your own in minutes. <a target="_blank" href="https://github.com/datadesk/latimes-table-stacker">Here's how</a>.</center>
+              {% endblock %}
+        </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+<h5>Similar data</h5>
+<ul>
+{% for table in object.get_similar_tables_list|slice:"3" %}
+    <li><a target="_blank" href="{{ table.get_absolute_url }}">&raquo; {{ table.title }}</a></li>
+{% endfor %}
+</ul>
+

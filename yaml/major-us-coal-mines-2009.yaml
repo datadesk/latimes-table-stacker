@@ -1,0 +1,32 @@
+table:
+  title: Major U.S. coal mines, 2009
+  file:  major-us-coal-mines-2009.csv
+  slug: major-us-coal-mines-2009
+  byline: Ben Welsh
+  description: <p>A list of the largest coal-producing U.S. mines for the year 2009. The U.S. Energy Information Administration reports the production of all mines that produce more than 4 million short tons. In 2009, 47 mines qualified by the list. All together, major mines produced more than 650 million short tons of coal, a majority of the roughly 1 billion total short tons unearthed across the nation. Wyoming mines dominate the list, filling out the first nine positions.</p>
+  column_options:
+    columns:
+      - Mine
+      - Company
+      - Type
+      - State
+      - Production (Short tons)
+    style:
+      Mine: 'text-align:left; width:250px;'
+      Company: 'text-align:left; width:250px;'
+      Type: "width:80px;"
+      State: "width:100px;"
+    sorted_by:
+      - Production (Short tons): descending
+    formatting:
+      Production (Short tons):
+        method: intcomma
+  is_published: true
+  publication_date: 2011-01-12
+  sources: <a href="http://www.eia.doe.gov/cneaf/coal/page/acr/acr_sum.html">U.S. Energy Information Administration</a>
+  credits: '<a href="mailto:ben.welsh@latimes.com">Ben Welsh</a>'
+  tags:
+    - Coal
+    - Energy
+    - Mines
+    - Business

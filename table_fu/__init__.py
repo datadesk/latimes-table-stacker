@@ -63,12 +63,15 @@ class TableFu(object):
         self.totals = {}
         self.formatting = options.get('formatting', {})
         self.style = options.get('style', {})
+        self.tags = options.get('tags', [])
         self.per_page = options.get("per_page", 20)
         self.options = options
         if options.has_key('sorted_by'):
-            col = options['sorted_by'].keys()[0]
-            self.sort(column_name=col, 
-            reverse=options['sorted_by'][col].get('reverse', False))
+            sort_opts = options.get("sorted_by")
+            sort_column, sort_direction = sort_opts[0].items()[0]
+            direction2reverse = {'ascending': False, 'descending': True}
+            sort_reverse = direction2reverse.get(sort_direction, False)
+            self.sort(column_name=sort_column, reverse=sort_reverse)
         else:
             self.sorted_by = None
 
@@ -232,7 +235,7 @@ class TableFu(object):
         `per_page` setting.
         """
         row_count = len(self.rows)
-        return math.ceil(row_count / float(self.per_page))
+        return int(math.ceil(row_count / float(self.per_page)))
     
     @property
     def page_size_list(self):
@@ -247,6 +250,7 @@ class TableFu(object):
             if page_size > row_count:
                 break
         return page_size_list
+
 
 class Row(object):
     """

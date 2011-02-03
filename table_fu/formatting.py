@@ -19,6 +19,16 @@ def intcomma(value):
     else:
         return intcomma(new)
 
+def title(value):
+    """
+    Converts a string into titlecase.
+    
+    Lifted from Django.
+    """
+    value = value.lower()
+    t = re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
+    return re.sub("\d([A-Z])", lambda m: m.group(0).lower(), t)
+
 def dollars(value):
     return u'$%s'% intcomma(value)
     
@@ -35,6 +45,7 @@ DEFAULT_FORMATTERS = {
     'intcomma': intcomma,
     'dollars': dollars,
     'percentage': percentage,
+    'title': title,
 }
 
 class Formatter(object):

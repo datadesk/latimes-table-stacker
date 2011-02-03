@@ -1,0 +1,81 @@
+    <script type='text/javascript'>
+      {% if table %}
+        var sortPlease = true;
+        var sortOrder = {{ table.sorted_by }};
+        var perPage = {{ table.per_page }};
+      {% else %}
+        var sortPlease = false;
+      {% endif %}
+    </script>
+    
+    <div class="clear"></div>
+    
+    {% if object.similar_tables %}
+        <div id="similar">{% include "similar_tables.html" %}</div>
+    {% endif %}
+    
+    {% if object.description %}
+        <div id="description" {% if object.similar_tables %}style="width:660px;"{% endif %}>{{ object.description|safe }}</div>
+    {% endif %}
+    
+    {% if object.byline %}
+        <div id="byline" {% if object.similar_tables %}style="width:660px;"{% endif %}>&mdash; {{ object.byline|safe }} ({{ object.publication_date|date:"N j, Y" }})</div>
+    {% endif %}
+    
+    <div class="clear" style="padding:2px 0;"></div>
+    
+    <div id="ribbon">
+    
+        <div id="download">
+            Download:
+            <a href="{{ object.get_csv_url }}">CSV</a> |
+            <a href="{{ object.get_xls_url }}">XLS</a> |
+            <a target="_blank" href="{{ object.get_json_url }}">JSON</a>
+        </div>
+        
+        <div id="controls">
+            <div id="filter">Search: <input type="text"></div>
+            <div id="pager" class="pager">
+              <form>
+                <img src="/media/img/first.png" class="first">
+                <img src="/media/img/prev.png" class="prev">
+                <span class="pagedisplay"/>1/{{ table.total_pages }}</span>
+                <img src="/media/img/next.png" class="next">
+                <img src="/media/img/last.png" class="last">
+                <select class="pagesize">
+                    {% for page_size in table.page_size_list %}
+                    <option {% if forloop.first %}selected="selected"{% endif %} value="{{ page_size }}">{{ page_size }}</option>
+                    {% endfor %}
+                </select> per page
+              </form>
+            </div>
+        </div>
+    
+    </div>
+
+    <div style="clear:both; padding:5px 0 0 0; margin:0;"></div>
+
+    <table id="data" class="tabular">
+        <thead>
+            <tr>
+            {% for header in table.headers %}
+              <th style="{{ header.style }}">{{ header }}</th>
+            {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in table.rows %}
+          <tr>
+            {% for column in row.data %}
+                <td style="{{ column.style }}">{{ column|safe }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+    <tfoot></tfoot>
+    </table>
+    {% if object.footer %}<div id="footer">{{ object.footer|safe }}</div>{% endif %}
+    {% if object.tags %}<div id="tags">Tags: {{ object.get_html_tag_list|safe }}</div>{% endif %}
+    {% if object.sources %}<div id="sources">Sources: {{ object.sources|safe }}</div>{% endif %}
+    {% if object.credits %}<div id="credits">Credits: {{ object.credits|safe }}</div>{% endif %}
+

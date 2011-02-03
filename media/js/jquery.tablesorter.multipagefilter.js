@@ -7,7 +7,7 @@
         $.tablesorter.clearTableBody(table);
         var tableBody = $(table.tBodies[0]);
         var collection_length = table.config.collection.length
-        if (table.config.reset) {
+        if (table.config.reset && table.config.size < table.config.collection.length) {
             collection_length = table.config.size
         }
         for(var i = 0; i < collection_length; i++) {
@@ -124,4 +124,3 @@
     tablesorterMultiPageFilter: $.tablesorterMultiPageFilter.init
   });
 }(jQuery))
-
