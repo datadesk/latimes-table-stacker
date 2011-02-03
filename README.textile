@@ -11,7 +11,7 @@ Yb,_    88              IP'`Yb      IP'`Yb              `8,,8'     I8           
 
 Publish CSV files as interactive tables using "TableFu":https://github.com/eyeseast/python-tablefu, "TableSetter":https://github.com/propublica/table-setter, "Django":http://www.djangoproject.com/, "jQuery":http://jquery.com/ and "Google App Engine":http://code.google.com/appengine/.
 
-You can see an example table working "here":http://table-stacker.appspot.com/example_formatted/.
+You can see an example table working "here":http://table-stacker.appspot.com/.
 
 Beware. This software is in beta testing and hasn’t been used much. But don’t let that stop you! Please try it and tell me what sucks.
 
