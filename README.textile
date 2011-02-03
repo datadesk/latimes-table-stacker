@@ -23,7 +23,7 @@ h2. Features
 * Do it over and over again without much trouble
 * Quickly publish your tables to Google App Engine and serve them on the web for free
 * Instantly syndicate data as CSV, XLS and JSON
-* Publish RSS and sitemaps feeds of the latest spreadsheets
+* Publish RSS and a sitemap that promote the latest spreadsheets
 * Link similar datasets together with blog-style tagging
 
 h2. Instructions
