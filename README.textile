@@ -53,7 +53,7 @@ h3. 05. Load the example table
 
 You'll be asked to log in with your Google App Engine credentials, don't worry. That's what's supposed to happen.
 <pre><code>python manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000</code></pre>
-If you want to peek under the hood and see how it works, check out the YAML file in the tables directory.
+If you want to peek under the hood and see how it works, check out the YAML file in the yaml directory.
 
 h3. 06. Check it out in your browser
 
