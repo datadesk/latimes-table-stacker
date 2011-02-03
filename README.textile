@@ -49,7 +49,7 @@ You'll see me using python2.5, since that's what Google App Engine requires.
 h3. 05. Load the example table
 
 You'll be asked to log in with your Google App Engine credentials, don't worry. That's what's supposed to happen.
-<pre><code>python manage.py loadtable example_formatted --host=localhost:8000</code></pre>
+<pre><code>python manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000</code></pre>
 If you want to peek under the hood and see how it works, check out the YAML file in the tables directory.
 
 h3. 06. Check it out in your browser
@@ -63,7 +63,7 @@ h3. 07. Upload your app to appspot.com
 h3. 08. Load the demo recipe to your live site
 
 Notice how you leave out the host option this time. These commands hit your live site by default.
-<pre><code>python2.5 manage.py loadtable example_formatted</code></pre>
+<pre><code>python2.5 manage.py loadtable major-us-coal-mines-2009</code></pre>
 
 h3. 09. Check out your site!
 
@@ -71,7 +71,7 @@ You should find it at http://your-app-id-here.appspot.com You might draw Django 
 
 h3. 10. Try configuring and loading your own table
 
-YAML files go in the tables folder. Corresponding CSV files in the csv folder.
+YAML files go in the yaml folder. Corresponding CSV files in the csv folder.
 
 
 
