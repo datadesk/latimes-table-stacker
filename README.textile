@@ -19,9 +19,12 @@ All of the good stuff in here was written by "ProPublica's News Application Desk
 
 h2. Features
 
-* Convert a CSV file into an interactive HTML table using a simple YAML config file
+* Convert a CSV file into an interactive HTML table that sorts, filters and paginates
 * Do it over and over again without much trouble
 * Quickly publish your tables to Google App Engine and serve them on the web for free
+* Instantly syndicate data as CSV, XLS and JSON
+* Publish RSS and sitemaps feeds of the latest spreadsheets
+* Link similar datasets together with blog-style tagging
 
 h2. Instructions
 
