@@ -16,8 +16,8 @@ Features
 Resources
 ---------
 
-* `Working demo <http://table-stacker.appspot.com>`_
 * `Source code <https://www.github.com/datadesk/latimes-table-stacker/>`_
+* `Working demonstration <http://table-stacker.appspot.com>`_
 
 
 Table of Contents
