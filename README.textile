@@ -48,7 +48,7 @@ Now jump into the directory it creates.
 <pre><code>$ cd table-stacker</code></pre>
 
 Activate the private environment with virtualenv's custom command.
-<pre><code>. bin/activate</code></pre>
+<pre><code>$ . bin/activate</code></pre>
 
 Download the latest version of the code repository into a directory called _project_.
 <pre><code>$ git clone git://github.com/datadesk/latimes-table-stacker.git project</code></pre>
