@@ -5,7 +5,7 @@ Configuration
 YAML Example
 ------------
 
-Meta Data Options
+Metadata Options
 -----------------
 
 title
