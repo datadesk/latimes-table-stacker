@@ -16,7 +16,7 @@ h2. Features
 * Post an RSS feed and sitemap that promote the latest data.
 * Link similar datasets together with blog-style tagging.
 
-h2 Resources
+h2. Resources
 
 "Docs":http://datadesk.github.com/latimes-table-stacker
 "Demo":http://table-stacker.appspot.com
