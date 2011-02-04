@@ -26,7 +26,7 @@ h2. Requirements
 
 h2. Getting Started
 
-h3. *01. Register a new application with Google App Engine.*
+h3. *01. Register a new application with Google App Engine*
 
 Go to "https://appengine.google.com/":https://appengine.google.com/. Don't download the SDK. Don't read the docs. Just create an account and mint a new application with a name like _my-table-stacker_. It serves as the unique identifer for your app inside the Google system, and the namespace where it will first appear online (i.e. "http://my-table-stacker.appspot.com/":http://my-table-stacker.appspot.com/).
 
@@ -38,7 +38,7 @@ It's not required, but I recommend creating a virtual environment to store your 
 # Or maybe ...
 $ sudo easy_install install virtualenv
 # Or, if you're in Ubuntu ...
-# sudo apt-get install python-virtualenv</code></pre>
+$ sudo apt-get install python-virtualenv</code></pre>
 
 Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I'm going to call this project _my-table-stacker_, but you should substitute whatever you're calling your version.
 <pre><code>$ virtualenv --no-site-packages my-table-stacker</code></pre>
@@ -70,7 +70,7 @@ Note that you'll see me using _python2.5_ throughout, instead of the usual _pyth
 
 h3. *05. Load the example table*
 
-You'll learn how to layout your own data later, but for now we'll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our _loadtable_ managment command to follow instructions in the _major-us-coal-mines-2009_ configuration file and create a new table in the test site we just lauched at "http://localhost:8000":http://localhost:8000.
+You'll learn how to layout your own data later, but for now we'll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our _loadtable_ management command to follow instructions in the _major-us-coal-mines-2009_ configuration file and create a new table in the test site we just launched at "http://localhost:8000":http://localhost:8000.
 <pre><code>$ python manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000</code></pre>
 
 h3. *06. Check it out*
@@ -79,12 +79,12 @@ If everything clicked, you should see your demo site up and running with the coa
 
 h3. *07. Deploy your app*
 
-Once everything's set, deploying your application to Google App engine only takes a single command. Here it is.
+Once everything's set, deploying your application to Google App Engine only takes a single command. Here it is.
 <pre><code>$ python2.5 manage.py update</code></pre>
 
 h3. *08. Load the demo table on your live site*
 
-You'll run the same _loadtable_ command from step 5, but drop the host option. It will post to your live site by default, so it's unnecessary this time around.
+You'll run the same _loadtable_ command from step five, but drop the host option. It will post to your live site by default, so it's unnecessary this time around.
 <pre><code>python2.5 manage.py loadtable major-us-coal-mines-2009</code></pre>
 
 h3. *09. Check it out*
