@@ -20,7 +20,7 @@ h2. Features
 
 h2. Getting Started
 
-h3. *01. Register a new application with Google App Engine.*
+*01. Register a new application with Google App Engine.*
 
 Go to "https://appengine.google.com/":https://appengine.google.com/ and follow their instructions.
 
