@@ -95,14 +95,6 @@ h3. *10. Publish you own data table*
 
 Before you can publish your own data table, you'll need to learn about our YAML-based configuration system. But don't worry, it's not that hard. You can read about it in the "documentation":http://datadesk.github.com/latimes-table-stacker/ or school yourself by mimicking the examples files in the project's _yaml_ subdirectory folder.
 
-h2. Credits
-
-This project would not be possible without the generous work of:
-
-* "ProPublica's News Application Desk":http://www.propublica.org/nerds, and particularly "Jeff Larson":https://github.com/thejefflarson, who developed the Ruby libraries "table-fu":https://github.com/propublica/table-fu and "table-setter":https://github.com/propublica/table-setter.
-* "Chris Amico":https://github.com/eyeseast, who did the noble work of "porting table-fu to Python":https://github.com/eyeseast/python-tablefu.
-* Christian Bach, the man who gave us "tablesorter":http://tablesorter.com/docs/.
-* The army of people who make something like "google-app-engine-django":http://code.google.com/p/google-app-engine-django/ possible.
 
 
 
