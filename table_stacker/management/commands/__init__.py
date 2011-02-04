@@ -184,12 +184,6 @@ def update_or_create_table(yaml_data):
         obj.rendered_html = obj.get_rendered_html()
         obj.put()
         created = True
-    # Update the short url
-    taskqueue.add(
-        url='/_/table/shorten-url/',
-        params=dict(key=obj.key()),
-        method='GET'
-    )
     # Update the similarity lists of tables with the same tags
     taskqueue.add(
         url='/_/table/update-similar/',
