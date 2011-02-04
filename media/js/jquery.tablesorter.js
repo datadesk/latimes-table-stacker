@@ -800,7 +800,6 @@
         format: function(s,table) {
             var c = table.config;
             s = s.replace(/\-/g,"/");
-            console.log(s)
             if(c.dateFormat == "us") {
                 // reformat the string in ISO format
                 s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/, "$3/$1/$2");
