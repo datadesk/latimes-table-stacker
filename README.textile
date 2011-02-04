@@ -18,6 +18,12 @@ h2. Features
 * Post an RSS feed and sitemap that promote the latest data
 * Link similar datasets together with blog-style tagging
 
+h2. Requirements
+
+* "git":http://git-scm.com/
+* "python2.5":http://www.python.org/download/releases/2.5.5/ (I don't know why, but "newer versions won't work in my preferred OS, Ubuntu 10.10":http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/).
+* "virtualenv":http://pypi.python.org/pypi/virtualenv
+
 h2. Getting Started
 
 h3. *01. Register a new application with Google App Engine.*
@@ -26,7 +32,7 @@ Go to "https://appengine.google.com/":https://appengine.google.com/. Don't downl
 
 h3. *02. Clone the code from this repository to your computer*
 
-I like to put things in a virtualenv like this.
+It's not required 
 <pre><code>$ virtualenv --no-site-packages table-stacker
 $ cd table-stacker
 $ git clone git://github.com/datadesk/latimes-table-stacker.git project
@@ -34,7 +40,7 @@ $ cd project</code></pre>
 
 h3. *03. Configure the apps.yaml file with your Google App Engine application id*
 
-<pre><code>application: your-app-id-here</code></pre>
+<pre><code>application: my-table-stacker</code></pre>
 
 h3. *04. Open a second terminal tab and fire up the development server*
 
