@@ -21,7 +21,8 @@ h2. Features
 h2. Requirements
 
 * "git":http://git-scm.com/
-* "python2.5":http://www.python.org/download/releases/2.5.5/ (I don't know why, but "newer versions won't work in my preferred OS, Ubuntu 10.10":http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/).
+* "python2.5":http://www.python.org/download/releases/2.5.5/ 
+** I don't know why, but "newer versions won't work in my preferred OS, Ubuntu 10.10":http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/.
 * "virtualenv":http://pypi.python.org/pypi/virtualenv
 
 h2. Getting Started
