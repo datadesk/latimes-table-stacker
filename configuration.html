@@ -177,7 +177,7 @@ credits: Bob Woodward and Carl Bernstein</pre>
 <p>The following YAML configuration options specify how to present the columns in the data table. They should appear as entries in a dictionary titled <tt class="docutils literal"><span class="pre">column_options</span></tt>.</p>
 <div class="section" id="columns">
 <h3>columns<a class="headerlink" href="#columns" title="Permalink to this headline">¶</a></h3>
-<p>A list of the columns from the CSV that should appear in the published table. They will appear in the order specified here. Key names should correspond to headers in the CSV file.</p>
+<p>A list of the columns from the CSV that should appear in the published table. They will appear in the order specified here. Key names should correspond to headers in the CSV file. Optional.</p>
 <p>Example:</p>
 <div class="highlight-python"><pre>columns:
   - Mine
@@ -200,7 +200,7 @@ credits: Bob Woodward and Carl Bernstein</pre>
 </div>
 <div class="section" id="sorted-by">
 <h3>sorted_by<a class="headerlink" href="#sorted-by" title="Permalink to this headline">¶</a></h3>
-<p>A single item list that specifies which column that table should be sorted by default, and which directions. Key names should correspond to headers in the CSV file. The direction can be either <tt class="docutils literal"><span class="pre">ascending</span></tt> or <tt class="docutils literal"><span class="pre">descending</span></tt>.</p>
+<p>A single item list that specifies which column that table should be sorted by default, and which directions. Key names should correspond to headers in the CSV file. The direction can be either <tt class="docutils literal"><span class="pre">ascending</span></tt> or <tt class="docutils literal"><span class="pre">descending</span></tt>. Optional.</p>
 <p>Example:</p>
 <div class="highlight-python"><pre>sorted_by:
   - Production (Short tons): descending</pre>

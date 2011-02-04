@@ -157,7 +157,7 @@ The following YAML configuration options specify how to present the columns in t
 columns
 ^^^^^^^
 
-A list of the columns from the CSV that should appear in the published table. They will appear in the order specified here. Key names should correspond to headers in the CSV file.
+A list of the columns from the CSV that should appear in the published table. They will appear in the order specified here. Key names should correspond to headers in the CSV file. Optional.
 
 Example::
 
@@ -185,7 +185,7 @@ Example::
 sorted_by
 ^^^^^^^^^
 
-A single item list that specifies which column that table should be sorted by default, and which directions. Key names should correspond to headers in the CSV file. The direction can be either ``ascending`` or ``descending``.
+A single item list that specifies which column that table should be sorted by default, and which directions. Key names should correspond to headers in the CSV file. The direction can be either ``ascending`` or ``descending``. Optional.
 
 Example::
 
