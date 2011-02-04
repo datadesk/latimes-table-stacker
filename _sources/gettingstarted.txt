@@ -14,7 +14,7 @@ Requirements
 01. Register a new application with Google App Engine
 ------------------------------------------------------
 
-Go to `https://appengine.google.com/ <https://appengine.google.com/>`_. Don't download the SDK. Don't read the docs. Just create an account and mint a new application with a name like `my-table-stacker`. It serves as the unique identifer for your app inside the Google system, and the namespace where it will first appear online (i.e. `http://my-table-stacker.appspot.com <http://my-table-stacker.appspot.com/>`_).
+Go to `https://appengine.google.com/ <https://appengine.google.com/>`_. Don't download the SDK. Don't read the docs. Just create an account and mint a new application with a name like ``my-table-stacker``. It serves as the unique identifer for your app inside the Google system, and the namespace where it will first appear online (i.e. `http://my-table-stacker.appspot.com <http://my-table-stacker.appspot.com/>`_).
 
 02. Install the code on your computer
 -------------------------------------
