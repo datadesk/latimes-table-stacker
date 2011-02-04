@@ -8,7 +8,7 @@
 
 Publish spreadsheets as interactive tables. And do it on deadline.
 
-h2.
+h2. &nbsp;
 
 TK
 
