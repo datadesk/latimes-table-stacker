@@ -25,7 +25,7 @@ It's not required, but I recommend creating a virtual environment to store your 
     # Or maybe ...
     $ sudo easy_install install virtualenv
     # Or, if you're in Ubuntu ...
-    $ sudo apt-get install python-virtualenv</code></pre>
+    $ sudo apt-get install python-virtualenv
 
 Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I'm going to call this project `my-table-stacker`, but you should substitute whatever you're calling your version. ::
 

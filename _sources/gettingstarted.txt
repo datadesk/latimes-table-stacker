@@ -25,7 +25,7 @@ It's not required, but I recommend creating a virtual environment to store your 
     # Or maybe ...
     $ sudo easy_install install virtualenv
     # Or, if you're in Ubuntu ...
-    $ sudo apt-get install python-virtualenv</code></pre>
+    $ sudo apt-get install python-virtualenv
 
 Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I'm going to call this project `my-table-stacker`, but you should substitute whatever you're calling your version. ::
 
@@ -87,7 +87,7 @@ Once everything's set, deploying your application to Google App Engine only take
 
 You'll run the same `loadtable` command from step five, but drop the host option. It will post to your live site by default, so it's unnecessary this time around. ::
 
-    python2.5 manage.py loadtable major-us-coal-mines-2009
+    $ python2.5 manage.py loadtable major-us-coal-mines-2009
 
 09. Check it out
 ----------------
