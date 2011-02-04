@@ -8,11 +8,6 @@
 
 Publish spreadsheets as interactive tables. And do it on deadline.
 
-  <hr />
-
-TK
-
-
 h2. Features
 
 * Convert a CSV file into an interactive HTML table that sorts, filters and paginates.
@@ -20,6 +15,11 @@ h2. Features
 * Instantly syndicate data as CSV, XLS and JSON.
 * Post an RSS feed and sitemap that promote the latest data.
 * Link similar datasets together with blog-style tagging.
+
+h2 Resources
+
+"Docs":http://datadesk.github.com/latimes-table-stacker
+"Demo":http://table-stacker.appspot.com
 
 h2. Getting Started
 
