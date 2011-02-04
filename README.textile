@@ -6,13 +6,9 @@
      888      d8(  888   888   888  888  888    .o oo     .d8P   888 . d8(  888  888   .o8  888 `88b.  888    .o  888     
     o888o     `Y888""8o  `Y8bod8P' o888o `Y8bod8P' 8""88888P'    "888" `Y888""8o `Y8bod8P' o888o o888o `Y8bod8P' d888b    </code></pre>
 
-Publish CSV files as interactive tables using "TableFu":https://github.com/eyeseast/python-tablefu, "TableSetter":https://github.com/propublica/table-setter, "Django":http://www.djangoproject.com/, "jQuery":http://jquery.com/ and "Google App Engine":http://code.google.com/appengine/.
+Quickly publish spreadsheets as interactive tables.
 
 You can see an example table working "here":http://table-stacker.appspot.com/.
-
-Beware. This software is in beta testing and hasn’t been used much. But don’t let that stop you! Please try it and tell me what sucks.
-
-All of the good stuff in here was written by "ProPublica's News Application Desk":http://www.propublica.org/nerds and "Chris Amico":http://www.chrisamico.com/blog/. Blame me for whatever sucks.
 
 h2. Features
 
@@ -72,6 +68,16 @@ You should find it at http://your-app-id-here.appspot.com You might draw Django 
 h3. 10. Try configuring and loading your own table
 
 YAML files go in the yaml folder. Corresponding CSV files in the csv folder.
+
+h2. Credits
+
+This project would not be possible without the generous work of:
+
+* "ProPublica's News Application Desk":http://www.propublica.org/nerds, and particularly "Jeff Larson":https://github.com/thejefflarson, who developed the Ruby libraries that got this ball rolling, namely: "table-fu":https://github.com/propublica/table-fu and "table-setter":https://github.com/propublica/table-setter.
+* Chris Amico, who did the noble work of "porting table-fu to Python":https://github.com/eyeseast/python-tablefu.
+* Christian Bach, the man who gave us "tablesorter":http://tablesorter.com/docs/
+* The army of people who make something like "google-app-engine-django":http://code.google.com/p/google-app-engine-django/ possible
+
 
 
 
