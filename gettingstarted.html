@@ -1,0 +1,208 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting started &mdash; Table Stacker v0.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Table Stacker v0.1 documentation" href="index.html" />
+    <link rel="next" title="Configuration" href="configuration.html" />
+    <link rel="prev" title="Table Stacker Documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Table Stacker Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Table Stacker v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial will walk you through the process of installing Table Stacker and publishing an example.</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://git-scm.com/">git</a></li>
+<li><a class="reference external" href="http://www.python.org/download/releases/2.5.5/">python2.5</a></li>
+<li><a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a></li>
+</ul>
+</div>
+<div class="section" id="register-a-new-application-with-google-app-engine">
+<h2>01. Register a new application with Google App Engine<a class="headerlink" href="#register-a-new-application-with-google-app-engine" title="Permalink to this headline">¶</a></h2>
+<p>Go to <a class="reference external" href="https://appengine.google.com/">https://appengine.google.com/</a>. Don&#8217;t download the SDK. Don&#8217;t read the docs. Just create an account and mint a new application with a name like <cite>my-table-stacker</cite>. It serves as the unique identifer for your app inside the Google system, and the namespace where it will first appear online (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+</div>
+<div class="section" id="install-the-code-on-your-computer">
+<h2>02. Install the code on your computer<a class="headerlink" href="#install-the-code-on-your-computer" title="Permalink to this headline">¶</a></h2>
+<p>It&#8217;s not required, but I recommend creating a virtual environment to store your application. I like to do this with the Python module <a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a>, which creates a walled-off garden for the Python code to work without distraction from the outside world. If you don&#8217;t have it, you&#8217;ll need to install it now, which just might be as easy as:</p>
+<div class="highlight-python"><pre>$ pip install virtualenv
+# Or maybe ...
+$ sudo easy_install install virtualenv
+# Or, if you're in Ubuntu ...
+$ sudo apt-get install python-virtualenv&lt;/code&gt;&lt;/pre&gt;</pre>
+</div>
+<p>Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I&#8217;m going to call this project <cite>my-table-stacker</cite>, but you should substitute whatever you&#8217;re calling your version.</p>
+<div class="highlight-python"><pre>$ virtualenv --no-site-packages my-table-stacker</pre>
+</div>
+<p>Now jump into the directory it creates.</p>
+<div class="highlight-python"><pre>$ cd table-stacker</pre>
+</div>
+<p>Activate the private environment with virtualenv&#8217;s custom command.</p>
+<div class="highlight-python"><pre>$ . bin/activate</pre>
+</div>
+<p>Download the latest version of the code repository into a directory called <cite>project</cite>.</p>
+<div class="highlight-python"><pre>$ git clone git://github.com/datadesk/latimes-table-stacker.git project</pre>
+</div>
+<p>And jump in and get ready to work.</p>
+<div class="highlight-python"><pre>$ cd project</pre>
+</div>
+</div>
+<div class="section" id="set-your-application-id">
+<h2>03. Set your application id<a class="headerlink" href="#set-your-application-id" title="Permalink to this headline">¶</a></h2>
+<p>In the <cite>project</cite> folder you will find a file called <cite>app.yaml</cite>. It contains the basic configuration for your Google App Engine site. You only need to make one little change: Replace <cite>my-table-stacker</cite> with the application id you registered in step one.</p>
+<div class="highlight-python"><pre>application: my-table-stacker</pre>
+</div>
+</div>
+<div class="section" id="launch-a-test-version-of-the-site">
+<h2>04. Launch a test version of the site<a class="headerlink" href="#launch-a-test-version-of-the-site" title="Permalink to this headline">¶</a></h2>
+<p>You&#8217;ll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the <cite>project</cite> directory and fire off the following. It is a <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port">Django management command</a> that will start a test version of the site on your machine.</p>
+<p>Note that you&#8217;ll see me using <cite>python2.5</cite> throughout, instead of the usual <cite>python</cite> command. This is because I work in Ubuntu and I&#8217;ve found that Google App Engine <a class="reference external" href="http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/">is not compatible with newer versions of Python</a>. I suspect is is the case with other operating systems, but I&#8217;m not sure. So, I&#8217;d recommend using <cite>python2.5</cite> but, as always, your mileage may vary.</p>
+<div class="highlight-python"><pre>$ python2.5 manage.py runserver</pre>
+</div>
+</div>
+<div class="section" id="load-the-example-table">
+<h2>05. Load the example table<a class="headerlink" href="#load-the-example-table" title="Permalink to this headline">¶</a></h2>
+<p>You&#8217;ll learn how to layout your own data later, but for now we&#8217;ll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our <cite>loadtable</cite> management command to follow instructions in the <cite>major-us-coal-mines-2009</cite> configuration file and create a new table in the test site we just launched at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
+<div class="highlight-python"><pre>$ python manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000</pre>
+</div>
+</div>
+<div class="section" id="check-it-out">
+<h2>06. Check it out<a class="headerlink" href="#check-it-out" title="Permalink to this headline">¶</a></h2>
+<p>If everything clicked, you should see your demo site up and running with the coal mines table at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
+</div>
+<div class="section" id="deploy-your-app">
+<h2>07. Deploy your app<a class="headerlink" href="#deploy-your-app" title="Permalink to this headline">¶</a></h2>
+<p>Once everything&#8217;s set, deploying your application to Google App Engine only takes a single command. Here it is.</p>
+<div class="highlight-python"><pre>$ python2.5 manage.py update</pre>
+</div>
+</div>
+<div class="section" id="load-the-demo-table-on-your-live-site">
+<h2>08. Load the demo table on your live site<a class="headerlink" href="#load-the-demo-table-on-your-live-site" title="Permalink to this headline">¶</a></h2>
+<p>You&#8217;ll run the same <cite>loadtable</cite> command from step five, but drop the host option. It will post to your live site by default, so it&#8217;s unnecessary this time around.</p>
+<div class="highlight-python"><pre>python2.5 manage.py loadtable major-us-coal-mines-2009</pre>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>09. Check it out<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>You should now see your starter site up and running at <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>. You might draw errors for a few minutes as the app builds its indexes, but don&#8217;t worry. It&#8217;ll be ready after you have a cup of coffee.</p>
+</div>
+<div class="section" id="publish-you-own-data-table">
+<h2>10. Publish you own data table<a class="headerlink" href="#publish-you-own-data-table" title="Permalink to this headline">¶</a></h2>
+<p>Before you can publish your own data table, you&#8217;ll need to learn about our YAML-based configuration system. But don&#8217;t worry, it&#8217;s not that hard. You can read about it in the <a class="reference internal" href="configuration.html"><em>configuration</em></a> section or school yourself by mimicking the examples files in the project&#8217;s <cite>yaml</cite> subdirectory folder.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting started</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#register-a-new-application-with-google-app-engine">01. Register a new application with Google App Engine</a></li>
+<li><a class="reference internal" href="#install-the-code-on-your-computer">02. Install the code on your computer</a></li>
+<li><a class="reference internal" href="#set-your-application-id">03. Set your application id</a></li>
+<li><a class="reference internal" href="#launch-a-test-version-of-the-site">04. Launch a test version of the site</a></li>
+<li><a class="reference internal" href="#load-the-example-table">05. Load the example table</a></li>
+<li><a class="reference internal" href="#check-it-out">06. Check it out</a></li>
+<li><a class="reference internal" href="#deploy-your-app">07. Deploy your app</a></li>
+<li><a class="reference internal" href="#load-the-demo-table-on-your-live-site">08. Load the demo table on your live site</a></li>
+<li><a class="reference internal" href="#id3">09. Check it out</a></li>
+<li><a class="reference internal" href="#publish-you-own-data-table">10. Publish you own data table</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Table Stacker Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="configuration.html"
+                        title="next chapter">Configuration</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/gettingstarted.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Table Stacker Documentation"
+             >previous</a> |</li>
+        <li><a href="index.html">Table Stacker v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Los Angeles Times.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
