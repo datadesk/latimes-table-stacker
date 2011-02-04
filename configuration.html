@@ -174,21 +174,67 @@ credits: Bob Woodward and Carl Bernstein</pre>
 </div>
 <div class="section" id="column-options">
 <h2>Column Options<a class="headerlink" href="#column-options" title="Permalink to this headline">¶</a></h2>
-<p>The following YAML configuration options specify how to present the columns in the data table itself. They should appear as entries in a dictionary titled <tt class="docutils literal"><span class="pre">column_options</span></tt>.</p>
+<p>The following YAML configuration options specify how to present the columns in the data table. They should appear as entries in a dictionary titled <tt class="docutils literal"><span class="pre">column_options</span></tt>.</p>
 <div class="section" id="columns">
 <h3>columns<a class="headerlink" href="#columns" title="Permalink to this headline">¶</a></h3>
+<p>A list of the columns from the CSV that should appear in the published table. They will appear in the order specified here. Key names should correspond to headers in the CSV file.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>columns:
+  - Mine
+  - Company
+  - Type
+  - State
+  - Production (Short tons)</pre>
+</div>
 </div>
 <div class="section" id="style">
 <h3>style<a class="headerlink" href="#style" title="Permalink to this headline">¶</a></h3>
+<p>A dictionary that specifies custom CSS to be applied to columns in the data table. CSS declarations should be included just as they would in an HTML <tt class="docutils literal"><span class="pre">style</span></tt> attribute. Key names should correspond to headers in the CSV file. Optional.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>style:
+  Mine: 'text-align:left; width:250px;'
+  Company: 'text-align:left; width:250px;'
+  Type: "width:80px;"
+  State: "width:100px;"</pre>
+</div>
 </div>
 <div class="section" id="sorted-by">
 <h3>sorted_by<a class="headerlink" href="#sorted-by" title="Permalink to this headline">¶</a></h3>
+<p>A single item list that specifies which column that table should be sorted by default, and which directions. Key names should correspond to headers in the CSV file. The direction can be either <tt class="docutils literal"><span class="pre">ascending</span></tt> or <tt class="docutils literal"><span class="pre">descending</span></tt>.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>sorted_by:
+  - Production (Short tons): descending</pre>
+</div>
 </div>
 <div class="section" id="formatting">
 <h3>formatting<a class="headerlink" href="#formatting" title="Permalink to this headline">¶</a></h3>
+<p>A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column&#8217;s name, followed by a dictionary requesting a particular method and, if necessary, identifing other columns to be passed in arguments. Optional.</p>
+<p>Available methods:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">dollars</span></tt>: Converts an number to a string containing commas every three digits with a dollar sign at the front.</li>
+<li><tt class="docutils literal"><span class="pre">intcomma</span></tt>: Converts an integer to a string containing commas every three digits.</li>
+<li><tt class="docutils literal"><span class="pre">link</span></tt>: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.</li>
+<li><tt class="docutils literal"><span class="pre">percentage</span></tt>: Multiplies a float by 100, converts it to a string and follows it with a percentage sign.</li>
+<li><tt class="docutils literal"><span class="pre">title</span></tt>: Converts a string into titlecase.</li>
+</ul>
+<p>Custom methods can be added by following the instructions in the <a class="reference internal" href="customization.html#data-formatting"><em>customization</em></a> section.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>formatting:
+  Employees Affected:
+    method: intcomma
+  Company Name:
+    method: title
+  Title:
+    method: link
+    argument: url</pre>
+</div>
 </div>
 <div class="section" id="per-page">
 <h3>per_page<a class="headerlink" href="#per-page" title="Permalink to this headline">¶</a></h3>
+<p>How many records should appear in each page of the data table. 20 by default. Optional.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>per_page: 50</pre>
+</div>
 </div>
 </div>
 </div>

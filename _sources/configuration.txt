@@ -152,22 +152,83 @@ Example::
 Column Options
 --------------
 
-The following YAML configuration options specify how to present the columns in the data table itself. They should appear as entries in a dictionary titled ``column_options``.
+The following YAML configuration options specify how to present the columns in the data table. They should appear as entries in a dictionary titled ``column_options``.
 
 columns
 ^^^^^^^
 
+A list of the columns from the CSV that should appear in the published table. They will appear in the order specified here. Key names should correspond to headers in the CSV file.
+
+Example::
+
+    columns:
+      - Mine
+      - Company
+      - Type
+      - State
+      - Production (Short tons)
+
 style
 ^^^^^
+
+A dictionary that specifies custom CSS to be applied to columns in the data table. CSS declarations should be included just as they would in an HTML ``style`` attribute. Key names should correspond to headers in the CSV file. Optional.
+
+Example::
+    
+    style:
+      Mine: 'text-align:left; width:250px;'
+      Company: 'text-align:left; width:250px;'
+      Type: "width:80px;"
+      State: "width:100px;"
+
 
 sorted_by
 ^^^^^^^^^
 
+A single item list that specifies which column that table should be sorted by default, and which directions. Key names should correspond to headers in the CSV file. The direction can be either ``ascending`` or ``descending``.
+
+Example::
+
+    sorted_by:
+      - Production (Short tons): descending
+
+
 formatting
 ^^^^^^^^^^
 
+A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column's name, followed by a dictionary requesting a particular method and, if necessary, identifing other columns to be passed in arguments. Optional.
+
+Available methods:
+
+* ``dollars``: Converts an number to a string containing commas every three digits with a dollar sign at the front.
+* ``intcomma``: Converts an integer to a string containing commas every three digits.
+* ``link``: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.
+* ``percentage``: Multiplies a float by 100, converts it to a string and follows it with a percentage sign.
+* ``title``: Converts a string into titlecase.
+
+Custom methods can be added by following the instructions in the :ref:`customization <data-formatting>` section.
+
+
+Example::
+
+    formatting:
+      Employees Affected:
+        method: intcomma
+      Company Name:
+        method: title
+      Title:
+        method: link
+        argument: url
+
 per_page
 ^^^^^^^^
+
+How many records should appear in each page of the data table. 20 by default. Optional.
+
+Example::
+
+    per_page: 50
+
 
 
 

@@ -8,5 +8,8 @@ CSS Styles
 Template Layout
 ---------------
 
-Data formatters
+
+.. _data-formatting:
+
+Data formatting
 ---------------
