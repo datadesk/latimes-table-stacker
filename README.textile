@@ -6,7 +6,7 @@
      888      d8(  888   888   888  888  888    .o oo     .d8P   888 . d8(  888  888   .o8  888 `88b.  888    .o  888     
     o888o     `Y888""8o  `Y8bod8P' o888o `Y8bod8P' 8""88888P'    "888" `Y888""8o `Y8bod8P' o888o o888o `Y8bod8P' d888b    </code></pre>
 
-<h3><center>Publish spreadsheets as interactive tables. And do it on deadline.</center></h3>
+<h3 style="text-align:center;">Publish spreadsheets as interactive tables. And do it on deadline.</h3>
 
 You can see an example table working "here":http://table-stacker.appspot.com/.
 
