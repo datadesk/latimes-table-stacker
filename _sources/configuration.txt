@@ -1,2 +1,15 @@
+=============
 Configuration
 =============
+
+YAML Example
+------------
+
+YAML Options
+------------
+
+title
+^^^^^
+
+slug
+^^^^
