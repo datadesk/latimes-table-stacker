@@ -77,22 +77,23 @@ h3. *06. Check it out*
 
 If everything clicked, you should see your demo site up and running with the coal mines table at "http://localhost:8000/":http://localhost:8000/.
 
-h3. *07. Upload your app to appspot.com*
+h3. *07. Deploy your app*
 
+Once everything's set, deploying your application to Google App engine only takes a single command. Here it is.
 <pre><code>$ python2.5 manage.py update</code></pre>
 
-h3. *08. Load the demo recipe to your live site*
+h3. *08. Load the demo table on your live site*
 
-Notice how you leave out the host option this time. These commands hit your live site by default.
+You'll run the same _loadtable_ command from step 5, but drop the host option. It will post to your live site by default, so it's unnecessary this time around.
 <pre><code>python2.5 manage.py loadtable major-us-coal-mines-2009</code></pre>
 
-h3. *09. Check out your site!*
+h3. *09. Check it out*
 
-You should find it at http://your-app-id-here.appspot.com You might draw Django errors for a few minutes as the app builds its indexes, but don't worry. It'll be ready after you have a cup of coffee.
+You should now see your starter site up and running at "http://my-table-stacker.appspot.com":http://my-table-stacker.appspot.com. You might draw errors for a few minutes as the app builds its indexes, but don't worry. It'll be ready after you have a cup of coffee.
 
-h3. *10. Try configuring and loading your own table*
+h3. *10. Publish you own data table*
 
-YAML files go in the yaml folder. Corresponding CSV files in the csv folder.
+Before you can publish your own data table, you'll need to learn about our YAML-based configuration system. But don't worry, it's not that hard. You can read about it in the "documentation":http://datadesk.github.com/latimes-table-stacker/ or school yourself by mimicking the examples files go in the project's _yaml_ subdirectory folder.
 
 h2. Credits
 
