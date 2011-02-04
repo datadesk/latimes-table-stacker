@@ -33,7 +33,9 @@ Go to "https://appengine.google.com/":https://appengine.google.com/. Don't downl
 
 h3. *02. Install the code on your computer*
 
-It's not required, but I recommend creating a virtual environment to store your app in. I like to do this with the Python module "virtualenv":":http://pypi.python.org/pypi/virtualenv, which creates a walled-off garden for the Python code in this project to work without distraction from the outside world.
+It's not required, but I recommend creating a virtual environment to store your application. I like to do this with the Python module "virtualenv":http://pypi.python.org/pypi/virtualenv, which creates a walled-off garden for the Python code to work without distraction from the outside world. If you don't have it, you'll need to install it now, which just might be as easy as:
+
+<pre><code>pip install virtualenv</code></pre>
 
 Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I'm going to call this project _my-table-stacker_, but you should substitute whatever you're calling your version.
 <pre><code>$ virtualenv --no-site-packages my-table-stacker</code></pre>
