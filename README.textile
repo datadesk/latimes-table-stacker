@@ -19,7 +19,7 @@ h2. Features
 * Publish RSS and a sitemap that promote the latest spreadsheets
 * Link similar datasets together with blog-style tagging
 
-h2. Instructions
+h2. Getting Started
 
 h3. 01. Register a new application with Google App Engine.
 
