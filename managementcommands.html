@@ -50,20 +50,69 @@
             
   <div class="section" id="management-commands">
 <h1>Management commands<a class="headerlink" href="#management-commands" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="deletealltables">
-<h2><cite>deletealltables</cite><a class="headerlink" href="#deletealltables" title="Permalink to this headline">¶</a></h2>
+<p>Interactions with the Table Stacker database are handled using custom <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/">Django management commands</a> that allow you to create, update and delete tables.</p>
+<p>Like other Django commands, they are run by interacting with the <cite>manage.py</cite> file in your project&#8217;s root directory.</p>
+<div class="section" id="deletealltables-options">
+<h2>deletealltables [options]<a class="headerlink" href="#deletealltables-options" title="Permalink to this headline">¶</a></h2>
+<p>Deletes all tables in the database</p>
+<p><tt class="docutils literal"><span class="pre">--host=&lt;host_address&gt;</span></tt></p>
+<p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<p>Example usage:</p>
+<div class="highlight-python"><pre># Clear the database in your live site
+$ python2.5 manage.py deletealltables
+# Or for a test site running on your local machine
+$ python2.5 manage.py deletealltables --host=localhost:8000</pre>
 </div>
-<div class="section" id="deletetable">
-<h2><cite>deletetable</cite><a class="headerlink" href="#deletetable" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="listtables">
-<h2><cite>listtables</cite><a class="headerlink" href="#listtables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="deletetable-config-file-name-options">
+<h2>deletetable &lt;config_file_name&gt; [options]<a class="headerlink" href="#deletetable-config-file-name-options" title="Permalink to this headline">¶</a></h2>
+<p>Delete the table outlined in the configuration file provided by the first argument.</p>
+<p><tt class="docutils literal"><span class="pre">--host=&lt;host_address&gt;</span></tt></p>
+<p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<p>Example usage:</p>
+<div class="highlight-python"><pre>python2.5 manage.py deletetable config-file-name --host=localhost:8000</pre>
 </div>
-<div class="section" id="loadalltables">
-<h2><cite>loadalltables</cite><a class="headerlink" href="#loadalltables" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="loadtable">
-<h2><cite>loadtable</cite><a class="headerlink" href="#loadtable" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="listtables-options">
+<h2>listtables [options]<a class="headerlink" href="#listtables-options" title="Permalink to this headline">¶</a></h2>
+<p>List all of the configuration files.</p>
+<p><tt class="docutils literal"><span class="pre">--host=&lt;host_address&gt;</span></tt></p>
+<p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<p>Example usage:</p>
+<div class="highlight-python"><pre>python2.5 manage.py listtables --host=localhost:8000</pre>
+</div>
+</div>
+<div class="section" id="loadalltables-options">
+<h2>loadalltables [options]<a class="headerlink" href="#loadalltables-options" title="Permalink to this headline">¶</a></h2>
+<p>Create or update all tables outlined in the directory of configuration file.</p>
+<p><tt class="docutils literal"><span class="pre">--host=&lt;host_address&gt;</span></tt></p>
+<p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<p>Example usage:</p>
+<div class="highlight-python"><pre>python2.5 manage.py loadalltables --host=localhost:8000</pre>
+</div>
+</div>
+<div class="section" id="loadtable-config-file-name-options">
+<h2>loadtable &lt;config_file_name&gt; [options]<a class="headerlink" href="#loadtable-config-file-name-options" title="Permalink to this headline">¶</a></h2>
+<p>Create or update the table outlined in the configuration file provided by the first argument.</p>
+<p><tt class="docutils literal"><span class="pre">--host=&lt;host_address&gt;</span></tt></p>
+<p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<p>Example usage:</p>
+<div class="highlight-python"><pre>python2.5 manage.py loadtable config-file-name --host=localhost:8000</pre>
+</div>
+</div>
+<div class="section" id="runserver">
+<h2>runserver<a class="headerlink" href="#runserver" title="Permalink to this headline">¶</a></h2>
+<p>The built-in command for firing up the Django test server. You can read more about it in <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port">the official Django docs</a>.</p>
+<p>Example usage:</p>
+<div class="highlight-python"><pre>python2.5 manage.py runserver</pre>
+</div>
+</div>
+<div class="section" id="update">
+<h2>update<a class="headerlink" href="#update" title="Permalink to this headline">¶</a></h2>
+<p>A custom command design for Google App Engine that deploys the code base to the web. Read more about it in the <a class="reference external" href="http://code.google.com/p/google-app-engine-django/source/browse/trunk/README">google-app-engine-helper</a> documentation.</p>
+<p>Example usage:</p>
+<div class="highlight-python"><pre>python2.5 manage.py update</pre>
+</div>
 </div>
 </div>
 
@@ -76,11 +125,13 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Management commands</a><ul>
-<li><a class="reference internal" href="#deletealltables"><cite>deletealltables</cite></a></li>
-<li><a class="reference internal" href="#deletetable"><cite>deletetable</cite></a></li>
-<li><a class="reference internal" href="#listtables"><cite>listtables</cite></a></li>
-<li><a class="reference internal" href="#loadalltables"><cite>loadalltables</cite></a></li>
-<li><a class="reference internal" href="#loadtable"><cite>loadtable</cite></a></li>
+<li><a class="reference internal" href="#deletealltables-options">deletealltables [options]</a></li>
+<li><a class="reference internal" href="#deletetable-config-file-name-options">deletetable &lt;config_file_name&gt; [options]</a></li>
+<li><a class="reference internal" href="#listtables-options">listtables [options]</a></li>
+<li><a class="reference internal" href="#loadalltables-options">loadalltables [options]</a></li>
+<li><a class="reference internal" href="#loadtable-config-file-name-options">loadtable &lt;config_file_name&gt; [options]</a></li>
+<li><a class="reference internal" href="#runserver">runserver</a></li>
+<li><a class="reference internal" href="#update">update</a></li>
 </ul>
 </li>
 </ul>
