@@ -79,7 +79,7 @@ If everything clicked, you should see your demo site up and running with the coa
 
 h3. *07. Deploy your app*
 
-Once everything's set, deploying your application to Google App engine only takes a single command. Here it is.
+Once everything's set, deploying your application to Google App Engine only takes a single command. Here it is.
 <pre><code>$ python2.5 manage.py update</code></pre>
 
 h3. *08. Load the demo table on your live site*
