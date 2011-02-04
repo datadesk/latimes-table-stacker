@@ -50,44 +50,131 @@
             
   <div class="section" id="configuration">
 <h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<p>Each published table is drawn from a CSV file you provide and styled according to the rules outlined in a configuration file written in <a class="reference external" href="http://en.wikipedia.org/wiki/YAML">YAML</a>.</p>
+<p>CSV files are stored in the <tt class="docutils literal"><span class="pre">csv</span></tt> folder in the root directory.</p>
+<p>YAML configuration files are stored in the <tt class="docutils literal"><span class="pre">yaml</span></tt> folder, with one configuration per file.</p>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Here is an example YAML configuration that specifies how to layout <a class="reference external" href="http://table-stacker.appspot.com/major-us-coal-mines-2009/">this demonstration table</a>.</p>
+<div class="highlight-python"><pre>table:
+  title: Major U.S. coal mines, 2009
+  file:  major-us-coal-mines-2009.csv
+  slug: major-us-coal-mines-2009
+  byline: Ben Welsh
+  description: &lt;p&gt;A list of the largest coal-producing U.S. mines for the year 2009. The U.S. Energy Information Administration reports the production of all mines that produce more than 4 million short tons. In 2009, 47 mines qualified by the list. All together, major mines produced more than 650 million short tons of coal, a majority of the roughly 1 billion total short tons unearthed across the nation. Wyoming mines dominate the list, filling out the first nine positions.&lt;/p&gt;
+  column_options:
+    columns:
+      - Mine
+      - Company
+      - Type
+      - State
+      - Production (Short tons)
+    style:
+      Mine: 'text-align:left; width:250px;'
+      Company: 'text-align:left; width:250px;'
+      Type: "width:80px;"
+      State: "width:100px;"
+    sorted_by:
+      - Production (Short tons): descending
+    formatting:
+      Production (Short tons):
+        method: intcomma
+  is_published: true
+  publication_date: 2011-01-12
+  sources: &lt;a href="http://www.eia.doe.gov/cneaf/coal/page/acr/acr_sum.html"&gt;U.S. Energy Information Administration&lt;/a&gt;
+  credits: &lt;a href="mailto:ben.welsh@latimes.com"&gt;Ben Welsh&lt;/a&gt;
+  tags:
+    - Coal
+    - Energy
+    - Mines
+    - Business</pre>
+</div>
 </div>
 <div class="section" id="metadata-options">
 <h2>Metadata Options<a class="headerlink" href="#metadata-options" title="Permalink to this headline">¶</a></h2>
+<p>The following YAML configuration options detail how to present a number of attributes about the table. All entries should be placed inside a dictionary titled <tt class="docutils literal"><span class="pre">table</span></tt>.</p>
 <div class="section" id="title">
 <h3>title<a class="headerlink" href="#title" title="Permalink to this headline">¶</a></h3>
+<p>The headline that will appear in lists and at the top of the table&#8217;s detail page. Required.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>title: Major U.S. coal mines, 2009</pre>
+</div>
 </div>
 <div class="section" id="file">
 <h3>file<a class="headerlink" href="#file" title="Permalink to this headline">¶</a></h3>
+<p>The name of the CSV file the table will be based on. It should be in the <tt class="docutils literal"><span class="pre">csv</span></tt> directory with a header row included. Required.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>file: major-us-coal-mines-2009.csv</pre>
+</div>
 </div>
 <div class="section" id="slug">
 <h3>slug<a class="headerlink" href="#slug" title="Permalink to this headline">¶</a></h3>
+<p>A string that serves as the unique identifier of the table in the database and doubles as the relative url of its web page. It cannot be used for more than one table in your database. It&#8217;s recommended that you do not use spaces or strange characters. Required.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>file: major-us-coal-mines-2009</pre>
+</div>
 </div>
 <div class="section" id="byline">
 <h3>byline<a class="headerlink" href="#byline" title="Permalink to this headline">¶</a></h3>
+<p>The name or list of names that will appear as a byline in lists and on the table&#8217;s detail page. Optional.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>byline: Russ Stanton
+# Or ...
+byline: Bob Woodard and Carl Bernstein</pre>
+</div>
 </div>
 <div class="section" id="description">
 <h3>description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
+<p>A block of text describing the table that will appear above the table on its detail page. HTML can and should be included. Optional.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>description: &lt;p&gt;A list of the largest coal-producing U.S. mines for the year 2009.&lt;/p&gt;</pre>
+</div>
 </div>
 <div class="section" id="is-published">
 <h3>is_published<a class="headerlink" href="#is-published" title="Permalink to this headline">¶</a></h3>
+<p>A boolean <tt class="docutils literal"><span class="pre">true</span></tt> or <tt class="docutils literal"><span class="pre">false</span></tt> that indicates whether the table should be published. If set to <tt class="docutils literal"><span class="pre">false</span></tt>, the table will be loaded in the database but will not appear on the site. Required.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>is_published: true</pre>
+</div>
 </div>
 <div class="section" id="publication-date">
 <h3>publication_date<a class="headerlink" href="#publication-date" title="Permalink to this headline">¶</a></h3>
+<p>The date that will appear alongside with the byline. Should be provided in <tt class="docutils literal"><span class="pre">YYYY-MM-DD</span></tt> format. Required.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>publication_date: 2011-01-12</pre>
+</div>
 </div>
 <div class="section" id="sources">
 <h3>sources<a class="headerlink" href="#sources" title="Permalink to this headline">¶</a></h3>
+<p>A block of text describing where the data came from. Will appear at the bottom of the table detail page after the phrase <tt class="docutils literal"><span class="pre">Sources:</span></tt>. HTML can and should be included. Optional.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>sources: &lt;a href="http://www.eia.doe.gov/cneaf/coal/page/acr/acr_sum.html"&gt;U.S. Energy Information Administration&lt;/a&gt;</pre>
+</div>
 </div>
 <div class="section" id="credits">
 <h3>credits<a class="headerlink" href="#credits" title="Permalink to this headline">¶</a></h3>
+<p>A block of text listing all the people who helped make the page. Will appear at the bottom of the table detail page after the phrase <tt class="docutils literal"><span class="pre">Credits:</span></tt>. HTML can and should be included. Optional.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>credits: &lt;a href="mailto:russ.stanton@latimes.com"&gt;Russ Stanton&lt;/a&gt;
+# Or ...
+credits: Bob Woodward and Carl Bernstein</pre>
+</div>
 </div>
 <div class="section" id="tags">
 <h3>tags<a class="headerlink" href="#tags" title="Permalink to this headline">¶</a></h3>
+<p>A list of blog-style tags that apply to the table. Will appear in a list at the bottom of the table&#8217;s detail page and be used to generate lists that connect this table to similar tables. Optional.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>tags:
+  - Coal
+  - Energy
+  - Mines
+  - Business</pre>
+</div>
 </div>
 </div>
 <div class="section" id="column-options">
 <h2>Column Options<a class="headerlink" href="#column-options" title="Permalink to this headline">¶</a></h2>
+<p>The following YAML configuration options specify how to present the columns in the data table itself. They should appear as entries in a dictionary titled <tt class="docutils literal"><span class="pre">column_options</span></tt>.</p>
 <div class="section" id="columns">
 <h3>columns<a class="headerlink" href="#columns" title="Permalink to this headline">¶</a></h3>
 </div>
