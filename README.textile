@@ -12,16 +12,16 @@ You can see an example table working "here":http://table-stacker.appspot.com/.
 
 h2. Features
 
-* Convert a CSV file into an interactive HTML table that sorts, filters and paginates
-* Quickly publish interactives tables to Google App Engine and serve them on the web for free
-* Instantly syndicate data as CSV, XLS and JSON
-* Post an RSS feed and sitemap that promote the latest data
-* Link similar datasets together with blog-style tagging
+* Convert a CSV file into an interactive HTML table that sorts, filters and paginates.
+* Quickly publish interactives tables to Google App Engine and serve them on the web for free.
+* Instantly syndicate data as CSV, XLS and JSON.
+* Post an RSS feed and sitemap that promote the latest data.
+* Link similar datasets together with blog-style tagging.
 
 h2. Requirements
 
 * "git":http://git-scm.com/
-* "python2.5":http://www.python.org/download/releases/2.5.5/ 
+* "python2.5":http://www.python.org/download/releases/2.5.5/
 ** I don't know why, but "newer versions won't work in my preferred OS, Ubuntu 10.10":http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/.
 * "virtualenv":http://pypi.python.org/pypi/virtualenv
 
