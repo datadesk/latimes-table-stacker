@@ -31,13 +31,24 @@ h3. *01. Register a new application with Google App Engine.*
 
 Go to "https://appengine.google.com/":https://appengine.google.com/. Don't download the SDK. Don't read the docs. Just create an account and mint a new application with a name like _my-table-stacker_. It serves as the unique identifer for your app inside the Google system, and the namespace where it will first appear online (i.e. "http://my-table-stacker.appspot.com/":http://my-table-stacker.appspot.com/).
 
-h3. *02. Clone the code from this repository to your computer*
+h3. *02. Install the code on your computer*
 
-It's not required 
-<pre><code>$ virtualenv --no-site-packages table-stacker
-$ cd table-stacker
-$ git clone git://github.com/datadesk/latimes-table-stacker.git project
-$ cd project</code></pre>
+It's not required, but I recommend creating a virtual environment to store your app in. I like to do this with the Python module "virtualenv":":http://pypi.python.org/pypi/virtualenv, which creates a walled-off garden for the Python code in this project to work without distraction from the outside world.
+
+Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I'm going to call this project _my-table-stacker_, but you should substitute whatever you're calling your version.
+<pre><code>$ virtualenv --no-site-packages my-table-stacker</code></pre>
+
+Now jump into the directory it creates.
+<pre><code>$ cd table-stacker</code></pre>
+
+Activate the private environment with virtualenv's custom command.
+<pre><code>. bin/activate</code></pre>
+
+Download the latest version of the code repository into a directory called _project_.
+<pre><code>$ git clone git://github.com/datadesk/latimes-table-stacker.git project</code></pre>
+
+Then jump in and get ready to work.
+<pre><code>$ cd project</code></pre>
 
 h3. *03. Configure the apps.yaml file with your Google App Engine application id*
 
