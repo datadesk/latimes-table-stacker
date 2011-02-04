@@ -87,7 +87,7 @@ Once everything's set, deploying your application to Google App Engine only take
 
 You'll run the same `loadtable` command from step five, but drop the host option. It will post to your live site by default, so it's unnecessary this time around. ::
 
-    python2.5 manage.py loadtable major-us-coal-mines-2009
+    $ python2.5 manage.py loadtable major-us-coal-mines-2009
 
 09. Check it out
 ----------------
