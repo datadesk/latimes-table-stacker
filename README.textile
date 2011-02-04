@@ -8,7 +8,7 @@
 
 Publish spreadsheets as interactive tables. And do it on deadline.
 
-h2. &nbsp;
+<div style="border-top:4px solid #E0E0E0"></div>
 
 TK
 
