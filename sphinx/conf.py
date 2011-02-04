@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'latimes-table-stacker'
-copyright = u'2011, Ben Welsh'
+project = u'Table Stacker'
+copyright = u'2011, Los Angeles Times'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

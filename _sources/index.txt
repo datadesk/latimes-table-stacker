@@ -3,18 +3,21 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to latimes-table-stacker's documentation!
-=================================================
+===========================
+Table Stacker Documentation
+===========================
 
-Contents:
+Publish spreadsheets as interactive tables. And do it on deadline.
+
+Table of Contents
+-----------------
 
 .. toctree::
    :maxdepth: 2
 
-Indices and tables
-==================
+   gettingstarted
+   configuration
+   managementcommands
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+
 
