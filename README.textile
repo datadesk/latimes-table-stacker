@@ -53,7 +53,7 @@ Activate the private environment with virtualenv's custom command.
 Download the latest version of the code repository into a directory called _project_.
 <pre><code>$ git clone git://github.com/datadesk/latimes-table-stacker.git project</code></pre>
 
-Then jump in and get ready to work.
+And jump in and get ready to work.
 <pre><code>$ cd project</code></pre>
 
 h3. *03. Configure the apps.yaml file with your Google App Engine application id*
