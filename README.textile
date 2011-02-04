@@ -18,12 +18,6 @@ h2. Features
 * Post an RSS feed and sitemap that promote the latest data.
 * Link similar datasets together with blog-style tagging.
 
-h2. Requirements
-
-* "git":http://git-scm.com/
-* "python2.5":http://www.python.org/download/releases/2.5.5/
-* "virtualenv":http://pypi.python.org/pypi/virtualenv
-
 h2. Getting Started
 
 h3. *01. Register a new application with Google App Engine*
