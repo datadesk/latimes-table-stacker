@@ -64,7 +64,7 @@ h3. *04. Launch a test version of the site on your computer*
 
 You'll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the _project_ directory and fire off the following. It is a "Django management command":http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port that will start a test version of the site on your machine.
 
-Note that you'll see me using _python2.5_ throughout, instead of the usual _python_ command. This is because I work in Ubuntu and I've found that Google App Engine "is not compatible with newer versions of Python":http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/. I suspect is is the case of other operating systems, but I'm not sure. So, I'd recommend using _python2.5_ but, as always, your mileage may vary.
+Note that you'll see me using _python2.5_ throughout, instead of the usual _python_ command. This is because I work in Ubuntu and I've found that Google App Engine "is not compatible with newer versions of Python":http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/. I suspect is is the case with other operating systems, but I'm not sure. So, I'd recommend using _python2.5_ but, as always, your mileage may vary.
 
 <pre><code>$ python2.5 manage.py runserver</code></pre>
 
