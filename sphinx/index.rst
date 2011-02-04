@@ -18,6 +18,7 @@ Table of Contents
    gettingstarted
    configuration
    managementcommands
+   credits
 
 
 
