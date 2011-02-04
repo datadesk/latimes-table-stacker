@@ -2,10 +2,10 @@
 Configuration
 =============
 
-YAML Example
+Example
 ------------
 
-Meta Data Options
+Metadata Options
 -----------------
 
 title
