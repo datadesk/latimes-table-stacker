@@ -73,9 +73,9 @@ h3. *05. Load the example table*
 You'll learn how to layout your own data later, but for now we'll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our _loadtable_ managment command to follow instructions in the _major-us-coal-mines-2009_ configuration file and create a new table in the test site we just lauched at "http://localhost:8000":http://localhost:8000.
 <pre><code>$ python manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000</code></pre>
 
-h3. *06. Check it out in your browser*
+h3. *06. Check it out*
 
-You should see our demo table, ready to serve at http://localhost:8000/
+If everything clicked, you should see your demo site up and running with the coal mines table at "http://localhost:8000/":http://localhost:8000/.
 
 h3. *07. Upload your app to appspot.com*
 
