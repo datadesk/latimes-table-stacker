@@ -16,7 +16,7 @@
             {% for obj in object_list %}
             <tr id="{{ obj.get_absolute_url }}">
                 <td style="{% if not forloop.first %}border-top: 1px dotted gray;{% endif %}{% if forloop.last %}border-bottom: 1px dotted gray;{% endif %}">
-                    <h2><a class="headline" href="{{ obj.get_absolute_url }}">{{ obj|safe }}</a></h2>
+                    <h2><a target="_blank" class="headline" href="{{ obj.get_absolute_url }}">{{ obj|safe }}</a></h2>
                     <span class="pubdate">{{ obj.publication_date|date:"N j, Y" }}</span>
                     <span class="byline">{% if obj.byline %}&nbsp;By&nbsp;{{ obj.byline }}{% endif %}</span>
                     <p class="description">{% if obj.description %}{{ obj.description|trim_p:1|striptags|truncatewords:100|safe }}{% endif %}</p>
