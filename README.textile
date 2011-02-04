@@ -56,8 +56,9 @@ Download the latest version of the code repository into a directory called _proj
 And jump in and get ready to work.
 <pre><code>$ cd project</code></pre>
 
-h3. *03. Configure the apps.yaml file with your Google App Engine application id*
+h3. *03. Set your application id*
 
+In the _project_ folder you will find a file called _app.yaml_. It contains the basic configuration for your Google App Engine site. You only need to make one little change: Replace _my-table-stacker_ with the application id you registered earlier.
 <pre><code>application: my-table-stacker</code></pre>
 
 h3. *04. Open a second terminal tab and fire up the development server*

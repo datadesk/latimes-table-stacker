@@ -1,4 +1,4 @@
-application: table-stacker
+application: my-table-stacker
 version: 1
 runtime: python
 api_version: 1
