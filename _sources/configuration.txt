@@ -5,11 +5,58 @@ Configuration
 YAML Example
 ------------
 
-YAML Options
-------------
+Meta Data Options
+-----------------
 
 title
 ^^^^^
 
+file
+^^^^
+
 slug
 ^^^^
+
+byline
+^^^^^^
+
+description
+^^^^^^^^^^^
+
+is_published
+^^^^^^^^^^^^
+
+publication_date
+^^^^^^^^^^^^^^^^
+
+sources
+^^^^^^^
+
+credits
+^^^^^^^
+
+tags
+^^^^
+
+Column Options
+--------------
+
+columns
+^^^^^^^
+
+style
+^^^^^
+
+sorted_by
+^^^^^^^^^
+
+formatting
+^^^^^^^^^^
+
+per_page
+^^^^^^^^
+
+
+
+
+
