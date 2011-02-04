@@ -193,6 +193,8 @@ Example::
       - Production (Short tons): descending
 
 
+.. _formatting-option:
+
 formatting
 ^^^^^^^^^^
 
