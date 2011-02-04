@@ -60,7 +60,7 @@ h3. *03. Set your application id*
 In the _project_ folder you will find a file called _app.yaml_. It contains the basic configuration for your Google App Engine site. You only need to make one little change: Replace _my-table-stacker_ with the application id you registered in step one.
 <pre><code>application: my-table-stacker</code></pre>
 
-h3. *04. Launch a test version of the site on your computer*
+h3. *04. Launch a test version of the site*
 
 You'll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the _project_ directory and fire off the following. It is a "Django management command":http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port that will start a test version of the site on your machine.
 
