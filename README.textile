@@ -19,7 +19,7 @@ h2. Features
 h2. Resources
 
 * "Full documentation":http://datadesk.github.com/latimes-table-stacker
-* "A working demo":http://table-stacker.appspot.com
+* "Working demo":http://table-stacker.appspot.com
 
 h2. Getting Started
 
@@ -82,7 +82,7 @@ Once everything's set, deploying your application to Google App Engine only take
 h3. *08. Load the demo table on your live site*
 
 You'll run the same _loadtable_ command from step five, but drop the host option. It will post to your live site by default, so it's unnecessary this time around.
-<pre><code>python2.5 manage.py loadtable major-us-coal-mines-2009</code></pre>
+<pre><code>$ python2.5 manage.py loadtable major-us-coal-mines-2009</code></pre>
 
 h3. *09. Check it out*
 
