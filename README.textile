@@ -68,7 +68,7 @@ Note that you'll see me using _python2.5_ throughout, instead of the usual _pyth
 h3. *05. Load the example table*
 
 You'll learn how to layout your own data later, but for now we'll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our _loadtable_ management command to follow instructions in the _major-us-coal-mines-2009_ configuration file and create a new table in the test site we just launched at "http://localhost:8000":http://localhost:8000.
-<pre><code>$ python manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000</code></pre>
+<pre><code>$ python2.5 manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000</code></pre>
 
 h3. *06. Check it out*
 

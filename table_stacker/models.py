@@ -63,7 +63,7 @@ class Table(db.Model):
         return 'http://spreadsheets.latimes.com%s' % self.get_absolute_url()
     
     def get_tablefu_opts(self):
-        return yaml.load(self.yaml_data)['column_options']
+        return yaml.load(self.yaml_data).get('column_options', {})
     
     def get_tablefu(self):
         """
