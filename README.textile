@@ -73,10 +73,10 @@ h2. Credits
 
 This project would not be possible without the generous work of:
 
-* "ProPublica's News Application Desk":http://www.propublica.org/nerds, and particularly "Jeff Larson":https://github.com/thejefflarson, who developed the Ruby libraries that got this ball rolling, namely: "table-fu":https://github.com/propublica/table-fu and "table-setter":https://github.com/propublica/table-setter.
+* "ProPublica's News Application Desk":http://www.propublica.org/nerds, and particularly "Jeff Larson":https://github.com/thejefflarson, who developed the Ruby libraries "table-fu":https://github.com/propublica/table-fu and "table-setter":https://github.com/propublica/table-setter.
 * Chris Amico, who did the noble work of "porting table-fu to Python":https://github.com/eyeseast/python-tablefu.
-* Christian Bach, the man who gave us "tablesorter":http://tablesorter.com/docs/
-* The army of people who make something like "google-app-engine-django":http://code.google.com/p/google-app-engine-django/ possible
+* Christian Bach, the man who gave us "tablesorter":http://tablesorter.com/docs/.
+* The army of people who make something like "google-app-engine-django":http://code.google.com/p/google-app-engine-django/ possible.
 
 
 
