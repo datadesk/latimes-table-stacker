@@ -72,7 +72,7 @@ $ sudo easy_install install virtualenv
 # Or, if you're in Ubuntu ...
 $ sudo apt-get install python-virtualenv</pre>
 </div>
-<p>Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I&#8217;m going to call this project <cite>my-table-stacker</cite>, but you should substitute whatever you&#8217;re calling your version.</p>
+<p>Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I&#8217;m going to call this project <tt class="docutils literal"><span class="pre">my-table-stacker</span></tt>, but you should substitute whatever you&#8217;re calling your version.</p>
 <div class="highlight-python"><pre>$ virtualenv --no-site-packages my-table-stacker</pre>
 </div>
 <p>Now jump into the directory it creates.</p>
@@ -81,7 +81,7 @@ $ sudo apt-get install python-virtualenv</pre>
 <p>Activate the private environment with virtualenv&#8217;s custom command.</p>
 <div class="highlight-python"><pre>$ . bin/activate</pre>
 </div>
-<p>Download the latest version of the code repository into a directory called <cite>project</cite>.</p>
+<p>Download the latest version of the code repository into a directory called <tt class="docutils literal"><span class="pre">project</span></tt>.</p>
 <div class="highlight-python"><pre>$ git clone git://github.com/datadesk/latimes-table-stacker.git project</pre>
 </div>
 <p>And jump in and get ready to work.</p>
@@ -90,20 +90,20 @@ $ sudo apt-get install python-virtualenv</pre>
 </div>
 <div class="section" id="set-your-application-id">
 <h2>03. Set your application id<a class="headerlink" href="#set-your-application-id" title="Permalink to this headline">¶</a></h2>
-<p>In the <cite>project</cite> folder you will find a file called <cite>app.yaml</cite>. It contains the basic configuration for your Google App Engine site. You only need to make one little change: Replace <cite>my-table-stacker</cite> with the application id you registered in step one.</p>
+<p>In the <tt class="docutils literal"><span class="pre">project</span></tt> folder you will find a file called <tt class="docutils literal"><span class="pre">app.yaml</span></tt>. It contains the basic configuration for your Google App Engine site. You only need to make one little change: Replace <tt class="docutils literal"><span class="pre">my-table-stacker</span></tt> with the application id you registered in step one.</p>
 <div class="highlight-python"><pre>application: my-table-stacker</pre>
 </div>
 </div>
 <div class="section" id="launch-a-test-version-of-the-site">
 <h2>04. Launch a test version of the site<a class="headerlink" href="#launch-a-test-version-of-the-site" title="Permalink to this headline">¶</a></h2>
-<p>You&#8217;ll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the <cite>project</cite> directory and fire off the following. It is a <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port">Django management command</a> that will start a test version of the site on your machine.</p>
-<p>Note that you&#8217;ll see me using <cite>python2.5</cite> throughout, instead of the usual <cite>python</cite> command. This is because I work in Ubuntu and I&#8217;ve found that Google App Engine <a class="reference external" href="http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/">is not compatible with newer versions of Python</a>. I suspect is is the case with other operating systems, but I&#8217;m not sure. So, I&#8217;d recommend using <cite>python2.5</cite> but, as always, your mileage may vary.</p>
+<p>You&#8217;ll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the <tt class="docutils literal"><span class="pre">project</span></tt> directory and fire off the following. It is a <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port">Django management command</a> that will start a test version of the site on your machine.</p>
+<p>Note that you&#8217;ll see me using <tt class="docutils literal"><span class="pre">python2.5</span></tt> throughout, instead of the usual <tt class="docutils literal"><span class="pre">python</span></tt> command. This is because I work in Ubuntu and I&#8217;ve found that Google App Engine <a class="reference external" href="http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/">is not compatible with newer versions of Python</a>. I suspect is is the case with other operating systems, but I&#8217;m not sure. So, I&#8217;d recommend using <tt class="docutils literal"><span class="pre">python2.5</span></tt> but, as always, your mileage may vary.</p>
 <div class="highlight-python"><pre>$ python2.5 manage.py runserver</pre>
 </div>
 </div>
 <div class="section" id="load-the-example-table">
 <h2>05. Load the example table<a class="headerlink" href="#load-the-example-table" title="Permalink to this headline">¶</a></h2>
-<p>You&#8217;ll learn how to layout your own data later, but for now we&#8217;ll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our <cite>loadtable</cite> management command to follow instructions in the <cite>major-us-coal-mines-2009</cite> configuration file and create a new table in the test site we just launched at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
+<p>You&#8217;ll learn how to layout your own data later, but for now we&#8217;ll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our <tt class="docutils literal"><span class="pre">loadtable</span></tt> management command to follow instructions in the <tt class="docutils literal"><span class="pre">major-us-coal-mines-2009</span></tt> configuration file and create a new table in the test site we just launched at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
 <div class="highlight-python"><pre>$ python2.5 manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000</pre>
 </div>
 </div>
@@ -119,7 +119,7 @@ $ sudo apt-get install python-virtualenv</pre>
 </div>
 <div class="section" id="load-the-demo-table-on-your-live-site">
 <h2>08. Load the demo table on your live site<a class="headerlink" href="#load-the-demo-table-on-your-live-site" title="Permalink to this headline">¶</a></h2>
-<p>You&#8217;ll run the same <cite>loadtable</cite> command from step five, but drop the host option. It will post to your live site by default, so it&#8217;s unnecessary this time around.</p>
+<p>You&#8217;ll run the same <tt class="docutils literal"><span class="pre">loadtable</span></tt> command from step five, but drop the host option. It will post to your live site by default, so it&#8217;s unnecessary this time around.</p>
 <div class="highlight-python"><pre>$ python2.5 manage.py loadtable major-us-coal-mines-2009</pre>
 </div>
 </div>
@@ -129,7 +129,7 @@ $ sudo apt-get install python-virtualenv</pre>
 </div>
 <div class="section" id="publish-you-own-data-table">
 <h2>10. Publish you own data table<a class="headerlink" href="#publish-you-own-data-table" title="Permalink to this headline">¶</a></h2>
-<p>Before you can publish your own data table, you&#8217;ll need to learn about our YAML-based configuration system. But don&#8217;t worry, it&#8217;s not that hard. You can read about it in the <a class="reference internal" href="configuration.html"><em>configuration</em></a> section or school yourself by mimicking the examples files in the project&#8217;s <cite>yaml</cite> subdirectory folder.</p>
+<p>Before you can publish your own data table, you&#8217;ll need to learn about our YAML-based configuration system. But don&#8217;t worry, it&#8217;s not that hard. You can read about it in the <a class="reference internal" href="configuration.html"><em>configuration</em></a> section or school yourself by mimicking the examples files in the project&#8217;s <tt class="docutils literal"><span class="pre">yaml</span></tt> subdirectory folder.</p>
 </div>
 </div>
 

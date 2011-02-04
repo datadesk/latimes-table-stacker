@@ -4,7 +4,7 @@ Management commands
 
 Interactions with the Table Stacker database are handled using custom `Django management commands <http://docs.djangoproject.com/en/dev/ref/django-admin/>`_ that allow you to create, update and delete tables.
 
-Like other Django commands, they are run by interacting with the `manage.py` file in your project's root directory.
+Like other Django commands, they are run by interacting with the ``manage.py`` file in your project's root directory.
 
 
 deletealltables [options]
