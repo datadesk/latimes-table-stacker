@@ -5,9 +5,8 @@ from django.contrib.syndication.feeds import Feed, FeedDoesNotExist
 
 
 class LatestTables(Feed):
-    title = "Recent spreadsheets from the Los Angeles Times"
-    link = "http://spreadsheets.latimes.com"
-    description = "The latest spreadsheets from the Los Angeles Times."
+    title = "Latest spreadsheets"
+    description = "The latest spreadsheets"
     title_template = "feeds/table_title.html"
     description_template = "feeds/table_description.html"
 
