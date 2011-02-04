@@ -2,7 +2,7 @@
 Configuration
 =============
 
-YAML Example
+Example
 ------------
 
 Metadata Options
