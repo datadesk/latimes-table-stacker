@@ -47,7 +47,7 @@ class UpdateSimilarTables(webapp.RequestHandler):
         # Then loop through and update all of them.
         for obj in similar_tables:
             obj.similar_tables = obj.get_similar_tables()
-            logging.debug("Updated similar documents for %s" % obj)
+            logging.debug("Updated similar tables for %s" % obj)
             obj.put()
         # Close out
         self.response.out.write('OK')
