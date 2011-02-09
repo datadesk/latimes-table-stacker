@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ object.title }} - {{ block.super }}{% endblock %}
+{% block title %}{{ object.title|safe }} - {{ block.super }}{% endblock %}
 
 {% if object.description %}
     {% block description %}{{ object.description|striptags|safe }}{% endblock %}

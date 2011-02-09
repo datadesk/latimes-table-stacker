@@ -31,6 +31,7 @@ class Table(db.Model):
     footer = db.TextProperty(required=False)
     sources = db.TextProperty(required=False)
     credits = db.TextProperty(required=False)
+    show_download_links = db.BooleanProperty(required=True, default=True)
     # The result
     rendered_html = db.TextProperty(required=False)
     # The meta
@@ -77,9 +78,11 @@ class Table(db.Model):
         """
         Create the rendered HTML for this table.
         """
-        from django.conf import settings
-        from django.template.loader import render_to_string
-        return render_to_string('table_content.html', { 
+        import os
+        this_dir = os.path.dirname(__file__)
+        template_path = os.path.join(this_dir, '../templates/table_content.html')
+        from google.appengine.ext.webapp import template
+        return template.render(template_path, { 
             'object': self, 
             'table': self.get_tablefu(),
             'size_choices': [1,2,3,4],

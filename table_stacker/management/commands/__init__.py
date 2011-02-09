@@ -158,8 +158,7 @@ def update_or_create_table(yaml_data):
         obj.credits=yaml_data.get('credits', '')
         obj.tags=get_tag_keys(yaml_data.get('tags', []))
         obj.is_published=yaml_data.get('is_published', False)
-        obj.similar_tables = obj.get_similar_tables()
-        obj.rendered_html = obj.get_rendered_html()
+        obj.show_download_links=yaml_data.get("show_download_links", True)
         obj.put()
         created = False
     else:
@@ -179,9 +178,8 @@ def update_or_create_table(yaml_data):
             credits=yaml_data.get('credits', ''),
             tags=get_tag_keys(yaml_data.get('tags', [])),
             is_published=yaml_data.get('is_published', False),
+            show_download_links=yaml_data.get("show_download_links", True),
         )
-        obj.similar_tables = obj.get_similar_tables()
-        obj.rendered_html = obj.get_rendered_html()
         obj.put()
         created = True
     # Update the similarity lists of tables with the same tags
