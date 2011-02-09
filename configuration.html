@@ -214,7 +214,8 @@ credits: Bob Woodward and Carl Bernstein</pre>
 <li><tt class="docutils literal"><span class="pre">dollars</span></tt>: Converts an number to a string containing commas every three digits with a dollar sign at the front.</li>
 <li><tt class="docutils literal"><span class="pre">intcomma</span></tt>: Converts an integer to a string containing commas every three digits.</li>
 <li><tt class="docutils literal"><span class="pre">link</span></tt>: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.</li>
-<li><tt class="docutils literal"><span class="pre">percentage</span></tt>: Multiplies a float by 100, converts it to a string and follows it with a percentage sign.</li>
+<li><tt class="docutils literal"><span class="pre">percentage</span></tt>: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.</li>
+<li><tt class="docutils literal"><span class="pre">percent_change</span></tt>: Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. Defauls to one decimal place. Zero division errors should print out as &#8220;N/A.&#8221;</li>
 <li><tt class="docutils literal"><span class="pre">title</span></tt>: Converts a string into titlecase.</li>
 </ul>
 <p>Custom methods can be added by following the instructions in the <a class="reference internal" href="customization.html#data-formatting"><em>customization</em></a> section.</p>
@@ -234,6 +235,13 @@ credits: Bob Woodward and Carl Bernstein</pre>
 <p>How many records should appear in each page of the data table. 20 by default. Optional.</p>
 <p>Example:</p>
 <div class="highlight-python"><pre>per_page: 50</pre>
+</div>
+</div>
+<div class="section" id="show-download-links">
+<h3>show_download_links<a class="headerlink" href="#show-download-links" title="Permalink to this headline">¶</a></h3>
+<p>Whether download links for CSV, XLS and JSON data should be made available on the table detail page. The default is true, so you only need to include it when you want to turn downloads off.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>show_download_links: false</pre>
 </div>
 </div>
 </div>
@@ -268,6 +276,7 @@ credits: Bob Woodward and Carl Bernstein</pre>
 <li><a class="reference internal" href="#sorted-by">sorted_by</a></li>
 <li><a class="reference internal" href="#formatting">formatting</a></li>
 <li><a class="reference internal" href="#per-page">per_page</a></li>
+<li><a class="reference internal" href="#show-download-links">show_download_links</a></li>
 </ul>
 </li>
 </ul>

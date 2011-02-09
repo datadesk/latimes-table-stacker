@@ -205,7 +205,8 @@ Available methods:
 * ``dollars``: Converts an number to a string containing commas every three digits with a dollar sign at the front.
 * ``intcomma``: Converts an integer to a string containing commas every three digits.
 * ``link``: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.
-* ``percentage``: Multiplies a float by 100, converts it to a string and follows it with a percentage sign.
+* ``percentage``: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.
+* ``percent_change``: Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. Defauls to one decimal place. Zero division errors should print out as "N/A."
 * ``title``: Converts a string into titlecase.
 
 Custom methods can be added by following the instructions in the :ref:`customization <data-formatting>` section.
@@ -230,6 +231,15 @@ How many records should appear in each page of the data table. 20 by default. Op
 Example::
 
     per_page: 50
+
+show_download_links
+^^^^^^^^^^^^^^^^^^^
+
+Whether download links for CSV, XLS and JSON data should be made available on the table detail page. The default is true, so you only need to include it when you want to turn downloads off.
+
+Example::
+
+    show_download_links: false
 
 
 
