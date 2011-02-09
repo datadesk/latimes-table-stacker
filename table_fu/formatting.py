@@ -31,10 +31,11 @@ def title(value):
 
 def dollars(value):
     return u'$%s'% intcomma(value)
-    
-def percentage(value):
+
+def percentage(value, precision=1):
     f = float(value) * 100
-    return u'%s%%'% intcomma(int(f))
+    format = '%%.%df' % precision
+    return format % f + '%'
 
 def link(title, url):
     return u'<a href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
