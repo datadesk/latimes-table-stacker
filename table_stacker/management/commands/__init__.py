@@ -159,6 +159,7 @@ def update_or_create_table(yaml_data):
         obj.tags=get_tag_keys(yaml_data.get('tags', []))
         obj.is_published=yaml_data.get('is_published', False)
         obj.show_download_links=yaml_data.get("show_download_links", True)
+        obj.show_in_feeds=yaml_data.get("show_in_feeds", True)
         obj.put()
         created = False
     else:
@@ -179,6 +180,7 @@ def update_or_create_table(yaml_data):
             tags=get_tag_keys(yaml_data.get('tags', [])),
             is_published=yaml_data.get('is_published', False),
             show_download_links=yaml_data.get("show_download_links", True),
+            show_in_feeds=yaml_data.get("show_in_feeds", True),
         )
         obj.put()
         created = True

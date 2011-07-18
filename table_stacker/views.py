@@ -28,7 +28,7 @@ def get_table_page(request, page):
     """
     # Pull the data
     qs = Table.all()
-    object_list = qs.filter("is_published =", True).order("-publication_date")
+    object_list = qs.filter("is_published =", True).filter("show_in_feeds =", True).order("-publication_date")
     paginator = Paginator(object_list, 10)
     # Limit it to thise page
     try:
@@ -96,7 +96,7 @@ def tag_page(request, tag, page):
     tag = Tag.get_by_key_name(tag)
     if not tag:
         raise Http404
-    object_list = Table.all().filter("is_published =", True).filter('tags =', tag.key())
+    object_list = Table.all().filter("is_published =", True).filter("show_in_feeds =", True).filter('tags =', tag.key())
     paginator = Paginator(object_list, 10)
     # Limit it to thise page
     try:
@@ -180,7 +180,7 @@ def sitemap(request):
     """
     Create a sitemap.xml file for Google and other search engines.
     """
-    table_list = Table.all().filter("is_published =", True).order("-publication_date")
+    table_list = Table.all().filter("is_published =", True).filter("show_in_feeds =", True).order("-publication_date")
     tag_list = Tag.all()
     context = {
         'tag_list': tag_list,

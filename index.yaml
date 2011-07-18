@@ -15,3 +15,10 @@ indexes:
   - name: is_published
   - name: publication_date
     direction: desc
+
+- kind: Table
+  properties:
+  - name: is_published
+  - name: show_in_feeds
+  - name: publication_date
+    direction: desc

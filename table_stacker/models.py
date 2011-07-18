@@ -38,6 +38,7 @@ class Table(db.Model):
     similar_tables = db.ListProperty(db.Key, default=None)
     tags = db.ListProperty(db.Key, default=None)
     is_published = db.BooleanProperty(required=True)
+    show_in_feeds = db.BooleanProperty(required=True, default=True)
     
     def __unicode__(self):
         return self.title
