@@ -354,11 +354,10 @@ class Formatter(object):
         for name, func in DEFAULT_FORMATTERS.items():
             self.register(name, func)
     
-    def __call__(self, value, func, *args):
+    def __call__(self, value, func, *args, **kwargs):
         if not callable(func):
             func = self._filters[func]
-        
-        return func(value, *args)
+        return func(value, *args, **kwargs)
     
     def register(self, name=None, func=None):
         if not func and not name:

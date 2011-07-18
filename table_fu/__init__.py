@@ -360,10 +360,11 @@ class Datum(object):
         if self.table.formatting.has_key(self.column_name):
             func = self.table.formatting[self.column_name].get('method', None)
             args = self.table.formatting[self.column_name].get('arguments', [])
+            kwargs = self.table.formatting[self.column_name].get('options', {})
             if func:
                 row = self.table[self.row_num]
                 args = [row[arg].value for arg in args]
-                return format(self.value, func, *args)
+                return format(self.value, func, *args, **kwargs)
         return self.value.encode('utf-8')
     
     def __eq__(self, other):
