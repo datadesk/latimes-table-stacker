@@ -97,9 +97,9 @@ ROOT_URLCONF = 'urls'
 
 ROOT_PATH = os.path.dirname(__file__)
 TEMPLATE_DIRS = (
-    #os.path.join(ROOT_PATH, 'templates'),
+    os.path.join(ROOT_PATH, 'templates'),
 )
-YAML_DIR = os.path.join(ROOT_PATH, 'tables')
+YAML_DIR = os.path.join(ROOT_PATH, 'yaml')
 CSV_DIR = os.path.join(ROOT_PATH, 'csv')
 
 INSTALLED_APPS = (

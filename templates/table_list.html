@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load toolbox_tags %}
+
+{% block title %}{{ headline }} - {{ block.super }}{% endblock %}
+
+{% block headline %}
+<a href="/feeds/latest/">
+    <img src="/media/img/rss/rss_notext.gif" class="rss">
+</a>
+<h1>{{ headline|safe }}{% ifnotequal page_number 1 %}&nbsp;<span style="font-size:16px;">Page {{ page_number }}</span>{% endifnotequal %}</h1>
+{% endblock %}
+
+{% block content %}
+    <table id="table_list" cellspacing="0">
+        <tbody>
+            {% for obj in object_list %}
+            <tr id="{{ obj.get_absolute_url }}">
+                <td style="{% if not forloop.first %}border-top: 1px dotted gray;{% endif %}{% if forloop.last %}border-bottom: 1px dotted gray;{% endif %}">
+                    <h2><a target="_blank" class="headline" href="{{ obj.get_absolute_url }}">{{ obj|safe }}</a></h2>
+                    <span class="pubdate">{{ obj.publication_date|date:"N j, Y" }}</span>
+                    <span class="byline">{% if obj.byline %}&nbsp;By&nbsp;{{ obj.byline }}{% endif %}</span>
+                    <p class="description">{% if obj.description %}{{ obj.description|trim_p:1|striptags|truncatewords:100|safe }}{% endif %}</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="clear pad10vert"></div>
+    {% if has_next %}
+        <a href="/page/{{ next_page_number }}/">
+            More Spreadsheets
+        </a>
+        <div class="clear pad5vert"></div>
+    {% endif %}
+
+{% endblock %}
+
+

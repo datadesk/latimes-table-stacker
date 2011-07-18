@@ -19,12 +19,34 @@ def intcomma(value):
     else:
         return intcomma(new)
 
+def title(value):
+    """
+    Converts a string into titlecase.
+    
+    Lifted from Django.
+    """
+    value = value.lower()
+    t = re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
+    return re.sub("\d([A-Z])", lambda m: m.group(0).lower(), t)
+
 def dollars(value):
     return u'$%s'% intcomma(value)
-    
-def percentage(value):
+
+def percentage(value, precision=1):
     f = float(value) * 100
-    return u'%s%%'% intcomma(int(f))
+    format = '%%.%df' % precision
+    return format % f + '%'
+
+def percent_change(value, precision=1):
+    try:
+        f = float(value) * 100
+    except ValueError:
+       return  'N/A'
+    format = '%%.%df' % precision
+    if f > 0:
+        return '+' + format % f + '%'
+    else:
+        return format % f + '%'
 
 def link(title, url):
     return u'<a href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
@@ -35,6 +57,8 @@ DEFAULT_FORMATTERS = {
     'intcomma': intcomma,
     'dollars': dollars,
     'percentage': percentage,
+    'percent_change': percent_change,
+    'title': title,
 }
 
 class Formatter(object):

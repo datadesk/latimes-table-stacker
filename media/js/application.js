@@ -1,7 +1,7 @@
 $(document).ready(function(){
   
   if(!sortPlease) return;
-  
+  // Custom CSS on highlighted column
   $.tablesorter.addWidget({
     id: "columnHighlight",
     format: function(table) {
@@ -21,33 +21,32 @@ $(document).ready(function(){
       });
     }
   });
-  
-  // Number formatting parsing, always difficult in JavaScript
-  var NUM_CLEANER = /[$£€\,]/g;
+  // Custom parser for comma-delimited numbers
   $.tablesorter.addParser({
-    id: "newNumbers",
-    is: function(s,table) {
-      var newNumber   = s.replace(NUM_CLEANER, "");
-      var maybeNumber = parseFloat(s, 10);
-      return maybeNumber.toString() === newNumber;
+    id: "fancyNumber",
+    is: function(s) {
+      return /^[0-9]?[0-9,\.]*$/.test(s);
     },
-    format: function(s){
-      return parseFloat(s, 10);
+    format: function(s) {
+      return jQuery.tablesorter.formatFloat( s.replace(/,/g,'') );
     },
     type: "numeric"
   });
-  
-  // Overriding format float to actually test a bit better. If it is a number 
-  // already we'll return the number's value, if not we'll call the old parse
-  // float from table sorter. 
-  var oldFloat = $.tablesorter.formatFloat;
-  $.tablesorter.formatFloat = $.tablesorter.formatInt = function(obj){
-    return (obj === +obj) || (Object.prototype.toString.call(obj) === '[object Number]') ? obj : oldFloat(obj);
-  };
-  
+
   //initialize the table
-  var table = window.table = $('#data')
+  var fu = $('#table_fu');
+  var table = window.table = $('#data', fu)
     .tablesorter({ widgets: ['columnHighlight'], sortList: sortOrder })
-    .tablesorterPager({ container: $("#pager"), size: perPage, positionFixed: false })
-    .tablesorterMultiPageFilter({ filterSelector: $("#filter input") });
+    .tablesorterPager({ container: $("#pager", fu), size: perPage, positionFixed: false })
+    .tablesorterMultiPageFilter({ filterSelector: $("#filter input", fu) });
+  // share buttons
+  $(".share_button").shareify({
+    'image_dir': '/media/img/'
+  }).hover(function() {
+    $(this).css({background: '#555'});
+  },function(){
+    $(this).css({background: '#333'});
+  });
+
+
 });

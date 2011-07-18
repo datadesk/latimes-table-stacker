@@ -1,4 +1,4 @@
-application: table-stacker
+application: my-table-stacker
 version: 1
 runtime: python
 api_version: 1
@@ -6,6 +6,10 @@ api_version: 1
 handlers:
 - url: /remote_api 
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py 
+  login: admin
+
+- url: /_/.*
+  script: tasks/main.py
   login: admin
 
 - url: /media

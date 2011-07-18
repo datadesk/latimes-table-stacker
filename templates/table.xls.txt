@@ -1,0 +1,10 @@
+<table>
+    {% for row in csv %}
+      <tr>
+        {% for column in row %}
+           <td>{{ column|safe }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+</table>
+

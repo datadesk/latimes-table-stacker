@@ -1,77 +1,98 @@
-<pre><code> ,ggggggggggggggg                                        ,gg,                                                                
-dP""""""88"""""""       ,dPYb,      ,dPYb,              i8""8i     I8                          ,dPYb,                        
-Yb,_    88              IP'`Yb      IP'`Yb              `8,,8'     I8                          IP'`Yb                        
- `""    88              I8  8I      I8  8I               `88'   88888888                       I8  8I                        
-        88              I8  8'      I8  8'               dP"8,     I8                          I8  8bgg,                     
-        88    ,gggg,gg  I8 dP       I8 dP   ,ggg,       dP' `8a    I8      ,gggg,gg    ,gggg,  I8 dP" "8   ,ggg,    ,gggggg, 
-        88   dP"  "Y8I  I8dP   88gg I8dP   i8" "8i     dP'   `Yb   I8     dP"  "Y8I   dP"  "Yb I8d8bggP"  i8" "8i   dP""""8I 
-  gg,   88  i8'    ,8I  I8P    8I   I8P    I8, ,8I _ ,dP'     I8  ,I8,   i8'    ,8I  i8'       I8P' "Yb,  I8, ,8I  ,8'    8I 
-   "Yb,,8P ,d8,   ,d8b,,d8b,  ,8I  ,d8b,_  `YbadP' "888,,____,dP ,d88b, ,d8,   ,d8b,,d8,_    _,d8    `Yb, `YbadP' ,dP     Y8,
-     "Y8P' P"Y8888P"`Y88P'"Y88P"'  8P'"Y88888P"Y888a8P"Y88888P" 88P""Y88P"Y8888P"`Y8P""Y8888PP88P      Y8888P"Y8888P      `Y8</code></pre>
+<pre><code>ooooooooooooo            .o8       oooo             .oooooo..o     .                       oooo                           
+8'   888   `8           "888       `888            d8P'    `Y8   .o8                       `888                           
+     888       .oooo.    888oooo.   888   .ooooo.  Y88bo.      .o888oo  .oooo.    .ooooo.   888  oooo   .ooooo.  oooo d8b 
+     888      `P  )88b   d88' `88b  888  d88' `88b  `"Y8888o.    888   `P  )88b  d88' `"Y8  888 .8P'   d88' `88b `888""8P 
+     888       .oP"888   888   888  888  888ooo888      `"Y88b   888    .oP"888  888        888888.    888ooo888  888     
+     888      d8(  888   888   888  888  888    .o oo     .d8P   888 . d8(  888  888   .o8  888 `88b.  888    .o  888     
+    o888o     `Y888""8o  `Y8bod8P' o888o `Y8bod8P' 8""88888P'    "888" `Y888""8o `Y8bod8P' o888o o888o `Y8bod8P' d888b    </code></pre>
 
-Publish CSV files as interactive tables using "TableFu":https://github.com/eyeseast/python-tablefu, "TableSetter":https://github.com/propublica/table-setter, "Django":http://www.djangoproject.com/, "jQuery":http://jquery.com/ and "Google App Engine":http://code.google.com/appengine/.
-
-You can see an example table working "here":http://table-stacker.appspot.com/example_formatted/.
-
-Beware. This software is in beta testing and hasn’t been used much. But don’t let that stop you! Please try it and tell me what sucks.
-
-All of the good stuff in here was written by "ProPublica's News Application Desk":http://www.propublica.org/nerds and "Chris Amico":http://www.chrisamico.com/blog/. Blame me for whatever sucks.
+Publish spreadsheets as interactive tables. And do it on deadline.
 
 h2. Features
 
-* Convert a CSV file into an interactive HTML table using a simple YAML config file
-* Do it over and over again without much trouble
-* Quickly publish your tables to Google App Engine and serve them on the web for free
+* Convert a CSV file into an interactive HTML table that sorts, filters and paginates.
+* Quickly publish interactives tables to Google App Engine and serve them on the web for free.
+* Instantly syndicate data as CSV, XLS and JSON.
+* Post an RSS feed and sitemap that promote the latest data.
+* Link similar datasets together with blog-style tagging.
 
-h2. Instructions
+h2. Resources
 
-h3. 01. Register a new application with Google App Engine.
+* "Full documentation":http://datadesk.github.com/latimes-table-stacker
+* "Working demonstration":http://table-stacker.appspot.com
 
-Go to "https://appengine.google.com/":https://appengine.google.com/ and follow their instructions.
+h2. Getting Started
 
-h3. 02. Clone the code from this repository to your development machine
+h3. *01. Register a new application with Google App Engine*
 
-I like to put things in a virtualenv like this.
-<pre><code>$ virtualenv --no-site-packages table-stacker
-$ cd table-stacker
-$ git clone git://github.com/datadesk/latimes-table-stacker.git project
-$ cd project</code></pre>
+Go to "https://appengine.google.com/":https://appengine.google.com/. Don't download the SDK. Don't read the docs. Just create an account and mint a new application with a name like _my-table-stacker_. It serves as the unique identifer for your app inside the Google system, and the namespace where it will first appear online (i.e. "http://my-table-stacker.appspot.com/":http://my-table-stacker.appspot.com/).
 
-h3. 03. Configure the apps.yaml file with your Google App Engine application id
+h3. *02. Install the code on your computer*
 
-<pre><code>application: your-app-id-here</code></pre>
+It's not required, but I recommend creating a virtual environment to store your application. I like to do this with the Python module "virtualenv":http://pypi.python.org/pypi/virtualenv, which creates a walled-off garden for the Python code to work without distraction from the outside world. If you don't have it, you'll need to install it now, which just might be as easy as:
 
-h3. 04. Open a second terminal tab and fire up the development server
+<pre><code>$ pip install virtualenv
+# Or maybe ...
+$ sudo easy_install install virtualenv
+# Or, if you're in Ubuntu ...
+$ sudo apt-get install python-virtualenv</code></pre>
 
-You'll see me using python2.5, since that's what Google App Engine requires.
+Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I'm going to call this project _my-table-stacker_, but you should substitute whatever you're calling your version.
+<pre><code>$ virtualenv --no-site-packages my-table-stacker</code></pre>
+
+Now jump into the directory it creates.
+<pre><code>$ cd table-stacker</code></pre>
+
+Activate the private environment with virtualenv's custom command.
+<pre><code>$ . bin/activate</code></pre>
+
+Download the latest version of the code repository into a directory called _project_.
+<pre><code>$ git clone git://github.com/datadesk/latimes-table-stacker.git project</code></pre>
+
+And jump in and get ready to work.
+<pre><code>$ cd project</code></pre>
+
+h3. *03. Set your application id*
+
+In the _project_ folder you will find a file called _app.yaml_. It contains the basic configuration for your Google App Engine site. You only need to make one little change: Replace _my-table-stacker_ with the application id you registered in step one.
+<pre><code>application: my-table-stacker</code></pre>
+
+h3. *04. Launch a test version of the site*
+
+You'll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the _project_ directory and fire off the following. It is a "Django management command":http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port that will start a test version of the site on your machine.
+
+Note that you'll see me using _python2.5_ throughout, instead of the usual _python_ command. This is because I work in Ubuntu and I've found that Google App Engine "is not compatible with newer versions of Python":http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/. I suspect is is the case with other operating systems, but I'm not sure. So, I'd recommend using _python2.5_ but, as always, your mileage may vary.
+
 <pre><code>$ python2.5 manage.py runserver</code></pre>
 
-h3. 05. Load the example table
+h3. *05. Load the example table*
 
-You'll be asked to log in with your Google App Engine credentials, don't worry. That's what's supposed to happen.
-<pre><code>python manage.py loadtable example_formatted --host=localhost:8000</code></pre>
-If you want to peek under the hood and see how it works, check out the YAML file in the tables directory.
+You'll learn how to layout your own data later, but for now we'll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our _loadtable_ management command to follow instructions in the _major-us-coal-mines-2009_ configuration file and create a new table in the test site we just launched at "http://localhost:8000":http://localhost:8000.
+<pre><code>$ python2.5 manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000</code></pre>
 
-h3. 06. Check it out in your browser
+h3. *06. Check it out*
 
-You should see our demo table, ready to serve at http://localhost:8000/
+If everything clicked, you should see your demo site up and running with the coal mines table at "http://localhost:8000/":http://localhost:8000/.
 
-h3. 07. Upload your app to appspot.com
+h3. *07. Deploy your app*
 
+Once everything's set, deploying your application to Google App Engine only takes a single command. Here it is.
 <pre><code>$ python2.5 manage.py update</code></pre>
 
-h3. 08. Load the demo recipe to your live site
+h3. *08. Load the demo table on your live site*
 
-Notice how you leave out the host option this time. These commands hit your live site by default.
-<pre><code>python2.5 manage.py loadtable example_formatted</code></pre>
+You'll run the same _loadtable_ command from step five, but drop the host option. It will post to your live site by default, so it's unnecessary this time around.
+<pre><code>$ python2.5 manage.py loadtable major-us-coal-mines-2009</code></pre>
 
-h3. 09. Check out your site!
+h3. *09. Check it out*
 
-You should find it at http://your-app-id-here.appspot.com You might draw Django errors for a few minutes as the app builds its indexes, but don't worry. It'll be ready after you have a cup of coffee.
+You should now see your starter site up and running at "http://my-table-stacker.appspot.com":http://my-table-stacker.appspot.com. You might draw errors for a few minutes as the app builds its indexes, but don't worry. It'll be ready after you have a cup of coffee.
 
-h3. 10. Try configuring and loading your own table
+h3. *10. Publish you own data table*
 
-YAML files go in the tables folder. Corresponding CSV files in the csv folder.
+Before you can publish your own data table, you'll need to learn about our YAML-based configuration system. But don't worry, it's not that hard. You can read about it in the "documentation":http://datadesk.github.com/latimes-table-stacker/ or school yourself by mimicking the examples files in the project's _yaml_ subdirectory folder.
+
+
 
 
 

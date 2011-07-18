@@ -1,49 +1,34 @@
-import os
-import yaml
-from django.conf import settings
-
-# Models
-from google.appengine.ext import db
 from table_stacker.models import Table
-
-# Auth
-from google.appengine.ext.remote_api import remote_api_stub
-
-# Command toys
+from table_stacker.management.commands import *
+from google.appengine.api.labs import taskqueue
 from django.core.management.base import BaseCommand, CommandError
-from table_stacker.management.commands import auth_func, get_app_id, custom_options
 
 
-class Command(BaseCommand):
+class Command(GAECommand):
     help = 'Deletes the specified table from the datastore'
-    args = '<table_file_name>'
-    option_list = BaseCommand.option_list + custom_options
+    args = '<table_key_name>'
     
     def handle(self, *args, **options):
         # Make sure they provided a table name
         try:
-            yaml_name = args[0]
+            table_name = args[0]
         except:
             raise CommandError("You must provide the name of a table config file as the first argument.")
         
-        # Set the host
-        app_id = get_app_id()
-        if options.get('host'):
-            host = options.get('host')
-        else:
-            host = '%s.appspot.com' % app_id
-        print host
-        
-        # Configure the remote connection
-        remote_api_stub.ConfigureRemoteDatastore(app_id, '/remote_api', auth_func, host)
+        # Login
+        self.authorize(options)
         
         # Check if the table already exists in the datastore
-        obj = Table.get_by_key_name(yaml_name)
+        obj = Table.get_by_key_name(table_name)
         if obj:
             # If it does, delete it.
             print "Deleted %s" % obj
             obj.delete()
         else:
             raise CommandError("Table does not exist")
-
-
+        # Update the related list of all the related documents
+        taskqueue.add(
+            url='/_/table/update-similar/',
+            params=dict(key=obj.key()),
+            method='GET'
+        )
