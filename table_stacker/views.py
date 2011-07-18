@@ -15,23 +15,12 @@ from django.core.paginator import  InvalidPage, EmptyPage
 # Cache
 from django.conf import settings
 from google.appengine.api import memcache
+from toolbox.cache import get_cache_key, get_cached_response
+
 
 #
-# Caching, grouping and the like
-# 
-
-def get_cached_response(request, cache_key):
-    """
-    Returns a cached response, if one exists. Returns None if it doesn't.
-    
-    Provide your request object and the cache_key.
-    """
-    # Hit the cache and see if it already has this key
-    cached_data = memcache.get(cache_key)
-    # If it does, return the cached data (unless we force a reload with the qs)
-    if cached_data is not None and not request.GET.get('force', None) and not settings.DEBUG:
-        return cached_data
-
+# The biz
+#
 
 def get_table_page(request, page):
     """
@@ -56,9 +45,6 @@ def get_table_page(request, page):
     }
     return direct_to_template(request, 'table_list.html', context)
 
-#
-# The biz
-#
 
 def table_index(request):
     """
@@ -110,7 +96,7 @@ def tag_page(request, tag, page):
     tag = Tag.get_by_key_name(tag)
     if not tag:
         raise Http404
-    object_list = Table.all().filter('tags =', tag.key())
+    object_list = Table.all().filter("is_published =", True).filter('tags =', tag.key())
     paginator = Paginator(object_list, 10)
     # Limit it to thise page
     try:
@@ -139,7 +125,7 @@ def table_detail(request, slug):
         return cached_response
     # If not, get the data
     obj = Table.get_by_key_name(slug)
-    if not obj:
+    if not obj or not obj.is_published:
         raise Http404
     context = {
         'object': obj,
@@ -158,7 +144,7 @@ def table_xls(request, slug):
     """
     # Get the data
     obj = Table.get_by_key_name(slug)
-    if not obj:
+    if not obj or not obj.is_published:
         raise Http404
     csv_data = simplejson.loads(unicode(obj.csv_data))
     context = {'csv': csv_data}
@@ -175,7 +161,7 @@ def table_json(request, slug):
     """
     # Get the csv data
     obj = Table.get_by_key_name(slug)
-    if not obj:
+    if not obj or not obj.is_published:
         raise Http404
     csv_data = simplejson.loads(unicode(obj.csv_data))
     # Convert it to JSON key/value formatting
