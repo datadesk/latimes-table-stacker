@@ -102,7 +102,9 @@ TEMPLATE_DIRS = (
 )
 YAML_DIR = os.path.join(ROOT_PATH, 'yaml')
 CSV_DIR = os.path.join(ROOT_PATH, 'csv')
-APP_VERSION = yaml.load(open(os.path.join(ROOT_PATH, "app.yaml"), "r")).get("version")
+CONFIG_PATH = os.path.join(ROOT_PATH, "app.yaml")
+CONFIG_DATA = yaml.load(open(CONFIG_PATH, "r"))
+APP_VERSION = CONFIG_DATA.get("version")
 
 
 INSTALLED_APPS = (
