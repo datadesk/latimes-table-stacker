@@ -1,8 +1,3 @@
-{# This template is written in Django 0.96 rules #}
-{# It's necessary because we need to run it as an auth-protected cron #}
-{# Sadly, those guys aren't able to run a more up-to-date Django #}
-
-{% autoescape off %}
     <script type='text/javascript'>
       {% if table %}
         var sortPlease = true;
@@ -20,28 +15,31 @@
     {% endif %}
     
     {% if object.description %}
-        <div id="description" {% if object.similar_tables %}style="width:660px;"{% endif %}>{{ object.description }}</div>
+        <div id="description" {% if object.similar_tables %}style="width:660px;"{% endif %}>{{ object.description|safe }}</div>
     {% endif %}
     
-    {% if object.byline %}
-        <div id="byline" {% if object.similar_tables %}style="width:660px;"{% endif %}>&mdash; {{ object.byline }} ({{ object.publication_date|date:"N j, Y" }})</div>
-    {% endif %}
+    <div class="clear"></div>
     
-    <div class="clear pad5vert"></div>
+    {% if object.legend %}
+        <div id="legend">{{ object.legend|safe }}</div>
+    {% endif %}
     
     <div id="ribbon">
     
-        <div id="download" {% if not object.show_download_links %}style="visibility:hidden;"{% endif %}>
+        <div id="download">
+            Published: <div id="pubdate">{{ object.publication_date|date:"N j, Y" }}</div>&nbsp;&nbsp;
+             {% if object.show_download_links %}
             Download:
             <a href="{{ object.get_csv_url }}">CSV</a> |
             <a href="{{ object.get_xls_url }}">XLS</a> |
             <a target="_blank" href="{{ object.get_json_url }}">JSON</a>
+            {% endif %}
         </div>
         
         <div id="controls">
             <div id="filter">Search: <input type="text"></div>
             <div id="pager" class="pager">
-              <form>
+              <form {% ifequal table.total_pages 1 %}style="display:none !important;"{% endifequal %}>
                 <img src="/media/img/first.png" class="first">
                 <img src="/media/img/prev.png" class="prev">
                 <span class="pagedisplay"/>1/{{ table.total_pages }}</span>
@@ -70,15 +68,15 @@
         {% for row in table.rows %}
           <tr>
             {% for column in row.data %}
-                <td style="{{ column.style }}">{{ column }}</td>
+                <td style="{{ column.style }}">{{ column|safe }}</td>
             {% endfor %}
           </tr>
         {% endfor %}
         </tbody>
     <tfoot></tfoot>
     </table>
-    {% if object.footer %}<div id="footer">{{ object.footer }}</div>{% endif %}
-    {% if object.tags %}<div id="tags">Tags: {{ object.get_html_tag_list }}</div>{% endif %}
-    {% if object.sources %}<div id="sources">Sources: {{ object.sources }}</div>{% endif %}
-    {% if object.credits %}<div id="credits">Credits: {{ object.credits }}</div>{% endif %}
-{% endautoescape %}
+    {% if object.footer %}<div id="footer">{{ object.footer|safe }}</div>{% endif %}
+    {% if object.tags %}<div id="tags">Tags: {{ object.get_html_tag_list|safe }}</div>{% endif %}
+    {% if object.sources %}<div id="sources">Sources: {{ object.sources|safe }}</div>{% endif %}
+    {% if object.credits %}<div id="credits">Credits: {{ object.credits|safe }}</div>{% endif %}
+
