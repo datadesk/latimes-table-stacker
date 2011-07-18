@@ -98,7 +98,7 @@ class GAECommand(BaseCommand):
         """
         Quickie method for logging in to the remote api. From GAE docs.
         """
-        return raw_input('Username:'), getpass.getpass('Password:')
+        return raw_input('Email:'), getpass.getpass('Password:')
 
 #
 # YAML
