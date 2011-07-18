@@ -19,7 +19,7 @@
                     <h2><a target="_blank" class="headline" href="{{ obj.get_absolute_url }}">{{ obj|safe }}</a></h2>
                     <span class="pubdate">{{ obj.publication_date|date:"N j, Y" }}</span>
                     <span class="byline">{% if obj.byline %}&nbsp;By&nbsp;{{ obj.byline }}{% endif %}</span>
-                    <p class="description">{% if obj.description %}{{ obj.description|trim_p:1|striptags|truncatewords:100|safe }}{% endif %}</p>
+                    <p class="description">{% if obj.description %}{{ obj.description|trim_p:1|striptags|safe }}{% endif %}</p>
                 </td>
             </tr>
             {% endfor %}
