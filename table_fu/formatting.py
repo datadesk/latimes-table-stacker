@@ -201,6 +201,25 @@ def ap_state(value):
         return value
 
 
+def bubble(value, yes_icon='/media/img/bubble_yes.png',
+    no_icon="/media/img/bubble_no.png", empty="&mdash;"):
+    """
+    Returns one of two "Consumer Reports" style bubbles that indicate:
+    
+        - Yes (Filled bubble)
+        - No (Empty bubble)
+    
+    The first letter of each type is what should be provided, i.e. Y, N.
+    """
+    img = "<img alt='%(name)s' title='%(name)s' class='tribubble' src='%(icon)s'>"
+    if value == 'Y':
+        return img % dict(name='Yes', icon=yes_icon)
+    elif value == 'N':
+        return img % dict(name='No', icon=no_icon)
+    else:
+        return empty
+
+
 def dollar_signs(value):
     """
     Converts an integer into the corresponding number of dollar sign symbols.
@@ -315,6 +334,7 @@ def title(value):
 
 DEFAULT_FORMATTERS = {
     'ap_state': ap_state,
+    'bubble': bubble,
     'dollar_signs': dollar_signs,
     'dollars': dollars,
     'link': link,
