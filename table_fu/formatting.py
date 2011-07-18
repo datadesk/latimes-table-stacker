@@ -5,6 +5,230 @@ template filters.
 """
 import re
 
+def _saferound(value, decimal_places):
+    """
+    Rounds a float value off to the desired precision
+    """
+    try:
+        f = float(value)
+    except ValueError:
+        return ''
+    format = '%%.%df' % decimal_places
+    return format % f
+
+AP_STATES_NORMALIZATION = {
+    'ak': 'Alaska',
+    'al': 'Ala.',
+    'ala': 'Ala.',
+    'alabama': 'Ala.',
+    'alaska': 'Alaska',
+    'american samao': 'A.S.',
+    'american samoa': 'A.S.',
+    'ar': 'Ark.',
+    'ariz': 'Ariz.',
+    'arizona': 'Ariz.',
+    'ark': 'Ark.',
+    'arkansas': 'Ark.',
+    'as': 'A.S.',
+    'az': 'Ariz.',
+    'ca': 'Calif.',
+    'calf': 'Calif.',
+    'calif': 'Calif.',
+    'california': 'Calif.',
+    'co': 'Colo.',
+    'colo': 'Colo.',
+    'colorado': 'Colo.',
+    'conn': 'Conn.',
+    'connecticut': 'Conn.',
+    'ct': 'Conn.',
+    'dc': 'D.C.',
+    'de': 'Del.',
+    'del': 'Del.',
+    'delaware': 'Del.',
+    'deleware': 'Del.',
+    'district of columbia': 'D.C.',
+    'fl': 'Fla.',
+    'fla': 'Fla.',
+    'florida': 'Fla.',
+    'ga': 'Ga.',
+    'georgia': 'Ga.',
+    'gu': 'Guam',
+    'guam': 'Guam',
+    'hawaii': 'Hawaii',
+    'hi': 'Hawaii',
+    'ia': 'Iowa',
+    'id': 'Idaho',
+    'idaho': 'Idaho',
+    'il': 'Ill.',
+    'ill': 'Ill.',
+    'illinois': 'Ill.',
+    'in': 'Ind.',
+    'ind': 'Ind.',
+    'indiana': 'Ind.',
+    'iowa': 'Iowa',
+    'kan': 'Kan.',
+    'kans': 'Kan.',
+    'kansas': 'Kan.',
+    'kentucky': 'Ky.',
+    'ks': 'Kan.',
+    'ky': 'Ky.',
+    'la': 'La.',
+    'louisiana': 'La.',
+    'ma': 'Mass.',
+    'maine': 'Maine',
+    'marianas islands': 'M.P.',
+    'marianas islands of the pacific': 'M.P.',
+    'marinas islands of the pacific': 'M.P.',
+    'maryland': 'Md.',
+    'mass': 'Mass.',
+    'massachusetts': 'Mass.',
+    'massachussetts': 'Mass.',
+    'md': 'Md.',
+    'me': 'Maine',
+    'mi': 'Mich.',
+    'mich': 'Mich.',
+    'michigan': 'Mich.',
+    'minn': 'Minn.',
+    'minnesota': 'Minn.',
+    'miss': 'Miss.',
+    'mississippi': 'Miss.',
+    'missouri': 'Mo.',
+    'mn': 'Minn.',
+    'mo': 'Mo.',
+    'mont': 'Mont.',
+    'montana': 'Mont.',
+    'mp': 'M.P.',
+    'ms': 'Miss.',
+    'mt': 'Mont.',
+    'n d': 'N.D.',
+    'n dak': 'N.D.',
+    'n h': 'N.H.',
+    'n j': 'N.J.',
+    'n m': 'N.M.',
+    'n mex': 'N.M.',
+    'nc': 'N.C.',
+    'nd': 'N.D.',
+    'ne': 'Neb.',
+    'neb': 'Neb.',
+    'nebr': 'Neb.',
+    'nebraska': 'Neb.',
+    'nev': 'Nev.',
+    'nevada': 'Nev.',
+    'new hampshire': 'N.H.',
+    'new jersey': 'N.J.',
+    'new mexico': 'N.M.',
+    'new york': 'N.Y.',
+    'nh': 'N.H.',
+    'nj': 'N.J.',
+    'nm': 'N.M.',
+    'nmex': 'N.M.',
+    'north carolina': 'N.C.',
+    'north dakota': 'N.D.',
+    'northern mariana islands': 'M.P.',
+    'nv': 'Nev.',
+    'ny': 'N.Y.',
+    'oh': 'Ohio',
+    'ohio': 'Ohio',
+    'ok': 'Okla.',
+    'okla': 'Okla.',
+    'oklahoma': 'Okla.',
+    'or': 'Ore.',
+    'ore': 'Ore.',
+    'oreg': 'Ore.',
+    'oregon': 'Ore.',
+    'pa': 'Pa.',
+    'penn': 'Pa.',
+    'pennsylvania': 'Pa.',
+    'pr': 'P.R.',
+    'puerto rico': 'P.R.',
+    'rhode island': 'R.I.',
+    'ri': 'R.I.',
+    's dak': 'S.D.',
+    'sc': 'S.C.',
+    'sd': 'S.D.',
+    'sdak': 'S.D.',
+    'south carolina': 'S.C.',
+    'south dakota': 'S.D.',
+    'tenn': 'Tenn.',
+    'tennessee': 'Tenn.',
+    'territory of hawaii': 'Hawaii',
+    'tex': 'Texas',
+    'texas': 'Texas',
+    'tn': 'Ten..',
+    'tx': 'Texas',
+    'us virgin islands': 'V.I.',
+    'usvi': 'V.I.',
+    'ut': 'Utah',
+    'utah': 'Utah',
+    'va': 'Va.',
+    'vermont': 'Vt.',
+    'vi': 'V.I.',
+    'viginia': 'Va.',
+    'virgin islands': 'V.I.',
+    'virgina': 'Va.',
+    'virginia': 'Va.',
+    'vt': 'Vt.',
+    'w va': 'W.Va.',
+    'wa': 'Wash.',
+    'wash': 'Wash.',
+    'washington': 'Wash.',
+    'west virginia': 'W.Va.',
+    'wi': 'Wis.',
+    'wis': 'Wis.',
+    'wisc': 'Wis.',
+    'wisconsin': 'Wis.',
+    'wv': 'W.Va.',
+    'wva': 'W.Va.',
+    'wy': 'Wyo.',
+    'wyo': 'Wyo.',
+    'wyoming': 'Wyo.',
+}
+
+
+def ap_state(value):
+    """
+    Converts a state's name or postal abbreviation to .A.P. style.
+    
+    Example usage:
+    
+        >> ap_state("California")
+        'Calif.'
+    
+    """
+    try:
+        return AP_STATES_NORMALIZATION[value.lower()]
+    except KeyError:
+        return value
+
+
+def dollar_signs(value):
+    """
+    Converts an integer into the corresponding number of dollar sign symbols.
+    
+    Meant to emulate the illustration of price range on Yelp.
+    """
+    try:
+        count = int(value)
+    except ValueError:
+        return 'N/A'
+    string = ''
+    for i in range(0, count):
+        string += '$'
+    return string
+
+
+def dollars(value, decimal_places=2):
+    """
+    Converts a number in a dollar figure, with commas after ever three digits.
+    """
+    if not value:
+        value = 0
+    value = _saferound(value, decimal_places)
+    if not value:
+        return 'N/A'
+    return u'$%s'% intcomma(value)
+
+
 def intcomma(value):
     """
     Borrowed from django.contrib.humanize
@@ -19,6 +243,64 @@ def intcomma(value):
     else:
         return intcomma(new)
 
+
+def link(title, url):
+    return u'<a target="_blank" href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
+
+
+def percentage(value, decimal_places=1, multiply=True):
+    """
+    Converts a floating point value into a percentage value.
+    
+    Number of decimal places set by the `decimal_places` kwarg. Default is one.
+    
+    By default the number is multiplied by 100. You can prevent it from doing
+    that by setting the `multiply` keyword argument to False.
+    """
+    value = float(value)
+    if multiply:
+        value = value * 100
+    return _saferound(value, decimal_places) + '%'
+
+
+def percent_change(value, decimal_places=1, multiply=True):
+    """
+    Converts a floating point value into a percentage change value.
+    
+    Number of decimal places set by the `precision` kwarg. Default is one.
+    
+    Non-floats are assumed to be zero division errors and are presented as
+    'N/A' in the output.
+    
+    By default the number is multiplied by 100. You can prevent it from doing
+    that by setting the `multiply` keyword argument to False.
+    """
+    try:
+        f = float(value)
+        if multiply:
+            f = f * 100
+    except ValueError:
+       return  'N/A'
+    s = _saferound(f, decimal_places)
+    if f > 0:
+        return '+' + s + '%'
+    else:
+        return s + '%'
+
+
+def ratio(value, precision=0):
+    """
+    Converts a floating point value a X:1 ratio.
+    
+    Number of decimal places set by the `precision` kwarg. Default is one.
+    """
+    try:
+        f = float(value)
+    except ValueError:
+        return 'N/A'
+    return _saferound(f, decimal_places) + ':1'
+
+
 def title(value):
     """
     Converts a string into titlecase.
@@ -29,36 +311,18 @@ def title(value):
     t = re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
     return re.sub("\d([A-Z])", lambda m: m.group(0).lower(), t)
 
-def dollars(value):
-    return u'$%s'% intcomma(value)
-
-def percentage(value, precision=1):
-    f = float(value) * 100
-    format = '%%.%df' % precision
-    return format % f + '%'
-
-def percent_change(value, precision=1):
-    try:
-        f = float(value) * 100
-    except ValueError:
-       return  'N/A'
-    format = '%%.%df' % precision
-    if f > 0:
-        return '+' + format % f + '%'
-    else:
-        return format % f + '%'
-
-def link(title, url):
-    return u'<a href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
 
 
 DEFAULT_FORMATTERS = {
+    'ap_state': ap_state,
+    'dollar_signs': dollar_signs,
+    'dollars': dollars,
     'link': link,
     'intcomma': intcomma,
-    'dollars': dollars,
     'percentage': percentage,
     'percent_change': percent_change,
     'title': title,
+    'ratio': ratio,
 }
 
 class Formatter(object):
