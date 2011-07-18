@@ -16,6 +16,8 @@ from django.core.paginator import  InvalidPage, EmptyPage
 from django.conf import settings
 from google.appengine.api import memcache
 from toolbox.cache import get_cache_key, get_cached_response
+CACHE_TIMEOUT = getattr(settings, "CACHE_TIMEOUT", 60 * 5)
+
 
 
 #
@@ -58,7 +60,7 @@ def table_index(request):
     # If not, get the data
     response = get_table_page(request, 1)
     # Add it to the cache
-    memcache.add(cache_key, response, 60)
+    memcache.add(cache_key, response, CACHE_TIMEOUT)
     # Pass it back
     return response
 
@@ -78,7 +80,7 @@ def table_page(request, page):
     # If not, get the data
     response = get_table_page(request, page)
     # Add it to the cache
-    memcache.add(cache_key, response, 60)
+    memcache.add(cache_key, response, CACHE_TIMEOUT)
     # Pass it back
     return response
 
@@ -132,7 +134,7 @@ def table_detail(request, slug):
         'force': request.GET.get('force', None),
     }
     response = direct_to_template(request, 'table_detail.html', context)
-    memcache.add(cache_key, response, 60)
+    memcache.add(cache_key, response, CACHE_TIMEOUT)
     return response
 
 
