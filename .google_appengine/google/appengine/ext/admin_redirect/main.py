@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Main module for admin redirect.
 
 To use, add this to app.yaml:
@@ -56,14 +59,19 @@ class RedirectToAdminConsole(webapp.RequestHandler):
       return
 
     if server.endswith(GOOGLE_SUFFIX):
+
+
       if server.find(app_id) == 0:
         new_server = server.replace(app_id, ADMIN_CONSOLE_NAME)
         self.redirect('http://%s%s%s' % (new_server,
                                          CONSOLE_SUFFIX,
                                          app_id))
+
       else:
         self.response.out.write("""
           Could not determine admin console location from server name.""")
+
+
     else:
       self.redirect('%s%s%s' % (APPENGINE_URL, CONSOLE_SUFFIX, app_id))
 

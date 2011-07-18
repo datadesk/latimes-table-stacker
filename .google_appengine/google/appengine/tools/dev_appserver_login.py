@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
+
 """Helper CGI for logins/logout in the development application server.
 
 This CGI has these parameters:
@@ -30,10 +33,12 @@ supply no parameters.
 
 import cgi
 import Cookie
-import md5
 import os
 import sys
 import urllib
+import hashlib
+
+
 
 
 CONTINUE_PARAM = 'continue'
@@ -41,12 +46,16 @@ EMAIL_PARAM = 'email'
 ADMIN_PARAM = 'admin'
 ACTION_PARAM = 'action'
 
+
 LOGOUT_ACTION = 'Logout'
 LOGIN_ACTION = 'Login'
 
+
 LOGOUT_PARAM = 'action=%s' % LOGOUT_ACTION
 
+
 COOKIE_NAME = 'dev_appserver_login'
+
 
 
 def GetUserInfo(http_cookie, cookie_name=COOKIE_NAME):
@@ -84,7 +93,7 @@ def CreateCookieData(email, admin):
   if admin:
     admin_string = 'True'
   if email:
-    user_id_digest = md5.new(email.lower()).digest()
+    user_id_digest = hashlib.md5(email.lower()).digest()
     user_id = '1' + ''.join(['%02d' % ord(x) for x in user_id_digest])[:20]
   else:
     user_id = ''
@@ -125,37 +134,38 @@ def ClearUserInfoCookie(cookie_name=COOKIE_NAME):
   return '%s\r\n' % set_cookie
 
 
+
 LOGIN_TEMPLATE = """<html>
 <head>
   <title>Login</title>
 </head>
 <body>
 
-<form method='get' action='%(login_url)s'
-      style='text-align:center; font: 13px sans-serif'>
-  <div style='width: 20em; margin: 1em auto;
+<form method="get" action="%(login_url)s"
+      style="text-align:center; font: 13px sans-serif">
+  <div style="width: 20em; margin: 1em auto;
               text-align:left;
               padding: 0 2em 1.25em 2em;
               background-color: #d6e9f8;
-              border: 2px solid #67a7e3'>
+              border: 2px solid #67a7e3">
     <h3>%(login_message)s</h3>
-    <p style='padding: 0; margin: 0'>
-      <label for='email' style="width: 3em">Email:</label>
-      <input name='email' type='text' value='%(email)s' id='email'/>
+    <p style="padding: 0; margin: 0">
+      <label for="email" style="width: 3em">Email:</label>
+      <input name="email" type="text" value="%(email)s" id="email"/>
     </p>
-    <p style='margin: .5em 0 0 3em; font-size:12px'>
-      <input name='admin' type='checkbox' value='True'
-       %(admin_checked)s id='admin'/>
-        <label for='admin'>Sign in as Administrator</label>
+    <p style="margin: .5em 0 0 3em; font-size:12px">
+      <input name="admin" type="checkbox" value="True"
+       %(admin_checked)s id="admin"/>
+        <label for="admin">Sign in as Administrator</label>
     </p>
-    <p style='margin-left: 3em'>
-      <input name='action' value='Login' type='submit'
-             id='submit-login' />
-      <input name='action' value='Logout' type='submit'
-             id='submit-logout' />
+    <p style="margin-left: 3em">
+      <input name="action" value="Login" type="submit"
+             id="submit-login" />
+      <input name="action" value="Logout" type="submit"
+             id="submit-logout" />
     </p>
   </div>
-  <input name='continue' type='hidden' value='%(continue_url)s'/>
+  <input name="continue" type="hidden" value="%(continue_url)s"/>
 </form>
 
 </body>
@@ -183,14 +193,15 @@ def RenderLoginTemplate(login_url, continue_url, email, admin):
   template_dict = {
 
 
-    'email': email or 'test\x40example.com',
+    'email': (cgi.escape(email, quote=1) or 'test\x40example.com'),
     'admin_checked': admin_checked,
     'login_message': login_message,
-    'login_url': login_url,
-    'continue_url': continue_url
+    'login_url': cgi.escape(login_url, quote=1),
+    'continue_url': cgi.escape(continue_url, quote=1)
   }
 
   return LOGIN_TEMPLATE % template_dict
+
 
 
 def LoginRedirect(login_url,
@@ -270,6 +281,7 @@ def LoginCGI(login_url,
                                       admin))
 
 
+
 def main():
   """Runs the login and logout CGI script."""
   form = cgi.FieldStorage()
@@ -291,6 +303,7 @@ def main():
            continue_url,
            sys.stdout)
   return 0
+
 
 
 if __name__ == '__main__':

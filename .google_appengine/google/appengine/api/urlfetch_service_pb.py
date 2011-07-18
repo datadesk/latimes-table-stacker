@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+
+
 from google.net.proto import ProtocolBuffer
 import array
 import dummy_thread as thread
@@ -24,12 +26,14 @@ __pychecker__ = """maxreturns=0 maxbranches=0 no-callinit
 
 class URLFetchServiceError(ProtocolBuffer.ProtocolMessage):
 
+
   OK           =    0
   INVALID_URL  =    1
   FETCH_ERROR  =    2
   UNSPECIFIED_ERROR =    3
   RESPONSE_TOO_LARGE =    4
   DEADLINE_EXCEEDED =    5
+  SSL_CERTIFICATE_ERROR =    6
 
   _ErrorCode_NAMES = {
     0: "OK",
@@ -38,6 +42,7 @@ class URLFetchServiceError(ProtocolBuffer.ProtocolMessage):
     3: "UNSPECIFIED_ERROR",
     4: "RESPONSE_TOO_LARGE",
     5: "DEADLINE_EXCEEDED",
+    6: "SSL_CERTIFICATE_ERROR",
   }
 
   def ErrorCode_Name(cls, x): return cls._ErrorCode_NAMES.get(x, "")
@@ -62,7 +67,11 @@ class URLFetchServiceError(ProtocolBuffer.ProtocolMessage):
 
   def ByteSize(self):
     n = 0
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    return n
 
   def Clear(self):
     pass
@@ -70,9 +79,14 @@ class URLFetchServiceError(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     pass
 
+  def OutputPartial(self, out):
+    pass
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -93,6 +107,7 @@ class URLFetchServiceError(ProtocolBuffer.ProtocolMessage):
   _TYPES = _BuildTagLookupTable({
     0: ProtocolBuffer.Encoder.NUMERIC,
   }, 0, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -163,6 +178,16 @@ class URLFetchRequest_Header(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.value_))
     return n + 2
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_key_):
+      n += 1
+      n += self.lengthString(len(self.key_))
+    if (self.has_value_):
+      n += 1
+      n += self.lengthString(len(self.value_))
+    return n
+
   def Clear(self):
     self.clear_key()
     self.clear_value()
@@ -172,6 +197,14 @@ class URLFetchRequest_Header(ProtocolBuffer.ProtocolMessage):
     out.putPrefixedString(self.key_)
     out.putVarInt32(42)
     out.putPrefixedString(self.value_)
+
+  def OutputPartial(self, out):
+    if (self.has_key_):
+      out.putVarInt32(34)
+      out.putPrefixedString(self.key_)
+    if (self.has_value_):
+      out.putVarInt32(42)
+      out.putPrefixedString(self.value_)
 
   def TryMerge(self, d):
     while 1:
@@ -183,6 +216,8 @@ class URLFetchRequest_Header(ProtocolBuffer.ProtocolMessage):
       if tt == 42:
         self.set_value(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -194,6 +229,7 @@ class URLFetchRequest_Header(ProtocolBuffer.ProtocolMessage):
     return res
 
 class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
+
 
   GET          =    1
   POST         =    2
@@ -222,6 +258,8 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
   followredirects_ = 1
   has_deadline_ = 0
   deadline_ = 0.0
+  has_mustvalidateservercertificate_ = 0
+  mustvalidateservercertificate_ = 1
 
   def __init__(self, contents=None):
     self.header_ = []
@@ -308,6 +346,19 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
 
   def has_deadline(self): return self.has_deadline_
 
+  def mustvalidateservercertificate(self): return self.mustvalidateservercertificate_
+
+  def set_mustvalidateservercertificate(self, x):
+    self.has_mustvalidateservercertificate_ = 1
+    self.mustvalidateservercertificate_ = x
+
+  def clear_mustvalidateservercertificate(self):
+    if self.has_mustvalidateservercertificate_:
+      self.has_mustvalidateservercertificate_ = 0
+      self.mustvalidateservercertificate_ = 1
+
+  def has_mustvalidateservercertificate(self): return self.has_mustvalidateservercertificate_
+
 
   def MergeFrom(self, x):
     assert x is not self
@@ -317,6 +368,7 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
     if (x.has_payload()): self.set_payload(x.payload())
     if (x.has_followredirects()): self.set_followredirects(x.followredirects())
     if (x.has_deadline()): self.set_deadline(x.deadline())
+    if (x.has_mustvalidateservercertificate()): self.set_mustvalidateservercertificate(x.mustvalidateservercertificate())
 
   def Equals(self, x):
     if x is self: return 1
@@ -333,6 +385,8 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
     if self.has_followredirects_ and self.followredirects_ != x.followredirects_: return 0
     if self.has_deadline_ != x.has_deadline_: return 0
     if self.has_deadline_ and self.deadline_ != x.deadline_: return 0
+    if self.has_mustvalidateservercertificate_ != x.has_mustvalidateservercertificate_: return 0
+    if self.has_mustvalidateservercertificate_ and self.mustvalidateservercertificate_ != x.mustvalidateservercertificate_: return 0
     return 1
 
   def IsInitialized(self, debug_strs=None):
@@ -358,7 +412,24 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
     if (self.has_payload_): n += 1 + self.lengthString(len(self.payload_))
     if (self.has_followredirects_): n += 2
     if (self.has_deadline_): n += 9
+    if (self.has_mustvalidateservercertificate_): n += 2
     return n + 2
+
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_method_):
+      n += 1
+      n += self.lengthVarInt64(self.method_)
+    if (self.has_url_):
+      n += 1
+      n += self.lengthString(len(self.url_))
+    n += 2 * len(self.header_)
+    for i in xrange(len(self.header_)): n += self.header_[i].ByteSizePartial()
+    if (self.has_payload_): n += 1 + self.lengthString(len(self.payload_))
+    if (self.has_followredirects_): n += 2
+    if (self.has_deadline_): n += 9
+    if (self.has_mustvalidateservercertificate_): n += 2
+    return n
 
   def Clear(self):
     self.clear_method()
@@ -367,6 +438,7 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
     self.clear_payload()
     self.clear_followredirects()
     self.clear_deadline()
+    self.clear_mustvalidateservercertificate()
 
   def OutputUnchecked(self, out):
     out.putVarInt32(8)
@@ -386,6 +458,33 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
     if (self.has_deadline_):
       out.putVarInt32(65)
       out.putDouble(self.deadline_)
+    if (self.has_mustvalidateservercertificate_):
+      out.putVarInt32(72)
+      out.putBoolean(self.mustvalidateservercertificate_)
+
+  def OutputPartial(self, out):
+    if (self.has_method_):
+      out.putVarInt32(8)
+      out.putVarInt32(self.method_)
+    if (self.has_url_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.url_)
+    for i in xrange(len(self.header_)):
+      out.putVarInt32(27)
+      self.header_[i].OutputPartial(out)
+      out.putVarInt32(28)
+    if (self.has_payload_):
+      out.putVarInt32(50)
+      out.putPrefixedString(self.payload_)
+    if (self.has_followredirects_):
+      out.putVarInt32(56)
+      out.putBoolean(self.followredirects_)
+    if (self.has_deadline_):
+      out.putVarInt32(65)
+      out.putDouble(self.deadline_)
+    if (self.has_mustvalidateservercertificate_):
+      out.putVarInt32(72)
+      out.putBoolean(self.mustvalidateservercertificate_)
 
   def TryMerge(self, d):
     while d.avail() > 0:
@@ -408,6 +507,11 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 65:
         self.set_deadline(d.getDouble())
         continue
+      if tt == 72:
+        self.set_mustvalidateservercertificate(d.getBoolean())
+        continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -427,6 +531,7 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
     if self.has_payload_: res+=prefix+("Payload: %s\n" % self.DebugFormatString(self.payload_))
     if self.has_followredirects_: res+=prefix+("FollowRedirects: %s\n" % self.DebugFormatBool(self.followredirects_))
     if self.has_deadline_: res+=prefix+("Deadline: %s\n" % self.DebugFormat(self.deadline_))
+    if self.has_mustvalidateservercertificate_: res+=prefix+("MustValidateServerCertificate: %s\n" % self.DebugFormatBool(self.mustvalidateservercertificate_))
     return res
 
 
@@ -441,6 +546,7 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
   kPayload = 6
   kFollowRedirects = 7
   kDeadline = 8
+  kMustValidateServerCertificate = 9
 
   _TEXT = _BuildTagLookupTable({
     0: "ErrorCode",
@@ -452,7 +558,8 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
     6: "Payload",
     7: "FollowRedirects",
     8: "Deadline",
-  }, 8)
+    9: "MustValidateServerCertificate",
+  }, 9)
 
   _TYPES = _BuildTagLookupTable({
     0: ProtocolBuffer.Encoder.NUMERIC,
@@ -464,7 +571,9 @@ class URLFetchRequest(ProtocolBuffer.ProtocolMessage):
     6: ProtocolBuffer.Encoder.STRING,
     7: ProtocolBuffer.Encoder.NUMERIC,
     8: ProtocolBuffer.Encoder.DOUBLE,
-  }, 8, ProtocolBuffer.Encoder.MAX_TYPE)
+    9: ProtocolBuffer.Encoder.NUMERIC,
+  }, 9, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -535,6 +644,16 @@ class URLFetchResponse_Header(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.value_))
     return n + 2
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_key_):
+      n += 1
+      n += self.lengthString(len(self.key_))
+    if (self.has_value_):
+      n += 1
+      n += self.lengthString(len(self.value_))
+    return n
+
   def Clear(self):
     self.clear_key()
     self.clear_value()
@@ -544,6 +663,14 @@ class URLFetchResponse_Header(ProtocolBuffer.ProtocolMessage):
     out.putPrefixedString(self.key_)
     out.putVarInt32(42)
     out.putPrefixedString(self.value_)
+
+  def OutputPartial(self, out):
+    if (self.has_key_):
+      out.putVarInt32(34)
+      out.putPrefixedString(self.key_)
+    if (self.has_value_):
+      out.putVarInt32(42)
+      out.putPrefixedString(self.value_)
 
   def TryMerge(self, d):
     while 1:
@@ -555,6 +682,8 @@ class URLFetchResponse_Header(ProtocolBuffer.ProtocolMessage):
       if tt == 42:
         self.set_value(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -786,6 +915,23 @@ class URLFetchResponse(ProtocolBuffer.ProtocolMessage):
     if (self.has_apibytesreceived_): n += 1 + self.lengthVarInt64(self.apibytesreceived_)
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_content_): n += 1 + self.lengthString(len(self.content_))
+    if (self.has_statuscode_):
+      n += 1
+      n += self.lengthVarInt64(self.statuscode_)
+    n += 2 * len(self.header_)
+    for i in xrange(len(self.header_)): n += self.header_[i].ByteSizePartial()
+    if (self.has_contentwastruncated_): n += 2
+    if (self.has_externalbytessent_): n += 1 + self.lengthVarInt64(self.externalbytessent_)
+    if (self.has_externalbytesreceived_): n += 1 + self.lengthVarInt64(self.externalbytesreceived_)
+    if (self.has_finalurl_): n += 1 + self.lengthString(len(self.finalurl_))
+    if (self.has_apicpumilliseconds_): n += 1 + self.lengthVarInt64(self.apicpumilliseconds_)
+    if (self.has_apibytessent_): n += 1 + self.lengthVarInt64(self.apibytessent_)
+    if (self.has_apibytesreceived_): n += 1 + self.lengthVarInt64(self.apibytesreceived_)
+    return n
+
   def Clear(self):
     self.clear_content()
     self.clear_statuscode()
@@ -807,6 +953,39 @@ class URLFetchResponse(ProtocolBuffer.ProtocolMessage):
     for i in xrange(len(self.header_)):
       out.putVarInt32(27)
       self.header_[i].OutputUnchecked(out)
+      out.putVarInt32(28)
+    if (self.has_contentwastruncated_):
+      out.putVarInt32(48)
+      out.putBoolean(self.contentwastruncated_)
+    if (self.has_externalbytessent_):
+      out.putVarInt32(56)
+      out.putVarInt64(self.externalbytessent_)
+    if (self.has_externalbytesreceived_):
+      out.putVarInt32(64)
+      out.putVarInt64(self.externalbytesreceived_)
+    if (self.has_finalurl_):
+      out.putVarInt32(74)
+      out.putPrefixedString(self.finalurl_)
+    if (self.has_apicpumilliseconds_):
+      out.putVarInt32(80)
+      out.putVarInt64(self.apicpumilliseconds_)
+    if (self.has_apibytessent_):
+      out.putVarInt32(88)
+      out.putVarInt64(self.apibytessent_)
+    if (self.has_apibytesreceived_):
+      out.putVarInt32(96)
+      out.putVarInt64(self.apibytesreceived_)
+
+  def OutputPartial(self, out):
+    if (self.has_content_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.content_)
+    if (self.has_statuscode_):
+      out.putVarInt32(16)
+      out.putVarInt32(self.statuscode_)
+    for i in xrange(len(self.header_)):
+      out.putVarInt32(27)
+      self.header_[i].OutputPartial(out)
       out.putVarInt32(28)
     if (self.has_contentwastruncated_):
       out.putVarInt32(48)
@@ -863,6 +1042,8 @@ class URLFetchResponse(ProtocolBuffer.ProtocolMessage):
       if tt == 96:
         self.set_apibytesreceived(d.getVarInt64())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -936,6 +1117,7 @@ class URLFetchResponse(ProtocolBuffer.ProtocolMessage):
     11: ProtocolBuffer.Encoder.NUMERIC,
     12: ProtocolBuffer.Encoder.NUMERIC,
   }, 12, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""

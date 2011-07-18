@@ -15,11 +15,20 @@
 # limitations under the License.
 #
 
+
+
+
 """Models to be used when accessing app specific datastore usage statistics.
 
 These entities cannot be created by users, but are populated in the
 application's datastore by offline processes run by the Google App Engine team.
 """
+
+
+
+
+
+
 
 
 
@@ -35,11 +44,15 @@ class BaseStatistic(db.Model):
   total number of occurrences of the statistic in the datastore.  The
   'timestamp' is when the statistic instance was written to the datastore.
   """
+
   STORED_KIND_NAME = '__BaseStatistic__'
+
 
   bytes = db.IntegerProperty()
 
+
   count = db.IntegerProperty()
+
 
   timestamp = db.DateTimeProperty()
 
@@ -55,7 +68,9 @@ class BaseKindStatistic(BaseStatistic):
   The 'kind_name' attribute represents the name of the kind associated with the
   statistic instance.
   """
+
   STORED_KIND_NAME = '__BaseKindStatistic__'
+
 
   kind_name = db.StringProperty()
 
@@ -107,6 +122,7 @@ class PropertyTypeStat(BaseStatistic):
   """
   STORED_KIND_NAME = '__Stat_PropertyType__'
 
+
   property_type = db.StringProperty()
 
 
@@ -117,6 +133,7 @@ class KindPropertyTypeStat(BaseKindStatistic):
   (kind, property_type) tuple in the application's datastore.
   """
   STORED_KIND_NAME = '__Stat_PropertyType_Kind__'
+
 
   property_type = db.StringProperty()
 
@@ -129,6 +146,7 @@ class KindPropertyNameStat(BaseKindStatistic):
   """
   STORED_KIND_NAME = '__Stat_PropertyName_Kind__'
 
+
   property_name = db.StringProperty()
 
 
@@ -140,6 +158,8 @@ class KindPropertyNamePropertyTypeStat(BaseKindStatistic):
   """
   STORED_KIND_NAME = '__Stat_PropertyType_PropertyName_Kind__'
 
+
   property_type = db.StringProperty()
+
 
   property_name = db.StringProperty()

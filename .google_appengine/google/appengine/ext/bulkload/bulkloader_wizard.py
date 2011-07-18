@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Wizard to generate bulkloader configuration.
 
 Helper functions to call from the bulkloader.yaml.
@@ -86,23 +90,29 @@ class StatPostTransform(object):
     property_type = dictionary['property_type']
 
     if kind_name.startswith('__'):
+
       return None
     if property_type == 'NULL':
+
       return None
 
     property_key = kind_name, property_name
     if kind_name != self.last_seen:
+
       self.last_seen = kind_name
       separator = KIND_PREAMBLE % dictionary
     elif property_key in self.seen_properties:
+
       separator = PROPERTY_DUPE_WARNING % dictionary
     else:
+
       separator = ''
     self.seen_properties[property_key] = (
         self.seen_properties.get(property_key, 0) + 1)
 
     dictionary['separator'] = separator
     return dictionary
+
 
 
 TYPE_TO_TRANSFORM_MAP = {
@@ -143,6 +153,7 @@ def DatastoreTypeToTransforms(property_type):
     may be '' (no transform needed), or one or two lines with import_transform
     or export_transform.
   """
+
   import_transform, export_transform = TYPE_TO_TRANSFORM_MAP.get(property_type,
                                                                  (None, None))
   transform = []

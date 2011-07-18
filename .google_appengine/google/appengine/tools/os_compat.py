@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
+
 """OS cross-platform compatibility tweaks.
 
 This module will, on import, change some parts of the running evironment so
@@ -25,6 +28,11 @@ always import this module first.
 """
 
 
+
+
+
+
+
 import os
 os.environ['TZ'] = 'UTC'
 import time
@@ -34,6 +42,10 @@ if hasattr(time, 'tzset'):
 import __builtin__
 
 
+
+
+
+
 if 'WindowsError' in __builtin__.__dict__:
   WindowsError = WindowsError
 else:
@@ -41,6 +53,9 @@ else:
     """A fake Windows Error exception which should never be thrown."""
 
 
+
+
 ERROR_PATH_NOT_FOUND = 3
 ERROR_ACCESS_DENIED = 5
 ERROR_ALREADY_EXISTS = 183
+WSAECONNABORTED = 10053

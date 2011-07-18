@@ -15,12 +15,20 @@
 # limitations under the License.
 #
 
+
+
+
 """Stub version of the capability service API, everything is always enabled."""
+
+
+
+
 
 
 
 from google.appengine.api import apiproxy_stub
 from google.appengine.api import capabilities
+
 
 IsEnabledRequest = capabilities.IsEnabledRequest
 IsEnabledResponse = capabilities.IsEnabledResponse

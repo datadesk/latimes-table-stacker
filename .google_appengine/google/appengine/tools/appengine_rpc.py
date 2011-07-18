@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Tool for performing authenticated RPCs against App Engine."""
 
 
@@ -89,6 +92,7 @@ class ClientLoginError(urllib2.HTTPError):
     urllib2.HTTPError.__init__(self, url, code, msg, headers, None)
     self.args = args
     self.reason = args["Error"]
+    self.info = args.get("Info")
 
   def read(self):
     return '%d %s: %s' % (self.code, self.msg, self.reason)
@@ -136,6 +140,7 @@ class AbstractRpcServer(object):
     self.debug_data = debug_data
     self.rpc_tries = rpc_tries
 
+
     self.account_type = account_type
 
     self.extra_headers = {}
@@ -145,12 +150,14 @@ class AbstractRpcServer(object):
       self.extra_headers.update(extra_headers)
 
     self.save_cookies = save_cookies
+
     self.cookie_jar = cookielib.MozillaCookieJar()
     self.opener = self._GetOpener()
     if self.host_override:
       logger.info("Server: %s; Host: %s", self.host, self.host_override)
     else:
       logger.info("Server: %s", self.host)
+
 
     if ((self.host_override and self.host_override == "localhost") or
         self.host == "localhost" or self.host.startswith("localhost:")):
@@ -189,9 +196,11 @@ class AbstractRpcServer(object):
     """
     account_type = self.account_type
     if not account_type:
+
       if (self.host.split(':')[0].endswith(".google.com")
           or (self.host_override
               and self.host_override.split(':')[0].endswith(".google.com"))):
+
         account_type = "HOSTED_OR_GOOGLE"
       else:
         account_type = "GOOGLE"
@@ -211,6 +220,9 @@ class AbstractRpcServer(object):
       response_body = response.read()
       response_dict = dict(x.split("=")
                            for x in response_body.split("\n") if x)
+      if os.getenv("APPENGINE_RPC_USE_SID", "0") == "1":
+        self.extra_headers["Cookie"] = (
+            'SID=%s; Path=/;' % response_dict["SID"])
       return response_dict["Auth"]
     except urllib2.HTTPError, e:
       if e.code == 403:
@@ -230,6 +242,7 @@ class AbstractRpcServer(object):
     Raises:
       HTTPError: If there was an error fetching the authentication cookies.
     """
+
     continue_location = "http://localhost/"
     args = {"continue": continue_location, "auth": auth_token}
     login_path = os.environ.get("APPCFG_LOGIN_PATH", "/_ah")
@@ -265,9 +278,17 @@ class AbstractRpcServer(object):
       credentials = self.auth_function()
       try:
         auth_token = self._GetAuthToken(credentials[0], credentials[1])
+        if os.getenv("APPENGINE_RPC_USE_SID", "0") == "1":
+          return
       except ClientLoginError, e:
         if e.reason == "BadAuthentication":
-          print >>sys.stderr, "Invalid username or password."
+          if e.info == "InvalidSecondFactor":
+            print >>sys.stderr, ("Use an application-specific password instead "
+                                 "of your regular account password.")
+            print >>sys.stderr, ("See http://www.google.com/"
+                                 "support/accounts/bin/answer.py?answer=185833")
+          else:
+            print >>sys.stderr, "Invalid username or password."
           continue
         if e.reason == "CaptchaRequired":
           print >>sys.stderr, (
@@ -333,6 +354,9 @@ class AbstractRpcServer(object):
           url += "?" + urllib.urlencode(kwargs)
         req = self._CreateRequest(url=url, data=payload)
         req.add_header("Content-Type", content_type)
+
+
+
         req.add_header("X-appcfg-api-version", "1")
         try:
           logger.debug('Sending %s request:\n%s',
@@ -347,13 +371,17 @@ class AbstractRpcServer(object):
           if tries > self.rpc_tries:
             raise
           elif e.code == 401:
+
             if auth_tried:
               raise
             auth_tried = True
             self._Authenticate()
           elif e.code >= 500 and e.code < 600:
+
             continue
           elif e.code == 302:
+
+
             if auth_tried:
               raise
             auth_tried = True
@@ -398,6 +426,8 @@ class HttpRpcServer(AbstractRpcServer):
   def _Authenticate(self):
     """Save the cookie jar after authentication."""
     if self.cert_file_available and not fancy_urllib.can_validate_certs():
+
+
       logger.warn("""ssl module not found.
 Without the ssl module, the identity of the remote host cannot be verified, and
 connections may NOT be secure. To fix this, please install the ssl module from
@@ -434,14 +464,18 @@ To learn more, see http://code.google.com/appengine/kb/general.html#rpcssl .""")
           logger.info("Loaded authentication cookies from %s",
                       self.cookie_jar.filename)
         except (OSError, IOError, cookielib.LoadError), e:
+
           logger.debug("Could not load authentication cookies; %s: %s",
                        e.__class__.__name__, e)
           self.cookie_jar.filename = None
       else:
+
+
         try:
           fd = os.open(self.cookie_jar.filename, os.O_CREAT, 0600)
           os.close(fd)
         except (OSError, IOError), e:
+
           logger.debug("Could not create authentication cookies file; %s: %s",
                        e.__class__.__name__, e)
           self.cookie_jar.filename = None

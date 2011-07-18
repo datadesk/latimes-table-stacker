@@ -15,7 +15,17 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Bulkloader interfaces for the format reader/writers."""
+
+
+
+
+
+
 
 
 
@@ -40,8 +50,9 @@ class ConnectorInterface(object):
   passed in from the bulkloader command line.
   """
 
+
   def generate_import_record(self, filename, bulkload_state):
-    """A function which returns an interator over dictionaries.
+    """A function which returns an iterator over dictionaries.
 
     This is the only method used on import.
 
@@ -55,7 +66,9 @@ class ConnectorInterface(object):
       An iterator describing an individual record. Typically a dictionary,
       to be used with dict_to_model. Typically implemented as a generator.
     """
+
     raise NotImplementedError
+
 
   def initialize_export(self, filename, bulkload_state):
     """Initialize the output file.

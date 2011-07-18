@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+
+
+
+
 """An Encoder class for Protocol Buffers that preserves sorting characteristics.
 
 This is used by datastore_sqlite_stub in order to index entities in a fashion
@@ -42,6 +46,12 @@ Warning:
 
 
 
+
+
+
+
+
+
 import array
 import struct
 
@@ -50,7 +60,11 @@ from google.net.proto import ProtocolBuffer
 
 _MAX_UNSIGNED_BYTE = 255
 
+
 _MAX_LONG_BYTES = 8
+
+
+
 
 _MAX_INLINE = (_MAX_UNSIGNED_BYTE - (2 * _MAX_LONG_BYTES)) / 2
 _MIN_INLINE = -_MAX_INLINE
@@ -145,11 +159,14 @@ class Encoder(ProtocolBuffer.Encoder):
     encoded = array.array('B')
     encoded.fromstring(struct.pack('>f', value))
     if value < 0:
+
+
       encoded[0] ^= 0xFF
       encoded[1] ^= 0xFF
       encoded[2] ^= 0xFF
       encoded[3] ^= 0xFF
     else:
+
       encoded[0] ^= 0x80
     self.buf.extend(encoded)
 
@@ -157,6 +174,8 @@ class Encoder(ProtocolBuffer.Encoder):
     encoded = array.array('B')
     encoded.fromstring(struct.pack('>d', value))
     if value < 0:
+
+
       encoded[0] ^= 0xFF
       encoded[1] ^= 0xFF
       encoded[2] ^= 0xFF
@@ -166,10 +185,13 @@ class Encoder(ProtocolBuffer.Encoder):
       encoded[6] ^= 0xFF
       encoded[7] ^= 0xFF
     else:
+
       encoded[0] ^= 0x80
     self.buf.extend(encoded)
 
   def putPrefixedString(self, value):
+
+
     self.buf.fromstring(value.replace('\1', '\1\2').replace('\0', '\1\1') + '\0')
 
 
@@ -256,8 +278,10 @@ class Decoder(ProtocolBuffer.Decoder):
     a = self.buf[self.idx:self.idx+4]
     self.idx += 4
     if a[0] & 0x80:
+
       a[0] ^= 0x80
     else:
+
       a = [x ^ 0xFF for x in a]
     return struct.unpack('>f', array.array('B', a).tostring())[0]
 
@@ -267,8 +291,10 @@ class Decoder(ProtocolBuffer.Decoder):
     a = self.buf[self.idx:self.idx+8]
     self.idx += 8
     if a[0] & 0x80:
+
       a[0] ^= 0x80
     else:
+
       a = [x ^ 0xFF for x in a]
     return struct.unpack('>d', array.array('B', a).tostring())[0]
 

@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Helper CGI for POST uploads.
 
 Utility library contains the main logic behind simulating the blobstore
@@ -29,13 +32,14 @@ Contents:
 import base64
 import cStringIO
 import datetime
-import md5
 import random
 import time
+import hashlib
 
 from google.appengine.api import datastore
 from google.appengine.api import datastore_errors
 from google.appengine.api.blobstore import blobstore
+
 
 
 try:
@@ -46,6 +50,9 @@ except ImportError:
   from email import Generator as generator
   from email import MIMEBase as base
   from email import MIMEMultipart as multipart
+
+
+
 
 STRIPPED_HEADERS = frozenset(('content-length',
                               'content-md5',
@@ -84,7 +91,7 @@ def GenerateBlobKey(time_func=time.time, random_func=random.random):
   tries = 0
   while tries < 10:
     number = str(random_func())
-    digester = md5.md5()
+    digester = hashlib.md5()
     digester.update(timestamp)
     digester.update(number)
     blob_key = base64.urlsafe_b64encode(digester.digest())
@@ -227,6 +234,8 @@ class UploadCGIHandler(object):
       Yields:
         cgi.FieldStorage irrespective of their nesting level.
       """
+
+
       for key in sorted(form):
         form_item = form[key]
         if isinstance(form_item, list):
@@ -238,18 +247,30 @@ class UploadCGIHandler(object):
     creation = self.__now_func()
     for form_item in IterateForm():
 
+
+
+
+
+
+
+
       disposition_parameters = {'name': form_item.name}
 
       if form_item.filename is None:
+
         variable = base.MIMEBase('text', 'plain')
         variable.set_payload(form_item.value)
       else:
+
+
+
         if not form_item.filename:
           continue
 
         disposition_parameters['filename'] = form_item.filename
 
         main_type, sub_type = _SplitMIMEType(form_item.type)
+
 
         blob_entity = self.StoreBlob(form_item, creation)
 
@@ -258,9 +279,11 @@ class UploadCGIHandler(object):
                                  access_type=blobstore.BLOB_KEY_HEADER,
                                  blob_key=blob_entity.key().name())
 
+
         form_item.file.seek(0, 2)
         content_length = form_item.file.tell()
         form_item.file.seek(0)
+
 
         external = base.MIMEBase(main_type,
                                  sub_type,
@@ -272,13 +295,17 @@ class UploadCGIHandler(object):
         for key, value in headers.iteritems():
           external.add_header(key, value)
 
+
         external_disposition_parameters = dict(disposition_parameters)
+
+
         external_disposition_parameters['filename'] = form_item.filename
         if not external.get('Content-Disposition'):
           external.add_header('Content-Disposition',
                               'form-data',
                               **external_disposition_parameters)
         variable.set_payload([external])
+
 
       variable.add_header('Content-Disposition',
                           'form-data',

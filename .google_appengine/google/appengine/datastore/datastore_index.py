@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Primitives for dealing with datastore indexes.
 
 Example index.yaml file:
@@ -49,6 +52,10 @@ indexes:
 
 
 
+
+
+
+
 from google.appengine.api import datastore_types
 from google.appengine.api import validation
 from google.appengine.api import yaml_errors
@@ -67,7 +74,7 @@ class Property(validation.Validated):
   """
 
   ATTRIBUTES = {
-      'name': validation.TYPE_STR,
+      'name': validation.Type(str, convert=False),
       'direction': validation.Options(('asc', ('ascending',)),
                                       ('desc', ('descending',)),
                                       default='asc'),
@@ -86,8 +93,8 @@ class Index(validation.Validated):
   """
 
   ATTRIBUTES = {
-      'kind': validation.TYPE_STR,
-      'ancestor': validation.Type(bool, default=False),
+      'kind': validation.Type(str, convert=False),
+      'ancestor': validation.Type(bool, convert=False, default=False),
       'properties': validation.Optional(validation.Repeated(Property)),
       }
 
@@ -180,8 +187,11 @@ def IndexToKey(index):
 
 
 
+
+
 ASCENDING = datastore_pb.Query_Order.ASCENDING
 DESCENDING = datastore_pb.Query_Order.DESCENDING
+
 
 EQUALITY_OPERATORS = set((datastore_pb.Query_Filter.EQUAL,
                           ))
@@ -192,6 +202,7 @@ INEQUALITY_OPERATORS = set((datastore_pb.Query_Filter.LESS_THAN,
                             ))
 EXISTS_OPERATORS = set((datastore_pb.Query_Filter.EXISTS,
                         ))
+
 
 _DIRECTION_MAP = {
     'asc':        entity_pb.Index_Property.ASCENDING,
@@ -210,8 +221,10 @@ def Normalize(filters, orders):
     (filter, orders) the reduced set of filters and orders
   """
 
+
   eq_properties = set()
   inequality_properties = set()
+
 
   for f in filters:
     if f.op() == datastore_pb.Query_Filter.IN and f.property_size() == 1:
@@ -223,6 +236,7 @@ def Normalize(filters, orders):
 
   eq_properties -= inequality_properties
 
+
   remove_set = eq_properties.copy()
   new_orders = []
   for o in orders:
@@ -232,8 +246,12 @@ def Normalize(filters, orders):
   orders = new_orders
 
 
+
+
   if datastore_types._KEY_SPECIAL_PROPERTY in eq_properties:
     orders = []
+
+
 
   new_orders = []
   for o in orders:
@@ -256,12 +274,18 @@ def RemoveNativelySupportedComponents(filters, orders):
   """
   (filters, orders) = Normalize(filters, orders)
 
+
   has_key_desc_order = False
   if orders and orders[-1].property() == datastore_types._KEY_SPECIAL_PROPERTY:
     if orders[-1].direction() == ASCENDING:
       orders = orders[:-1]
     else:
       has_key_desc_order = True
+
+
+
+
+
 
   if not has_key_desc_order:
     for f in filters:
@@ -350,10 +374,13 @@ def CompositeIndexForQuery(query):
   """
   required = True
 
+
   kind = query.kind()
   ancestor = query.has_ancestor()
   filters = query.filter_list()
   orders = query.order_list()
+
+
 
   for filter in filters:
     assert filter.op() != datastore_pb.Query_Filter.IN, 'Filter.op()==IN'
@@ -361,9 +388,12 @@ def CompositeIndexForQuery(query):
     assert nprops == 1, 'Filter has %s properties, expected 1' % nprops
 
   if not kind:
+
+
     required = False
 
   (filters, orders) = RemoveNativelySupportedComponents(filters, orders)
+
 
   eq_filters = [f for f in filters if f.op() in EQUALITY_OPERATORS]
   ineq_filters = [f for f in filters if f.op() in INEQUALITY_OPERATORS]
@@ -373,9 +403,14 @@ def CompositeIndexForQuery(query):
 
   if (kind and not ineq_filters and not exists_filters and
       not orders):
+
+
+
     names = set(f.property(0).name() for f in eq_filters)
     if not names.intersection(datastore_types._SPECIAL_PROPERTIES):
       required = False
+
+
 
   ineq_property = None
   if ineq_filters:
@@ -388,22 +423,33 @@ def CompositeIndexForQuery(query):
       else:
         assert filter.property(0).name() == ineq_property
 
+
   props = []
 
+
+  seen = set()
   for f in eq_filters:
     prop = f.property(0)
-    props.append((prop.name(), ASCENDING))
+    if prop.name() not in seen:
+      seen.add(prop.name())
+      props.append((prop.name(), ASCENDING))
+
 
   props.sort()
 
+
   if ineq_property:
     if orders:
+
+
       assert ineq_property == orders[0].property()
     else:
       props.append((ineq_property, ASCENDING))
 
+
   for order in orders:
     props.append((order.property(), order.direction()))
+
 
   for filter in exists_filters:
     prop = filter.property(0)
@@ -412,15 +458,21 @@ def CompositeIndexForQuery(query):
       if name == prop_name:
         break
     else:
+
       props.append((prop_name, ASCENDING))
 
   if kind and not ancestor and len(props) <= 1:
+
+
     required = False
+
+
 
     if props:
       prop, dir = props[0]
       if prop in datastore_types._SPECIAL_PROPERTIES and dir is DESCENDING:
         required = True
+
 
   return (required, kind, ancestor, tuple(props), len(eq_filters))
 

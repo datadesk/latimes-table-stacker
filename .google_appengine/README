@@ -73,6 +73,17 @@ Options:
                              (Default '').
   --smtp_password=PASSWORD   Password for SMTP server.
                              (Default '')
+  --rdbms_sqlite_path=PATH   Path to the sqlite3 file for the RDBMS API.
+  --mysql_host=HOSTNAME      MySQL database host that the rdbms API will use.
+                             (Default '%(mysql_host)s')
+  --mysql_port=PORT          MySQL port to connect to.
+                             (Default %(mysql_port)s)
+  --mysql_user=USER          MySQL user to connect as.
+                             (Default %(mysql_user)s)
+  --mysql_password=PASSWORD  MySQL password to use.
+                             (Default '%(mysql_password)s')
+  --mysql_socket=PATH        MySQL Unix socket file path.
+                             (Default '%(mysql_socket)s')
   --enable_sendmail          Enable sendmail when SMTP not configured.
                              (Default false)
   --show_mail_body           Log the body of emails in mail stub.
@@ -92,7 +103,11 @@ Options:
   --task_retry_seconds       How long to wait in seconds before retrying a
                              task after it fails during execution.
                              (Default '30')
-
+  --backends                 Run the dev_appserver with backends support
+                             (multiproces mode).
+  --multiprocess_min_port    Specifies the lowest port value to use when
+                             choosing ports in multiprocess mode.  If set to 0,
+                             select random ports.  (Default: 9000)
 
 
 USING THE SDK

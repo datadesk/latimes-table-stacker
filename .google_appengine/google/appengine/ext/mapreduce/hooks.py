@@ -15,6 +15,21 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """API allowing control over some mapreduce implementation details."""
 
 
@@ -27,6 +42,15 @@ class Hooks(object):
   control.start_map accepts an optional "hooks" argument that can be passed a
   subclass of this class.
   """
+
+  def __init__(self, mapreduce_spec):
+    """Initializes a Hooks class.
+
+    Args:
+      mapreduce_spec: The mapreduce.model.MapreduceSpec for the current
+        mapreduce.
+    """
+    self.mapreduce_spec = mapreduce_spec
 
   def enqueue_worker_task(self, task, queue_name):
     """Enqueues a worker task that is used to run the mapper.

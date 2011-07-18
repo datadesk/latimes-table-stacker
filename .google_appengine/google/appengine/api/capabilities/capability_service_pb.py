@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+
+
 from google.net.proto import ProtocolBuffer
 import array
 import dummy_thread as thread
@@ -112,6 +114,17 @@ class IsEnabledRequest(ProtocolBuffer.ProtocolMessage):
     for i in xrange(len(self.call_)): n += self.lengthString(len(self.call_[i]))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_package_):
+      n += 1
+      n += self.lengthString(len(self.package_))
+    n += 1 * len(self.capability_)
+    for i in xrange(len(self.capability_)): n += self.lengthString(len(self.capability_[i]))
+    n += 1 * len(self.call_)
+    for i in xrange(len(self.call_)): n += self.lengthString(len(self.call_[i]))
+    return n
+
   def Clear(self):
     self.clear_package()
     self.clear_capability()
@@ -120,6 +133,17 @@ class IsEnabledRequest(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(10)
     out.putPrefixedString(self.package_)
+    for i in xrange(len(self.capability_)):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.capability_[i])
+    for i in xrange(len(self.call_)):
+      out.putVarInt32(26)
+      out.putPrefixedString(self.call_[i])
+
+  def OutputPartial(self, out):
+    if (self.has_package_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.package_)
     for i in xrange(len(self.capability_)):
       out.putVarInt32(18)
       out.putPrefixedString(self.capability_[i])
@@ -139,6 +163,8 @@ class IsEnabledRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 26:
         self.add_call(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -182,9 +208,11 @@ class IsEnabledRequest(ProtocolBuffer.ProtocolMessage):
     3: ProtocolBuffer.Encoder.STRING,
   }, 3, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class IsEnabledResponse(ProtocolBuffer.ProtocolMessage):
+
 
   ENABLED      =    1
   SCHEDULED_FUTURE =    2
@@ -290,6 +318,16 @@ class IsEnabledResponse(ProtocolBuffer.ProtocolMessage):
     for i in xrange(len(self.config_)): n += self.lengthString(self.config_[i].ByteSize())
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_summary_status_):
+      n += 1
+      n += self.lengthVarInt64(self.summary_status_)
+    if (self.has_time_until_scheduled_): n += 1 + self.lengthVarInt64(self.time_until_scheduled_)
+    n += 1 * len(self.config_)
+    for i in xrange(len(self.config_)): n += self.lengthString(self.config_[i].ByteSizePartial())
+    return n
+
   def Clear(self):
     self.clear_summary_status()
     self.clear_time_until_scheduled()
@@ -306,6 +344,18 @@ class IsEnabledResponse(ProtocolBuffer.ProtocolMessage):
       out.putVarInt32(self.config_[i].ByteSize())
       self.config_[i].OutputUnchecked(out)
 
+  def OutputPartial(self, out):
+    if (self.has_summary_status_):
+      out.putVarInt32(8)
+      out.putVarInt32(self.summary_status_)
+    if (self.has_time_until_scheduled_):
+      out.putVarInt32(16)
+      out.putVarInt64(self.time_until_scheduled_)
+    for i in xrange(len(self.config_)):
+      out.putVarInt32(26)
+      out.putVarInt32(self.config_[i].ByteSizePartial())
+      self.config_[i].OutputPartial(out)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
@@ -321,6 +371,8 @@ class IsEnabledResponse(ProtocolBuffer.ProtocolMessage):
         d.skip(length)
         self.add_config().TryMerge(tmp)
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -360,6 +412,7 @@ class IsEnabledResponse(ProtocolBuffer.ProtocolMessage):
     2: ProtocolBuffer.Encoder.NUMERIC,
     3: ProtocolBuffer.Encoder.STRING,
   }, 3, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""

@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
+
+
 """Copyright 2008 Python Software Foundation, Ian Bicking, and Google."""
 
 import mimetools
@@ -135,6 +139,9 @@ class HTTPConnection:
   _follow_redirects = False
 
   def __init__(self, host, port=None, strict=False, timeout=None):
+
+
+
     from google.appengine.api import urlfetch
     self._fetch = urlfetch.fetch
     self._method_map = {
@@ -144,8 +151,10 @@ class HTTPConnection:
       'PUT': urlfetch.PUT,
       'DELETE': urlfetch.DELETE,
     }
+
     self.host = host
     self.port = port
+
     self._method = self._url = None
     self._body = ''
     self.headers = []
@@ -167,6 +176,7 @@ class HTTPConnection:
     self.headers = headers
 
   def putrequest(self, request, selector, skip_host=False, skip_accept_encoding=False):
+
     self._method = request
     self._url = selector
 
@@ -214,6 +224,7 @@ class HTTPSConnection(HTTPConnection):
 
     def __init__(self, host, port=None, key_file=None, cert_file=None,
                  strict=False, timeout=None):
+
         if key_file is not None or cert_file is not None:
             raise NotImplementedError(
                 "key_file and cert_file arguments are not implemented")
@@ -254,6 +265,7 @@ class HTTPResponse(object):
     return responses.get(self._fetch_response.status_code, 'Unknown')
 
 
+
 class HTTP:
   "Compatibility class with httplib.py from 1.5."
 
@@ -267,13 +279,18 @@ class HTTP:
   def __init__(self, host='', port=None, strict=None):
     "Provide a default host, since the superclass requires one."
 
+
     if port == 0:
       port = None
+
+
+
 
     self._setup(self._connection_class(host, port, strict))
 
   def _setup(self, conn):
     self._conn = conn
+
 
     self.send = conn.send
     self.putrequest = conn.putrequest
@@ -314,7 +331,13 @@ class HTTP:
   def close(self):
     self._conn.close()
 
+
+
+
+
+
     self.file = None
+
 
 
 class HTTPS(HTTP):
@@ -334,10 +357,14 @@ class HTTPS(HTTP):
           "key_file and cert_file arguments are not implemented")
 
 
+
+
     if port == 0:
       port = None
     self._setup(self._connection_class(host, port, key_file,
                                        cert_file, strict))
+
+
 
     self.key_file = key_file
     self.cert_file = cert_file

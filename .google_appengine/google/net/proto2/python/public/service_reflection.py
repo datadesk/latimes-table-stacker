@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Contains metaclasses used to create protocol service and service stub
 classes from ServiceDescriptor objects at runtime.
 
@@ -58,6 +61,8 @@ class GeneratedServiceType(type):
         dictionary[_DESCRIPTOR_KEY] must contain a ServiceDescriptor object
         describing this protocol service type.
     """
+
+
     if GeneratedServiceType._DESCRIPTOR_KEY not in dictionary:
       return
     descriptor = dictionary[GeneratedServiceType._DESCRIPTOR_KEY]
@@ -86,6 +91,8 @@ class GeneratedServiceStubType(GeneratedServiceType):
         describing this protocol service type.
     """
     super(GeneratedServiceStubType, cls).__init__(name, bases, dictionary)
+
+
     if GeneratedServiceStubType._DESCRIPTOR_KEY not in dictionary:
       return
     descriptor = dictionary[GeneratedServiceStubType._DESCRIPTOR_KEY]
@@ -118,6 +125,9 @@ class _ServiceBuilder(object):
     Args:
       cls: The class that will be constructed.
     """
+
+
+
 
     def _WrapCallMethod(srvc, method_descriptor,
                         rpc_controller, request, callback):

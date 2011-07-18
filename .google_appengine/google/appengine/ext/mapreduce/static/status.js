@@ -47,7 +47,7 @@ function getResponseDataJson(error, data) {
     error = 'Could not parse response JSON data.';
   }
   if (error) {
-    setButter('Error -- ' + error, true);
+    setButter(error, true);
     return null;
   }
   return response;
@@ -314,8 +314,10 @@ function initJobOverview(jobs, cursor) {
 
 //////// Launching jobs.
 
+// TODO(aizatsky): new job parameters shouldn't be hidden by default.
 var FIXED_JOB_PARAMS = [
-    'name', 'mapper_input_reader', 'mapper_handler', 'mapper_params_validator'
+    'name', 'mapper_input_reader', 'mapper_handler', 'mapper_params_validator',
+    'mapper_output_writer'
 ];
 
 var EDITABLE_JOB_PARAMS = ['shard_count', 'processing_rate', 'queue_name'];
@@ -493,7 +495,7 @@ function refreshJobDetail(jobId, detail) {
 
     $('<li>')
       .append($('<span class="param-key">').text(getNiceParamKey(key)))
-      .append($('<span class="param-value">').text(value))
+      .append($('<span class="param-value">').text("" + value))
       .appendTo(jobParams);
   });
 
@@ -504,7 +506,7 @@ function refreshJobDetail(jobId, detail) {
       var value = detail.mapper_spec.mapper_params[key];
       $('<li>')
         .append($('<span class="user-param-key"">').text(key))
-        .append($('<span class="param-value">').html(value))
+        .append($('<span class="param-value">').html("" + value))
         .appendTo(jobParams);
     });
   }

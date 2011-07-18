@@ -15,11 +15,18 @@
 # limitations under the License.
 #
 
+
+
+
 """XMPP webapp handler classes.
 
 This module provides handler classes for XMPP bots, including both basic
 messaging functionality and a command handler for commands such as "/foo bar"
 """
+
+
+
+
 
 
 

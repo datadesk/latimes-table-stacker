@@ -15,6 +15,21 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """Mapreduce execution context.
 
 Mapreduce context provides handler code with information about
@@ -30,17 +45,25 @@ __all__ = ["MAX_ENTITY_COUNT", "MAX_POOL_SIZE", "Context", "MutationPool",
 from google.appengine.api import datastore
 from google.appengine.ext import db
 
+
+
+
+
 MAX_POOL_SIZE = 900 * 1000
+
 
 MAX_ENTITY_COUNT = 500
 
+
 DATASTORE_DEADLINE = 15
+
 
 COUNTER_MAPPER_CALLS = "mapper_calls"
 
 
 def _normalize_entity(value):
   """Return an entity from an entity or model instance."""
+
   if getattr(value, "_populate_internal_entity", None):
     return value._populate_internal_entity()
   return value
@@ -92,7 +115,9 @@ class ItemList(object):
     return self.items
 
 
+
 EntityList = ItemList
+
 
 
 class MutationPool(object):
@@ -138,12 +163,14 @@ class MutationPool(object):
     Args:
       entity: an entity, model instance, or key to delete.
     """
+
     key = _normalize_key(entity)
     key_size = len(key._ToPb().Encode())
     if (self.deletes.length >= self.max_entity_count or
         (self.deletes.size + key_size) > self.max_pool_size):
       self.__flush_deletes()
     self.deletes.append(key, key_size)
+
 
   def flush(self):
     """Flush(apply) all changed to datastore."""
@@ -169,6 +196,8 @@ class MutationPool(object):
       A UserRPC instance.
     """
     return datastore.CreateRPC(deadline=DATASTORE_DEADLINE)
+
+
 
 
 class Counters(object):
@@ -206,6 +235,7 @@ class Context(object):
     counters: counters object as Counters.
   """
 
+
   _context_instance = None
 
   def __init__(self, mapreduce_spec, shard_state, task_retry_count=0):
@@ -222,10 +252,12 @@ class Context(object):
     if self.mapreduce_spec:
       self.mapreduce_id = self.mapreduce_spec.mapreduce_id
     else:
+
       self.mapreduce_id = None
     if self.shard_state:
       self.shard_id = self.shard_state.get_shard_id()
     else:
+
       self.shard_id = None
 
     self.mutation_pool = MutationPool(
@@ -241,8 +273,10 @@ class Context(object):
     """Flush all information recorded in context."""
     for pool in self._pools.values():
       pool.flush()
-    if self.shard_state:
-      self.shard_state.put()
+
+
+
+
 
 
 

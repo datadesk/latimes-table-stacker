@@ -44,6 +44,7 @@ class MainPage(webapp.RequestHandler):
       self.response.out.write('<blockquote>%s</blockquote>' %
                               cgi.escape(greeting.content))
 
+
     self.response.out.write("""
           <form action="/sign" method="post">
             <div><textarea name="content" rows="3" cols="60"></textarea></div>

@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """A logging handler that records information about unique exceptions.
 
 'Unique' in this case is defined as a given (exception class, location) tuple.
@@ -71,6 +74,10 @@ this to your index.yaml:
 
 
 
+
+
+
+
 import datetime
 import logging
 import os
@@ -81,6 +88,7 @@ import urllib
 from google.appengine.api import memcache
 from google.appengine.ext import db
 from google.appengine.ext import webapp
+
 
 
 MAX_SIGNATURE_LENGTH = 256
@@ -94,6 +102,7 @@ class ExceptionRecord(db.Model):
   minor_version = db.IntegerProperty(required=True)
   date = db.DateProperty(required=True)
   count = db.IntegerProperty(required=True, default=0)
+
 
   stacktrace = db.TextProperty(required=True)
   http_method = db.TextProperty(required=True)
@@ -211,12 +220,15 @@ class ExceptionRecordingHandler(logging.Handler):
     """
     try:
       if not record.exc_info:
+
         return
 
       signature = self.__GetSignature(record.exc_info)
 
+
       if not memcache.add(signature, None, self.log_interval):
         return
+
 
       db.run_in_transaction_custom_retries(1, self.__EmitTx, signature,
                                            record.exc_info)

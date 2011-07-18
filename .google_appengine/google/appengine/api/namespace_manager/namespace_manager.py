@@ -15,12 +15,19 @@
 # limitations under the License.
 #
 
+
+
+
 """Control the namespacing system used by various APIs.
 
 A namespace may be specified in various API calls exemplified
 by the datastore and memcache interfaces.  The default can be
 specified using this module.
 """
+
+
+
+
 
 
 
@@ -39,8 +46,15 @@ __all__ = ['BadValueError',
           ]
 
 
+
+
 _ENV_DEFAULT_NAMESPACE = 'HTTP_X_APPENGINE_DEFAULT_NAMESPACE'
 _ENV_CURRENT_NAMESPACE = 'HTTP_X_APPENGINE_CURRENT_NAMESPACE'
+
+
+
+
+
 
 _NAMESPACE_MAX_LENGTH = 100
 _NAMESPACE_PATTERN = r'^[0-9A-Za-z._-]{0,%s}$' % _NAMESPACE_MAX_LENGTH
@@ -118,4 +132,5 @@ def validate_namespace(value, exception=BadValueError):
     raise exception('value should be a string; received %r (a %s):' %
                     (value, type(value)))
   if not _NAMESPACE_RE.match(value):
-    raise exception('value does not match pattern "%s"' % _NAMESPACE_PATTERN)
+    raise exception('value "%s" does not match regex "%s"' %
+                    (value, _NAMESPACE_PATTERN))

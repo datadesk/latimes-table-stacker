@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Higher-level, semantic data types for the datastore. These types
 are expected to be set as attributes of Entities.  See "Supported Data Types"
 in the API Guide.
@@ -30,6 +34,10 @@ The namespace schemas are:
   http://www.w3.org/2005/Atom
   http://schemas.google.com/g/2005
 """
+
+
+
+
 
 
 
@@ -51,20 +59,59 @@ from google.appengine.api import namespace_manager
 from google.net.proto import ProtocolBuffer
 from google.appengine.datastore import entity_pb
 
+
+
+
+
+
 _MAX_STRING_LENGTH = 500
+
+
+
+
+
+
+
+
+
 
 _MAX_LINK_PROPERTY_LENGTH = 2083
 
+
+
+
+
+
+
 RESERVED_PROPERTY_NAME = re.compile('^__.*__$')
+
+
+
+
+
+
 
 _KEY_SPECIAL_PROPERTY = '__key__'
 _UNAPPLIED_LOG_TIMESTAMP_SPECIAL_PROPERTY = '__unapplied_log_timestamp_us__'
 _SPECIAL_PROPERTIES = frozenset(
     [_KEY_SPECIAL_PROPERTY, _UNAPPLIED_LOG_TIMESTAMP_SPECIAL_PROPERTY])
 
+
+
+
+
+
+
 _NAMESPACE_SEPARATOR = '!'
 
+
+
+
+
 _EMPTY_NAMESPACE_ID = 1
+
+
+
 
 class UtcTzinfo(datetime.tzinfo):
   def utcoffset(self, dt): return datetime.timedelta(0)
@@ -173,8 +220,8 @@ def ResolveNamespace(namespace):
     namespace: The namespace argument value to be validated.
 
   Returns:
-    The value of namespace, or the substituted default.
-    Always a non-empty string or None.
+    The value of namespace, or the substituted default. The empty string is used
+    to denote the empty namespace.
 
   Raises:
     BadArgumentError if the value is not a string.
@@ -285,14 +332,22 @@ class Key(object):
           'Key() expects a string; received %s (a %s).' %
           (repr_encoded, typename(encoded)))
       try:
+
         modulo = len(encoded) % 4
         if modulo != 0:
           encoded += ('=' * (4 - modulo))
+
+
+
+
+
+
 
         self._str = str(encoded)
         encoded_pb = base64.urlsafe_b64decode(self._str)
         self.__reference = entity_pb.Reference(encoded_pb)
         assert self.__reference.IsInitialized()
+
 
         self._str = self._str.rstrip('=')
 
@@ -300,11 +355,17 @@ class Key(object):
         raise datastore_errors.BadKeyError(
           'Invalid string key %s. Details: %s' % (encoded, e))
       except Exception, e:
+
+
+
+
+
         if e.__class__.__name__ == 'ProtocolBufferDecodeError':
           raise datastore_errors.BadKeyError('Invalid string key %s.' % encoded)
         else:
           raise
     else:
+
       self.__reference = entity_pb.Reference()
 
   def to_path(self, _default_id=None):
@@ -316,6 +377,10 @@ class Key(object):
     Raises:
       datastore_errors.BadKeyError if this key does not have a valid path.
     """
+
+
+
+
 
     path = []
     for path_element in self.__reference.path().element_list():
@@ -356,19 +421,26 @@ class Key(object):
       BadArgumentError for invalid arguments.
       BadKeyError if the parent key is incomplete.
     """
+
     parent = kwds.pop('parent', None)
+
     app_id = ResolveAppId(kwds.pop('_app', None))
 
+
+
     namespace = kwds.pop('namespace', None)
+
 
     if kwds:
       raise datastore_errors.BadArgumentError(
           'Excess keyword arguments ' + repr(kwds))
 
+
     if not args or len(args) % 2:
       raise datastore_errors.BadArgumentError(
           'A non-zero even number of positional arguments is required '
           '(kind, id or name, kind, id or name, ...); received %s' % repr(args))
+
 
     if parent is not None:
       if not isinstance(parent, Key):
@@ -386,7 +458,9 @@ class Key(object):
             'parent.app/namespace() (%s/%s)' %
             (app_id, namespace, parent.app(), parent.namespace()))
 
+
     namespace = ResolveNamespace(namespace)
+
 
     key = Key()
     ref = key.__reference
@@ -395,6 +469,8 @@ class Key(object):
     else:
       ref.set_app(app_id)
       SetNamespace(ref, namespace)
+
+
 
     path = ref.mutable_path()
     for i in xrange(0, len(args), 2):
@@ -417,6 +493,7 @@ class Key(object):
             'Expected an integer id or string name as argument %d; '
             'received %r (a %s).' % (i + 2, id_or_name, typename(id_or_name)))
 
+
     assert ref.IsInitialized()
     return key
 
@@ -433,6 +510,8 @@ class Key(object):
       return self.__reference.name_space().decode('utf-8')
     else:
       return ''
+
+
 
   def kind(self):
     """Returns this entity's kind, as a string."""
@@ -463,6 +542,7 @@ class Key(object):
     if self.id() is not None:
       return self.id()
     else:
+
       return self.name()
 
   def has_id_or_name(self):
@@ -561,6 +641,8 @@ class Key(object):
     if not self.has_id_or_name():
       pb.mutable_path().element_list()[-1].set_id(0)
 
+
+
     pb.app().decode('utf-8')
     for pathelem in pb.path().element_list():
       pathelem.type().decode('utf-8')
@@ -582,6 +664,9 @@ class Key(object):
     Returns:
       string
     """
+
+
+
     try:
       if self._str is not None:
         return self._str
@@ -661,6 +746,14 @@ class Key(object):
     args = self.to_path(_default_id=0)
     args.append(self.__reference.app())
     return hash(type(args)) ^ hash(tuple(args))
+
+
+
+
+
+
+
+
 
 
 class Category(unicode):
@@ -748,6 +841,7 @@ class GeoPt(object):
 
   def __init__(self, lat, lon=None):
     if lon is None:
+
       try:
         split = lat.split(',')
         lat, lon = split
@@ -766,6 +860,7 @@ class GeoPt(object):
         raise datastore_errors.BadValueError(
           'Longitude must be between -180 and 180; received %f' % lon)
     except (TypeError, ValueError):
+
       raise datastore_errors.BadValueError(
         'Expected floats for lat and long; received %s (a %s) and %s (a %s).' %
         (lat, typename(lat), lon, typename(lon)))
@@ -779,6 +874,7 @@ class GeoPt(object):
         other = GeoPt(other)
       except datastore_errors.BadValueError:
         return NotImplemented
+
 
     lat_cmp = cmp(self.lat, other.lat)
     if lat_cmp != 0:
@@ -848,6 +944,7 @@ class IM(object):
 
   def __init__(self, protocol, address=None):
     if address is None:
+
       try:
         split = protocol.split(' ', 1)
         protocol, address = split
@@ -858,6 +955,7 @@ class IM(object):
 
     ValidateString(address, 'address')
     if protocol not in self.PROTOCOLS:
+
       Link(protocol)
 
     self.address = address
@@ -869,6 +967,15 @@ class IM(object):
         other = IM(other)
       except datastore_errors.BadValueError:
         return NotImplemented
+
+
+
+
+
+
+
+
+
 
 
     return cmp((self.address, self.protocol),
@@ -957,6 +1064,7 @@ class Rating(long):
   def __init__(self, rating):
     super(Rating, self).__init__()
     if isinstance(rating, float) or isinstance(rating, complex):
+
       raise datastore_errors.BadValueError(
         'Expected int or long; received %s (a %s).' %
         (rating, typename(rating)))
@@ -965,6 +1073,7 @@ class Rating(long):
       if long(rating) < Rating.MIN or long(rating) > Rating.MAX:
         raise datastore_errors.BadValueError()
     except ValueError:
+
       raise datastore_errors.BadValueError(
         'Expected int or long; received %s (a %s).' %
         (rating, typename(rating)))
@@ -1112,6 +1221,8 @@ class BlobKey(object):
     return 'datastore_types.%s(%r)' % (type(self).__name__, self.__blob_key)
 
   def __cmp__(self, other):
+
+
     if type(other) is type(self):
       return cmp(str(self), str(other))
     elif isinstance(other, basestring):
@@ -1124,6 +1235,7 @@ class BlobKey(object):
 
   def ToXml(self):
     return str(self)
+
 
 
 _PROPERTY_MEANINGS = {
@@ -1144,6 +1256,7 @@ _PROPERTY_MEANINGS = {
   Rating:            entity_pb.Property.GD_RATING,
   BlobKey:           entity_pb.Property.BLOBKEY,
 }
+
 
 _PROPERTY_TYPES = frozenset([
   Blob,
@@ -1170,8 +1283,12 @@ _PROPERTY_TYPES = frozenset([
   BlobKey,
 ])
 
+
+
+
 _RAW_PROPERTY_TYPES = (Blob, Text)
 _RAW_PROPERTY_MEANINGS = (entity_pb.Property.BLOB, entity_pb.Property.TEXT)
+
 
 def ValidatePropertyInteger(name, value):
   """Raises an exception if the supplied integer is invalid.
@@ -1250,6 +1367,11 @@ def ValidatePropertyKey(name, value):
         'Incomplete key found for reference property %s.' % name)
 
 
+
+
+
+
+
 _VALIDATE_PROPERTY_VALUES = {
   Blob: ValidatePropertyNothing,
   ByteString: ValidatePropertyString,
@@ -1275,6 +1397,7 @@ _VALIDATE_PROPERTY_VALUES = {
   BlobKey: ValidatePropertyNothing,
 }
 
+
 assert set(_VALIDATE_PROPERTY_VALUES.iterkeys()) == _PROPERTY_TYPES
 
 
@@ -1299,10 +1422,12 @@ def ValidateProperty(name, values, read_only=False):
 
   values_type = type(values)
 
+
   if values_type is tuple:
     raise datastore_errors.BadValueError(
         'May not use tuple property value; property %s is %s.' %
         (name, repr(values)))
+
 
   if values_type is list:
     multiple = True
@@ -1310,10 +1435,13 @@ def ValidateProperty(name, values, read_only=False):
     multiple = False
     values = [values]
 
+
   if not values:
     raise datastore_errors.BadValueError(
         'May not use the empty list as a property value; property %s is %s.' %
         (name, repr(values)))
+
+
 
   try:
     for v in values:
@@ -1328,7 +1456,11 @@ def ValidateProperty(name, values, read_only=False):
       'Error type checking values for property %s: %s' % (name, msg))
 
 
+
+
+
 ValidateReadProperty = ValidateProperty
+
 
 
 def PackBlob(name, value, pbvalue):
@@ -1372,6 +1504,7 @@ def DatetimeToTimestamp(value):
   Returns: value as a long
   """
   if value.tzinfo:
+
     value = value.astimezone(UTC)
   return long(calendar.timegm(value.timetuple()) * 1000000L) + value.microsecond
 
@@ -1400,6 +1533,9 @@ def PackUser(name, value, pbvalue):
   pbvalue.mutable_uservalue().set_auth_domain(
       value.auth_domain().encode('utf-8'))
   pbvalue.mutable_uservalue().set_gaiaid(0)
+
+
+
 
   if value.user_id() is not None:
     pbvalue.mutable_uservalue().set_obfuscated_gaiaid(
@@ -1462,6 +1598,11 @@ def PackFloat(name, value, pbvalue):
   pbvalue.set_doublevalue(value)
 
 
+
+
+
+
+
 _PACK_PROPERTY_VALUES = {
   Blob: PackBlob,
   ByteString: PackBlob,
@@ -1486,6 +1627,7 @@ _PACK_PROPERTY_VALUES = {
   users.User: PackUser,
   BlobKey: PackString,
 }
+
 
 assert set(_PACK_PROPERTY_VALUES.iterkeys()) == _PROPERTY_TYPES
 
@@ -1563,7 +1705,15 @@ def FromReferenceProperty(value):
   return key
 
 
+
 _EPOCH = datetime.datetime.utcfromtimestamp(0)
+
+
+
+
+
+
+
 
 _PROPERTY_CONVERSIONS = {
   entity_pb.Property.GD_WHEN:
@@ -1602,8 +1752,12 @@ def FromPropertyPb(pb):
     if meaning not in (entity_pb.Property.BLOB, entity_pb.Property.BYTESTRING):
       value = unicode(value.decode('utf-8'))
   elif pbval.has_int64value():
+
+
     value = long(pbval.int64value())
   elif pbval.has_booleanvalue():
+
+
     value = bool(pbval.booleanvalue())
   elif pbval.has_doublevalue():
     value = pbval.doublevalue()
@@ -1622,10 +1776,13 @@ def FromPropertyPb(pb):
       federated_identity = unicode(
           pbval.uservalue().federated_identity().decode('utf-8'))
 
+
+
     value = users.User(email=email,
                        _auth_domain=auth_domain,
                        _user_id=obfuscated_gaiaid,
-                       federated_identity=federated_identity)
+                       federated_identity=federated_identity,
+                       _strict_mode=False)
   else:
     value = None
 
@@ -1665,6 +1822,7 @@ def PropertyTypeName(value):
     return 'null'
   else:
     return typename(value).lower()
+
 
 _PROPERTY_TYPE_STRINGS = {
     'string':           unicode,
@@ -1725,11 +1883,14 @@ def PropertyValueFromString(type_,
   """
   if type_ == datetime.datetime:
     value_string = value_string.strip()
+
     if value_string[-6] in ('+', '-'):
       if value_string[-5:] == '00:00':
         value_string = value_string[:-6]
       else:
+
         raise ValueError('Non-UTC offsets in datetimes are not supported.')
+
 
     split = value_string.split('.')
     iso_date = split[0]
@@ -1737,10 +1898,13 @@ def PropertyValueFromString(type_,
     if len(split) > 1:
       microseconds = int(split[1])
 
+
+
     time_struct = time.strptime(iso_date, '%Y-%m-%d %H:%M:%S')[0:6]
     value = datetime.datetime(*(time_struct + (microseconds,)))
     return value
   elif type_ == Rating:
+
     return Rating(int(value_string))
   elif type_ == bool:
     return value_string == 'True'
@@ -1749,3 +1913,115 @@ def PropertyValueFromString(type_,
   elif type_ == type(None):
     return None
   return type_(value_string)
+
+
+def ReferenceToKeyValue(reference):
+  """Converts a entity_pb.Reference into a comparable hashable "key" value.
+
+  Args:
+    reference: The entity_pb.Reference from which to construct the key value.
+
+  Returns:
+    A comparable and hashable representation of the given reference that is
+    compatible with one derived from a reference property value.
+  """
+  if isinstance(reference, entity_pb.Reference):
+    element_list = reference.path().element_list()
+  elif isinstance(reference, entity_pb.PropertyValue_ReferenceValue):
+    element_list = reference.pathelement_list()
+  else:
+    raise datastore_errors.BadArgumentError(
+        "reference arg expected to be entity_pb.Reference (%r)" % (reference,))
+
+  result = [entity_pb.PropertyValue.kReferenceValueGroup,
+            reference.app(), reference.name_space()]
+  for element in element_list:
+    result.append(element.type())
+    if element.has_name():
+      result.append(element.name())
+    else:
+      result.append(element.id())
+  return tuple(result)
+
+
+def PropertyValueToKeyValue(prop_value):
+  """Converts a entity_pb.PropertyValue into a comparable hashable "key" value.
+
+  The values produces by this function mimic the native ording of the datastore
+  and uniquely identify the given PropertyValue.
+
+  Args:
+    prop_value: The entity_pb.PropertyValue from which to construct the
+      key value.
+
+  Returns:
+    A comparable and hashable representation of the given property value.
+  """
+  if not isinstance(prop_value, entity_pb.PropertyValue):
+    raise datastore_errors.BadArgumentError(
+        'prop_value arg expected to be entity_pb.PropertyValue (%r)' %
+        (prop_value,))
+
+
+
+  if prop_value.has_stringvalue():
+    return (entity_pb.PropertyValue.kstringValue, prop_value.stringvalue())
+  if prop_value.has_int64value():
+    return (entity_pb.PropertyValue.kint64Value, prop_value.int64value())
+  if prop_value.has_booleanvalue():
+    return (entity_pb.PropertyValue.kbooleanValue, prop_value.booleanvalue())
+  if prop_value.has_doublevalue():
+    return (entity_pb.PropertyValue.kdoubleValue, prop_value.doublevalue())
+  if prop_value.has_pointvalue():
+    return (entity_pb.PropertyValue.kPointValueGroup,
+            prop_value.pointvalue().x(), prop_value.pointvalue().y())
+  if prop_value.has_referencevalue():
+    return ReferenceToKeyValue(prop_value.referencevalue())
+  if prop_value.has_uservalue():
+    result = []
+    uservalue = prop_value.uservalue()
+    if uservalue.has_email():
+      result.append((entity_pb.PropertyValue.kUserValueemail,
+                     uservalue.email()))
+    if uservalue.has_auth_domain():
+      result.append((entity_pb.PropertyValue.kUserValueauth_domain,
+                     uservalue.auth_domain()))
+    if uservalue.has_nickname():
+      result.append((entity_pb.PropertyValue.kUserValuenickname,
+                     uservalue.nickname()))
+    if uservalue.has_gaiaid():
+      result.append((entity_pb.PropertyValue.kUserValuegaiaid,
+                     uservalue.gaiaid()))
+    if uservalue.has_obfuscated_gaiaid():
+      result.append((entity_pb.PropertyValue.kUserValueobfuscated_gaiaid,
+                     uservalue.obfuscated_gaiaid()))
+    if uservalue.has_federated_identity():
+      result.append((entity_pb.PropertyValue.kUserValuefederated_identity,
+                     uservalue.federated_identity()))
+    if uservalue.has_federated_provider():
+      result.append((entity_pb.PropertyValue.kUserValuefederated_provider,
+                     uservalue.federated_provider()))
+    result.sort()
+    return (entity_pb.PropertyValue.kUserValueGroup, tuple(result))
+  return ()
+
+
+def GetPropertyValueTag(value_pb):
+  """Returns the tag constant associated with the given entity_pb.PropertyValue.
+  """
+  if value_pb.has_booleanvalue():
+    return entity_pb.PropertyValue.kbooleanValue
+  elif value_pb.has_doublevalue():
+    return entity_pb.PropertyValue.kdoubleValue
+  elif value_pb.has_int64value():
+    return entity_pb.PropertyValue.kint64Value
+  elif value_pb.has_pointvalue():
+    return entity_pb.PropertyValue.kPointValueGroup
+  elif value_pb.has_referencevalue():
+    return entity_pb.PropertyValue.kReferenceValueGroup
+  elif value_pb.has_stringvalue():
+    return entity_pb.PropertyValue.kstringValue
+  elif value_pb.has_uservalue():
+    return entity_pb.PropertyValue.kUserValueGroup
+  else:
+    return 0

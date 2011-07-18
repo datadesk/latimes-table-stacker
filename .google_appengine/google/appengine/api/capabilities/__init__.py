@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Allows applications to identify API outages and scheduled downtime.
 
 Some examples:
@@ -27,12 +30,12 @@ Some examples:
 
   def RenderHTMLForm(self):
     datastore_readonly = CapabilitySet('datastore_v3', capabilities=['write'])
-    if datastore_readonly.may_be_disabled_in(60):
+    if datastore_readonly.is_enabled():
+      # ...render form normally...
+    else:
       # self.response.out('<p>Not accepting submissions right now: %s</p>' %
                           datastore_readonly.admin_message())
       # ...render form with form elements disabled...
-    else:
-      # ...render form normally...
 
   Individual API wrapper modules should expose CapabilitySet objects
   for users rather than relying on users to create them.  They may
@@ -47,6 +50,12 @@ Classes defined here:
 
 
 
+
+
+
+
+
+import warnings
 
 from google.appengine.api.capabilities import capability_service_pb
 from google.appengine.base import capabilities_pb
@@ -103,6 +112,9 @@ class CapabilitySet(object):
   def will_remain_enabled_for(self, time=60):
     """Returns true if it will remain enabled for the specified amount of time.
 
+    DEPRECATED: this method was never fully implemented and is
+    considered deprecated.  Use is_enabled() instead.
+
     Args:
       time: Number of seconds in the future to look when checking for scheduled
         downtime.
@@ -114,6 +126,10 @@ class CapabilitySet(object):
     Raises:
       UnknownCapabilityError, if a specified capability was not recognized.
     """
+    warnings.warn('will_remain_enabled_for() is deprecated: '
+                  'use is_enabled instead.',
+                  DeprecationWarning,
+                  stacklevel=2)
     config = self._get_status()
 
     status = config.summary_status()
@@ -125,10 +141,13 @@ class CapabilitySet(object):
       if config.has_time_until_scheduled():
         return config.time_until_scheduled() >= time
       else:
+
         return True
     elif status == IsEnabledResponse.DISABLED:
       return False
     else:
+
+
       return False
 
   def admin_message(self):

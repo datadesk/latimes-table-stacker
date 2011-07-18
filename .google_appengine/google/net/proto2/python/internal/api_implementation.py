@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """
 This module is the central entity that determines which implementation of the
 API is used.
@@ -22,12 +25,28 @@ API is used.
 
 
 import os
+
+
+
 _implementation_type = os.getenv('PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION',
                                  'python')
 
 
 if _implementation_type != 'python':
+
+
+
   _implementation_type = 'cpp'
+
+
+
+
+
+
+
+
+
+
 
 
 def Type():

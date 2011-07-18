@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Code for encoding protocol message primitives.
 
 Contains the logic for encoding every logical protocol field type
@@ -56,6 +59,8 @@ import struct
 from google.net.proto2.python.internal import wire_format
 
 
+
+
 _POS_INF = 1e10000
 _NEG_INF = -_POS_INF
 
@@ -92,7 +97,14 @@ def _SignedVarintSize(value):
 def _TagSize(field_number):
   """Returns the number of bytes required to serialize a tag with this field
   number."""
+
   return _VarintSize(wire_format.PackTag(field_number, 0))
+
+
+
+
+
+
 
 
 
@@ -179,6 +191,11 @@ def _FixedSizer(value_size):
       return FieldSize
 
   return SpecificSizer
+
+
+
+
+
 
 
 
@@ -281,6 +298,8 @@ def MessageSizer(field_number, is_repeated, is_packed):
 
 
 
+
+
 def MessageSetItemSizer(field_number):
   """Returns a sizer for extensions of MessageSet.
 
@@ -301,6 +320,8 @@ def MessageSetItemSizer(field_number):
     return static_size + local_VarintSize(l) + l
 
   return FieldSize
+
+
 
 
 
@@ -357,6 +378,9 @@ def TagBytes(field_number, wire_type):
   """Encode the given tag and return the bytes.  Only called at startup."""
 
   return _VarintBytes(wire_format.PackTag(field_number, wire_type))
+
+
+
 
 
 
@@ -488,6 +512,7 @@ def _FloatingPointEncoder(wire_type, format):
   value_size = struct.calcsize(format)
   if value_size == 4:
     def EncodeNonFiniteOrRaise(write, value):
+
       if value == _POS_INF:
         write('\x00\x00\x80\x7F')
       elif value == _NEG_INF:
@@ -519,6 +544,8 @@ def _FloatingPointEncoder(wire_type, format):
         write(tag_bytes)
         local_EncodeVarint(write, len(value) * value_size)
         for element in value:
+
+
           try:
             write(local_struct_pack(format, element))
           except SystemError:
@@ -549,6 +576,9 @@ def _FloatingPointEncoder(wire_type, format):
 
 
 
+
+
+
 Int32Encoder = Int64Encoder = EnumEncoder = _SimpleEncoder(
     wire_format.WIRETYPE_VARINT, _EncodeSignedVarint, _SignedVarintSize)
 
@@ -558,6 +588,10 @@ UInt32Encoder = UInt64Encoder = _SimpleEncoder(
 SInt32Encoder = SInt64Encoder = _ModifiedEncoder(
     wire_format.WIRETYPE_VARINT, _EncodeVarint, _VarintSize,
     wire_format.ZigZagEncode)
+
+
+
+
 
 Fixed32Encoder  = _StructPackEncoder(wire_format.WIRETYPE_FIXED32, '<I')
 Fixed64Encoder  = _StructPackEncoder(wire_format.WIRETYPE_FIXED64, '<Q')
@@ -690,6 +724,8 @@ def MessageEncoder(field_number, is_repeated, is_packed):
       local_EncodeVarint(write, value.ByteSize())
       return value._InternalSerialize(write)
     return EncodeField
+
+
 
 
 

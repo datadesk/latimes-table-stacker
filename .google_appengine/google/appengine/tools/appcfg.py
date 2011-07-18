@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Tool for deploying apps to an app server.
 
 Currently, the application only uploads new appversions. To do this, it first
@@ -39,14 +42,16 @@ import optparse
 import os
 import random
 import re
-import sha
 import sys
 import tempfile
 import time
 import urllib
 import urllib2
 
+
+
 import google
+import hashlib
 import yaml
 from google.appengine.cron import groctimespecification
 from google.appengine.api import appinfo
@@ -55,6 +60,7 @@ from google.appengine.api import appinfo_includes
 from google.appengine.api import croninfo
 from google.appengine.api import dosinfo
 from google.appengine.api import queueinfo
+from google.appengine.api import backendinfo
 from google.appengine.api import validation
 from google.appengine.api import yaml_errors
 from google.appengine.api import yaml_object
@@ -67,33 +73,51 @@ from google.appengine.tools import bulkloader
 MAX_FILES_TO_CLONE = 100
 LIST_DELIMITER = '\n'
 TUPLE_DELIMITER = '|'
+BACKENDS_ACTION = 'backends'
 
-VERSION_FILE = '../VERSION'
+
+
+
+VERSION_FILE = '../../VERSION'
+
 
 UPDATE_CHECK_TIMEOUT = 3
 
+
 NAG_FILE = '.appcfg_nag'
 
+
 MAX_LOG_LEVEL = 4
+
 
 MAX_BATCH_SIZE = 1000000
 MAX_BATCH_COUNT = 100
 MAX_BATCH_FILE_SIZE = 200000
 BATCH_OVERHEAD = 500
 
+
+
+
+
+
 verbosity = 1
+
 
 PREFIXED_BY_ADMIN_CONSOLE_RE = '^(?:admin-console)(.*)'
 
-appinfo.AppInfoExternal.ATTRIBUTES[appinfo.RUNTIME] = 'python'
+
+SDK_PRODUCT = 'appcfg_py'
+
+
+
 _api_versions = os.environ.get('GOOGLE_TEST_API_VERSIONS', '1')
 _options = validation.Options(*_api_versions.split(','))
 appinfo.AppInfoExternal.ATTRIBUTES[appinfo.API_VERSION] = _options
 del _api_versions, _options
 
 
-def StatusUpdate(msg):
-  """Print a status message to stderr.
+def PrintUpdate(msg):
+  """Print a message to stderr.
 
   If 'verbosity' is greater than 0, print the message.
 
@@ -102,6 +126,16 @@ def StatusUpdate(msg):
   """
   if verbosity > 0:
     print >>sys.stderr, msg
+
+
+def StatusUpdate(msg):
+  """Print a status message to stderr."""
+  PrintUpdate(msg)
+
+
+def ErrorUpdate(msg):
+  """Print an error message to stderr."""
+  PrintUpdate(msg)
 
 
 def GetMimeTypeIfStaticFile(config, filename):
@@ -230,7 +264,7 @@ def GetVersionObject(isfile=os.path.isfile, open_fn=open):
   Returns:
     A Yaml object or None if the VERSION file does not exist.
   """
-  version_filename = os.path.join(os.path.dirname(google.__file__),
+  version_filename = os.path.join(os.path.dirname(google.appengine.__file__),
                                   VERSION_FILE)
   if not isfile(version_filename):
     logging.error('Could not find version file at %s', version_filename)
@@ -324,13 +358,13 @@ class UpdateCheck(object):
     'timestamp': Last time we nagged the user in seconds since the epoch.
 
   Attributes:
-    server: An AbstractRpcServer instance used to check for the latest SDK.
+    rpcserver: An AbstractRpcServer instance used to check for the latest SDK.
     config: The app's AppInfoExternal.  Needed to determine which api_version
       the app is using.
   """
 
   def __init__(self,
-               server,
+               rpcserver,
                config,
                isdir=os.path.isdir,
                isfile=os.path.isfile,
@@ -338,14 +372,14 @@ class UpdateCheck(object):
     """Create a new UpdateCheck.
 
     Args:
-      server: The AbstractRpcServer to use.
+      rpcserver: The AbstractRpcServer to use.
       config: The yaml object that specifies the configuration of this
         application.
       isdir: Replacement for os.path.isdir (for testing).
       isfile: Replacement for os.path.isfile (for testing).
       open_fn: Replacement for the open builtin (for testing).
     """
-    self.server = server
+    self.rpcserver = rpcserver
     self.config = config
     self.isdir = isdir
     self.isfile = isfile
@@ -354,6 +388,11 @@ class UpdateCheck(object):
   @staticmethod
   def MakeNagFilename():
     """Returns the filename for the nag file for this user."""
+
+
+
+
+
     user_homedir = os.path.expanduser('~/')
     if not os.path.isdir(user_homedir):
       drive, unused_tail = os.path.splitdrive(os.__file__)
@@ -377,7 +416,7 @@ class UpdateCheck(object):
     the SDK supports that api_version.
 
     Raises:
-      SystemExit if the api_version is not supported.
+      sys.exit if the api_version is not supported.
     """
     version = self._ParseVersionFile()
     if version is None:
@@ -413,12 +452,15 @@ class UpdateCheck(object):
       return
     logging.info('Checking for updates to the SDK.')
 
+
+
+
     try:
-      response = self.server.Send('/api/updatecheck',
-                                  timeout=UPDATE_CHECK_TIMEOUT,
-                                  release=version['release'],
-                                  timestamp=version['timestamp'],
-                                  api_versions=version['api_versions'])
+      response = self.rpcserver.Send('/api/updatecheck',
+                                     timeout=UPDATE_CHECK_TIMEOUT,
+                                     release=version['release'],
+                                     timestamp=version['timestamp'],
+                                     api_versions=version['api_versions'])
     except urllib2.URLError, e:
       logging.info('Update check failed: %s', e)
       return
@@ -568,6 +610,7 @@ class UpdateCheck(object):
                'change this setting, edit %s' % UpdateCheck.MakeNagFilename())
         nag.opt_in = False
       else:
+
         print ('dev_appserver will check for updates on startup.  To change '
                'this setting, edit %s' % UpdateCheck.MakeNagFilename())
         nag.opt_in = True
@@ -578,137 +621,137 @@ class UpdateCheck(object):
 class IndexDefinitionUpload(object):
   """Provides facilities to upload index definitions to the hosting service."""
 
-  def __init__(self, server, config, definitions):
+  def __init__(self, rpcserver, config, definitions):
     """Creates a new DatastoreIndexUpload.
 
     Args:
-      server: The RPC server to use.  Should be an instance of HttpRpcServer
+      rpcserver: The RPC server to use.  Should be an instance of HttpRpcServer
         or TestRpcServer.
       config: The AppInfoExternal object derived from the app.yaml file.
       definitions: An IndexDefinitions object.
     """
-    self.server = server
+    self.rpcserver = rpcserver
     self.config = config
     self.definitions = definitions
 
   def DoUpload(self):
     """Uploads the index definitions."""
     StatusUpdate('Uploading index definitions.')
-    self.server.Send('/api/datastore/index/add',
-                     app_id=self.config.application,
-                     version=self.config.version,
-                     payload=self.definitions.ToYAML())
+    self.rpcserver.Send('/api/datastore/index/add',
+                        app_id=self.config.application,
+                        version=self.config.version,
+                        payload=self.definitions.ToYAML())
 
 
 class CronEntryUpload(object):
   """Provides facilities to upload cron entries to the hosting service."""
 
-  def __init__(self, server, config, cron):
+  def __init__(self, rpcserver, config, cron):
     """Creates a new CronEntryUpload.
 
     Args:
-      server: The RPC server to use.  Should be an instance of a subclass of
+      rpcserver: The RPC server to use.  Should be an instance of a subclass of
       AbstractRpcServer
       config: The AppInfoExternal object derived from the app.yaml file.
       cron: The CronInfoExternal object loaded from the cron.yaml file.
     """
-    self.server = server
+    self.rpcserver = rpcserver
     self.config = config
     self.cron = cron
 
   def DoUpload(self):
     """Uploads the cron entries."""
     StatusUpdate('Uploading cron entries.')
-    self.server.Send('/api/cron/update',
-                     app_id=self.config.application,
-                     version=self.config.version,
-                     payload=self.cron.ToYAML())
+    self.rpcserver.Send('/api/cron/update',
+                        app_id=self.config.application,
+                        version=self.config.version,
+                        payload=self.cron.ToYAML())
 
 
 class QueueEntryUpload(object):
   """Provides facilities to upload task queue entries to the hosting service."""
 
-  def __init__(self, server, config, queue):
+  def __init__(self, rpcserver, config, queue):
     """Creates a new QueueEntryUpload.
 
     Args:
-      server: The RPC server to use.  Should be an instance of a subclass of
+      rpcserver: The RPC server to use.  Should be an instance of a subclass of
       AbstractRpcServer
       config: The AppInfoExternal object derived from the app.yaml file.
       queue: The QueueInfoExternal object loaded from the queue.yaml file.
     """
-    self.server = server
+    self.rpcserver = rpcserver
     self.config = config
     self.queue = queue
 
   def DoUpload(self):
     """Uploads the task queue entries."""
     StatusUpdate('Uploading task queue entries.')
-    self.server.Send('/api/queue/update',
-                     app_id=self.config.application,
-                     version=self.config.version,
-                     payload=self.queue.ToYAML())
+    self.rpcserver.Send('/api/queue/update',
+                        app_id=self.config.application,
+                        version=self.config.version,
+                        payload=self.queue.ToYAML())
 
 
 class DosEntryUpload(object):
   """Provides facilities to upload dos entries to the hosting service."""
 
-  def __init__(self, server, config, dos):
+  def __init__(self, rpcserver, config, dos):
     """Creates a new DosEntryUpload.
 
     Args:
-      server: The RPC server to use. Should be an instance of a subclass of
+      rpcserver: The RPC server to use. Should be an instance of a subclass of
         AbstractRpcServer.
       config: The AppInfoExternal object derived from the app.yaml file.
       dos: The DosInfoExternal object loaded from the dos.yaml file.
     """
-    self.server = server
+    self.rpcserver = rpcserver
     self.config = config
     self.dos = dos
 
   def DoUpload(self):
     """Uploads the dos entries."""
     StatusUpdate('Uploading DOS entries.')
-    self.server.Send('/api/dos/update',
-                     app_id=self.config.application,
-                     version=self.config.version,
-                     payload=self.dos.ToYAML())
+    self.rpcserver.Send('/api/dos/update',
+                        app_id=self.config.application,
+                        version=self.config.version,
+                        payload=self.dos.ToYAML())
 
 
 class DefaultVersionSet(object):
   """Provides facilities to set the default (serving) version."""
 
-  def __init__(self, server, config):
+  def __init__(self, rpcserver, config):
     """Creates a new DefaultVersionSet.
 
     Args:
-      server: The RPC server to use. Should be an instance of a subclass of
+      rpcserver: The RPC server to use. Should be an instance of a subclass of
         AbstractRpcServer.
       config: The AppInfoExternal object derived from the app.yaml file.
     """
-    self.server = server
+    self.rpcserver = rpcserver
     self.config = config
 
   def SetVersion(self):
     """Sets the default version."""
     StatusUpdate('Setting default version to %s.' % (self.config.version,))
-    self.server.Send('/api/appversion/setdefault',
-                     app_id=self.config.application,
-                     version=self.config.version)
+    self.rpcserver.Send('/api/appversion/setdefault',
+                        app_id=self.config.application,
+                        version=self.config.version)
 
 
 class IndexOperation(object):
   """Provide facilities for writing Index operation commands."""
 
-  def __init__(self, server, config):
+  def __init__(self, rpcserver, config):
     """Creates a new IndexOperation.
 
     Args:
-      server: The RPC server to use.  Should be an instance of HttpRpcServer
+      rpcserver: The RPC server to use.  Should be an instance of HttpRpcServer
         or TestRpcServer.
       config: appinfo.AppInfoExternal configuration object.
     """
-    self.server = server
+    self.rpcserver = rpcserver
     self.config = config
 
   def DoDiff(self, definitions):
@@ -726,9 +769,9 @@ class IndexOperation(object):
       that these indexes should probably be vacuumed).
     """
     StatusUpdate('Fetching index definitions diff.')
-    response = self.server.Send('/api/datastore/index/diff',
-                                app_id=self.config.application,
-                                payload=definitions.ToYAML())
+    response = self.rpcserver.Send('/api/datastore/index/diff',
+                                   app_id=self.config.application,
+                                   payload=definitions.ToYAML())
     return datastore_index.ParseMultipleIndexDefinitions(response)
 
   def DoDelete(self, definitions):
@@ -744,27 +787,27 @@ class IndexOperation(object):
       the index-diff and sending deletion confirmation through.
     """
     StatusUpdate('Deleting selected index definitions.')
-    response = self.server.Send('/api/datastore/index/delete',
-                                app_id=self.config.application,
-                                payload=definitions.ToYAML())
+    response = self.rpcserver.Send('/api/datastore/index/delete',
+                                   app_id=self.config.application,
+                                   payload=definitions.ToYAML())
     return datastore_index.ParseIndexDefinitions(response)
 
 
 class VacuumIndexesOperation(IndexOperation):
   """Provide facilities to request the deletion of datastore indexes."""
 
-  def __init__(self, server, config, force,
+  def __init__(self, rpcserver, config, force,
                confirmation_fn=raw_input):
     """Creates a new VacuumIndexesOperation.
 
     Args:
-      server: The RPC server to use.  Should be an instance of HttpRpcServer
+      rpcserver: The RPC server to use.  Should be an instance of HttpRpcServer
         or TestRpcServer.
       config: appinfo.AppInfoExternal configuration object.
       force: True to force deletion of indexes, else False.
       confirmation_fn: Function used for getting input form user.
     """
-    super(VacuumIndexesOperation, self).__init__(server, config)
+    super(VacuumIndexesOperation, self).__init__(rpcserver, config)
     self.force = force
     self.confirmation_fn = confirmation_fn
 
@@ -790,14 +833,17 @@ class VacuumIndexesOperation(IndexOperation):
       True if user enters 'y' or 'a'.  False if user enter 'n'.
     """
     while True:
+
       print 'This index is no longer defined in your index.yaml file.'
       print
       print index.ToYAML()
       print
 
+
       confirmation = self.confirmation_fn(
           'Are you sure you want to delete this index? (N/y/a): ')
       confirmation = confirmation.strip().lower()
+
 
       if confirmation == 'y':
         return True
@@ -827,7 +873,9 @@ class VacuumIndexesOperation(IndexOperation):
       definitions: datastore_index.IndexDefinitions as loaded from users
         index.yaml file.
     """
+
     unused_new_indexes, notused_indexes = self.DoDiff(definitions)
+
 
     deletions = datastore_index.IndexDefinitions(indexes=[])
     if notused_indexes.indexes is not None:
@@ -835,8 +883,10 @@ class VacuumIndexesOperation(IndexOperation):
         if self.force or self.GetConfirmation(index):
           deletions.indexes.append(index)
 
+
     if deletions.indexes:
       not_deleted = self.DoDelete(deletions)
+
 
       if not_deleted.indexes:
         not_deleted_count = len(not_deleted.indexes)
@@ -855,13 +905,13 @@ class VacuumIndexesOperation(IndexOperation):
 class LogsRequester(object):
   """Provide facilities to export request logs."""
 
-  def __init__(self, server, config, output_file,
+  def __init__(self, rpcserver, config, output_file,
                num_days, append, severity, end, vhost, include_vhost,
                include_all=None, time_func=time.time):
     """Constructor.
 
     Args:
-      server: The RPC server to use.  Should be an instance of HttpRpcServer
+      rpcserver: The RPC server to use.  Should be an instance of HttpRpcServer
         or TestRpcServer.
       config: appinfo.AppInfoExternal configuration object.
       output_file: Output file name.
@@ -875,7 +925,8 @@ class LogsRequester(object):
         about the request.
       time_func: Method that return a timestamp representing now (for testing).
     """
-    self.server = server
+
+    self.rpcserver = rpcserver
     self.config = config
     self.output_file = output_file
     self.append = append
@@ -884,6 +935,7 @@ class LogsRequester(object):
     self.vhost = vhost
     self.include_vhost = include_vhost
     self.include_all = include_all
+
     self.version_id = self.config.version + '.1'
     self.sentinel = None
     self.write_mode = 'w'
@@ -891,11 +943,13 @@ class LogsRequester(object):
       self.sentinel = FindSentinel(self.output_file)
       self.write_mode = 'a'
 
+
     self.skip_until = False
     now = PacificDate(time_func())
     if end < now:
       self.skip_until = end
     else:
+
       end = now
 
     self.valid_dates = None
@@ -912,6 +966,11 @@ class LogsRequester(object):
     """
     StatusUpdate('Downloading request logs for %s %s.' %
                  (self.config.application, self.version_id))
+
+
+
+
+
     tf = tempfile.TemporaryFile()
     last_offset = None
     try:
@@ -971,7 +1030,7 @@ class LogsRequester(object):
       kwds['include_vhost'] = str(self.include_vhost)
     if self.include_all is not None:
       kwds['include_all'] = str(self.include_all)
-    response = self.server.Send('/api/request_logs', payload=None, **kwds)
+    response = self.rpcserver.Send('/api/request_logs', payload=None, **kwds)
     response = response.replace('\r', '\0')
     lines = response.splitlines()
     logging.info('Received %d bytes, %d records.', len(response), len(lines))
@@ -983,6 +1042,7 @@ class LogsRequester(object):
         offset = match.group(1)
     if lines and lines[-1].startswith('#'):
       del lines[-1]
+
     valid_dates = self.valid_dates
     sentinel = self.sentinel
     skip_until = self.skip_until
@@ -996,6 +1056,7 @@ class LogsRequester(object):
         return None
 
       linedate = DateOfLogLine(line)
+
       if not linedate:
         continue
 
@@ -1003,6 +1064,7 @@ class LogsRequester(object):
         if linedate > skip_until:
           continue
         else:
+
           self.skip_until = skip_until = False
 
       if valid_dates and not valid_dates[0] <= linedate <= valid_dates[1]:
@@ -1039,6 +1101,7 @@ def PacificDate(now):
   Returns:
     A date object representing what day it is in the US/Pacific timezone.
   """
+
   return datetime.date(*time.gmtime(PacificTime(now))[:3])
 
 
@@ -1087,9 +1150,11 @@ def IsPacificDST(now):
   pst = time.gmtime(now)
   year = pst[0]
   assert year >= 2007
+
   begin = calendar.timegm((year, 3, 8, 2, 0, 0, 0, 0, 0))
   while time.gmtime(begin).tm_wday != SUNDAY:
     begin += DAY
+
   end = calendar.timegm((year, 11, 1, 2, 0, 0, 0, 0, 0))
   while time.gmtime(end).tm_wday != SUNDAY:
     end += DAY
@@ -1122,6 +1187,7 @@ def CopyReversedLines(instream, outstream, blocksize=2**16):
     lines = data.splitlines(True)
     lines[-1:] = ''.join(lines[-1:] + [spillover]).splitlines(True)
     if lines and not lines[-1].endswith('\n'):
+
       lines[-1] += '\n'
     lines.reverse()
     if lines and iblock > 0:
@@ -1164,6 +1230,7 @@ def FindSentinel(filename, blocksize=2**16):
       if not line.startswith('\t'):
         sentinel = line
     if not sentinel:
+
       StatusUpdate('Append mode disabled: can\'t find sentinel in %r.' %
                    filename)
       return None
@@ -1175,21 +1242,19 @@ def FindSentinel(filename, blocksize=2**16):
 class UploadBatcher(object):
   """Helper to batch file uploads."""
 
-  def __init__(self, what, app_id, version, server):
+  def __init__(self, what, rpcserver, params):
     """Constructor.
 
     Args:
       what: Either 'file' or 'blob' or 'errorblob' indicating what kind of
         objects this batcher uploads.  Used in messages and URLs.
-      app_id: The application ID.
-      version: The application version string.
-      server: The RPC server.
+      rpcserver: The RPC server.
+      params: A dictionary object containing URL params to add to HTTP requests.
     """
     assert what in ('file', 'blob', 'errorblob'), repr(what)
     self.what = what
-    self.app_id = app_id
-    self.version = version
-    self.server = server
+    self.params = params
+    self.rpcserver = rpcserver
     self.single_url = '/api/appversion/add' + what
     self.batch_url = self.single_url + 's'
     self.batching = True
@@ -1231,11 +1296,10 @@ class UploadBatcher(object):
     payload = delimiter.join(parts)
     logging.info('Uploading batch of %d %ss to %s with boundary="%s".',
                  len(self.batch), self.what, self.batch_url, boundary)
-    self.server.Send(self.batch_url,
-                     payload=payload,
-                     content_type='message/rfc822',
-                     app_id=self.app_id,
-                     version=self.version)
+    self.rpcserver.Send(self.batch_url,
+                        payload=payload,
+                        content_type='message/rfc822',
+                        **self.params)
     self.batch = []
     self.batch_size = 0
 
@@ -1243,12 +1307,11 @@ class UploadBatcher(object):
     """Send a single file on its way."""
     logging.info('Uploading %s %s (%s bytes, type=%s) to %s.',
                  self.what, path, len(payload), mime_type, self.single_url)
-    self.server.Send(self.single_url,
-                     payload=payload,
-                     content_type=mime_type,
-                     path=path,
-                     app_id=self.app_id,
-                     version=self.version)
+    self.rpcserver.Send(self.single_url,
+                        payload=payload,
+                        content_type=mime_type,
+                        path=path,
+                        **self.params)
 
   def Flush(self):
     """Flush the current batch.
@@ -1267,11 +1330,14 @@ class UploadBatcher(object):
       if err.code != 404:
         raise
 
+
       logging.info('Old server detected; turning off %s batching.', self.what)
       self.batching = False
 
+
       for path, payload, mime_type in self.batch:
         self.SendSingleFile(path, payload, mime_type)
+
 
       self.batch = []
       self.batch_size = 0
@@ -1302,8 +1368,23 @@ class UploadBatcher(object):
     self.SendSingleFile(path, payload, mime_type)
 
 
+def _FormatHash(h):
+  """Return a string representation of a hash.
+
+  The hash is a sha1 hash. It is computed both for files that need to be
+  pushed to App Engine and for data payloads of requests made to App Engine.
+
+  Args:
+    h: The hash
+
+  Returns:
+    The string representation of the hash.
+  """
+  return '%s_%s_%s_%s_%s' % (h[0:8], h[8:16], h[16:24], h[24:32], h[32:40])
+
+
 def _Hash(content):
-  """Compute the hash of the content.
+  """Compute the sha1 hash of the content.
 
   Args:
     content: The data to hash as a string.
@@ -1311,8 +1392,30 @@ def _Hash(content):
   Returns:
     The string representation of the hash.
   """
-  h = sha.new(content).hexdigest()
-  return '%s_%s_%s_%s_%s' % (h[0:8], h[8:16], h[16:24], h[24:32], h[32:40])
+  h = hashlib.sha1(content).hexdigest()
+  return _FormatHash(h)
+
+
+def _HashFromFileHandle(file_handle):
+  """Compute the hash of the content of the file pointed to by file_handle.
+
+  Args:
+    file_handle: File-like object which provides seek, read and tell.
+
+  Returns:
+    The string representation of the hash.
+  """
+
+
+
+
+
+
+
+  pos = file_handle.tell()
+  content_hash = _Hash(file_handle.read())
+  file_handle.seek(pos, 0)
+  return content_hash
 
 
 def EnsureDir(path):
@@ -1328,15 +1431,17 @@ def EnsureDir(path):
   try:
     os.makedirs(path)
   except OSError, exc:
+
+
     if not (exc.errno == errno.EEXIST and os.path.isdir(path)):
       raise
 
 
-def DoDownloadApp(server, out_dir, app_id, app_version):
+def DoDownloadApp(rpcserver, out_dir, app_id, app_version):
   """Downloads the files associated with a particular app version.
 
   Args:
-    server: The RPC server to use to download.
+    rpcserver: The RPC server to use to download.
     out_dir: The directory the files should be downloaded to.
     app_id: The app ID of the app whose files we want to download.
     app_version: The version number we want to download.  Can be:
@@ -1351,7 +1456,7 @@ def DoDownloadApp(server, out_dir, app_id, app_version):
   if app_version is not None:
     url_args['version_match'] = app_version
 
-  result = server.Send('/api/files/list', **url_args)
+  result = rpcserver.Send('/api/files/list', **url_args)
 
   StatusUpdate('Fetching files...')
 
@@ -1389,11 +1494,15 @@ def DoDownloadApp(server, out_dir, app_id, app_version):
     StatusUpdate('[%d/%d] %s' % (current_file_number, num_files, path))
 
     def TryGet():
+
+
       try:
-        contents = server.Send('/api/files/get', app_id=app_id,
-                               version=full_version, id=file_id)
+        contents = rpcserver.Send('/api/files/get', app_id=app_id,
+                                  version=full_version, id=file_id)
         return True, contents
       except urllib2.HTTPError, exc:
+
+
         if exc.code == 503:
           return False, exc
         else:
@@ -1454,42 +1563,73 @@ class AppVersionUpload(object):
   """Provides facilities to upload a new appversion to the hosting service.
 
   Attributes:
-    server: The AbstractRpcServer to use for the upload.
+    rpcserver: The AbstractRpcServer to use for the upload.
     config: The AppInfoExternal object derived from the app.yaml file.
     app_id: The application string from 'config'.
-    version: The version string from 'config'.
-    files: A dictionary of files to upload to the server, mapping path to
+    version: The version string from 'config', or an alternate version override.
+    backend: The backend to update, if any.
+    files: A dictionary of files to upload to the rpcserver, mapping path to
       hash of the file contents.
     in_transaction: True iff a transaction with the server has started.
       An AppVersionUpload can do only one transaction at a time.
     deployed: True iff the Deploy method has been called.
+    started: True iff the StartServing method has been called.
   """
 
-  def __init__(self, server, config):
+  def __init__(self, rpcserver, config, version=None, backend=None,
+               error_fh=None):
     """Creates a new AppVersionUpload.
 
     Args:
-      server: The RPC server to use. Should be an instance of HttpRpcServer or
-        TestRpcServer.
+      rpcserver: The RPC server to use. Should be an instance of HttpRpcServer
+        or TestRpcServer.
       config: An AppInfoExternal object that specifies the configuration for
         this application.
+      version: If specified, overrides the app version specified in config.
+      backend: If specified, indicates the update applies to the given backend.
+        The backend name must match an entry in the backends: stanza.
+      error_fh: Unexpected HTTPErrors are printed to this file handle.
     """
-    self.server = server
+    self.rpcserver = rpcserver
     self.config = config
     self.app_id = self.config.application
-    self.version = self.config.version
+    self.backend = backend
+    self.error_fh = error_fh or sys.stderr
+
+    if version:
+      self.version = version
+    else:
+      self.version = self.config.version
+
+    self.params = {}
+    if self.app_id:
+      self.params['app_id'] = self.app_id
+    if self.backend:
+      self.params['backend'] = self.backend
+    elif self.version:
+      self.params['version'] = self.version
+
+
+
 
     self.files = {}
 
+
+    self.all_files = set()
+
     self.in_transaction = False
     self.deployed = False
+    self.started = False
     self.batching = True
-    self.file_batcher = UploadBatcher('file', self.app_id, self.version,
-                                      self.server)
-    self.blob_batcher = UploadBatcher('blob', self.app_id, self.version,
-                                      self.server)
-    self.errorblob_batcher = UploadBatcher('errorblob', self.app_id,
-                                           self.version, self.server)
+    self.file_batcher = UploadBatcher('file', self.rpcserver, self.params)
+    self.blob_batcher = UploadBatcher('blob', self.rpcserver, self.params)
+    self.errorblob_batcher = UploadBatcher('errorblob', self.rpcserver,
+                                           self.params)
+
+  def Send(self, url, payload=''):
+    """Sends a request to the server, with common params."""
+    logging.info('Send: %s, params=%s' % (url, self.params))
+    return self.rpcserver.Send(url, payload=payload, **self.params)
 
   def AddFile(self, path, file_handle):
     """Adds the provided file to the list to be pushed to the server.
@@ -1506,11 +1646,19 @@ class AppVersionUpload(object):
       logging.error(reason)
       return
 
-    pos = file_handle.tell()
-    content_hash = _Hash(file_handle.read())
-    file_handle.seek(pos, 0)
+    content_hash = _HashFromFileHandle(file_handle)
 
     self.files[path] = content_hash
+    self.all_files.add(path)
+
+  def Describe(self):
+    """Returns a string describing the object being updated."""
+    result = 'app: %s' % self.app_id
+    if self.backend:
+      result += ', backend: %s' % self.backend
+    elif self.version:
+      result += ', version: %s' % self.version
+    return result
 
   def Begin(self):
     """Begins the transaction, returning a list of files that need uploading.
@@ -1523,9 +1671,7 @@ class AppVersionUpload(object):
     """
     assert not self.in_transaction, 'Already in a transaction.'
 
-    StatusUpdate('Initiating update.')
-    self.server.Send('/api/appversion/create', app_id=self.app_id,
-                     version=self.version, payload=self.config.ToYAML())
+    self.Send('/api/appversion/create', payload=self.config.ToYAML())
     self.in_transaction = True
 
     files_to_clone = []
@@ -1539,8 +1685,13 @@ class AppVersionUpload(object):
         blobs_to_clone.append((path, content_hash, mime_type))
         match_found = True
 
+
+
       (mime_type, error_code) = LookupErrorBlob(self.config, path)
       if mime_type is not None:
+
+
+
         errorblobs[path] = content_hash
         match_found = True
 
@@ -1562,14 +1713,13 @@ class AppVersionUpload(object):
 
       StatusUpdate('Cloning %d %s file%s.' %
                    (len(files), file_type, len(files) != 1 and 's' or ''))
+
       for i in xrange(0, len(files), MAX_FILES_TO_CLONE):
         if i > 0 and i % MAX_FILES_TO_CLONE == 0:
           StatusUpdate('Cloned %d files.' % i)
 
         chunk = files[i:min(len(files), i + MAX_FILES_TO_CLONE)]
-        result = self.server.Send(url,
-                                  app_id=self.app_id, version=self.version,
-                                  payload=BuildClonePostBody(chunk))
+        result = self.Send(url, payload=BuildClonePostBody(chunk))
         if result:
           files_to_upload.update(dict(
               (f, self.files[f]) for f in result.split(LIST_DELIMITER)))
@@ -1611,26 +1761,40 @@ class AppVersionUpload(object):
       self.blob_batcher.AddToBatch(path, payload, mime_type)
       match_found = True
 
+
+
     (mime_type, error_code) = LookupErrorBlob(self.config, path)
     if mime_type is not None:
+
+
       self.errorblob_batcher.AddToBatch(error_code, payload, mime_type)
       match_found = True
 
     if not match_found:
+
       self.file_batcher.AddToBatch(path, payload, None)
 
 
   def Precompile(self):
     """Handle bytecode precompilation."""
-    StatusUpdate('Precompilation starting.')
+
+    StatusUpdate('Compilation starting.')
+
     files = []
+    if self.config.runtime == 'go':
+
+
+      for f in self.all_files:
+        if not self.config.nobuild_files.match(f):
+          files.append(f)
+
     while True:
       if files:
-        StatusUpdate('Precompilation: %d files left.' % len(files))
+        StatusUpdate('Compilation: %d files left.' % len(files))
       files = self.PrecompileBatch(files)
       if not files:
         break
-    StatusUpdate('Precompilation completed.')
+    StatusUpdate('Compilation completed.')
 
   def PrecompileBatch(self, files):
     """Precompile a batch of files.
@@ -1644,10 +1808,7 @@ class AppVersionUpload(object):
       or a list of files to be precompiled subsequently.
     """
     payload = LIST_DELIMITER.join(files)
-    response = self.server.Send('/api/appversion/precompile',
-                                app_id=self.app_id,
-                                version=self.version,
-                                payload=payload)
+    response = self.Send('/api/appversion/precompile', payload=payload)
     if not response:
       return []
     return response.split(LIST_DELIMITER)
@@ -1660,6 +1821,10 @@ class AppVersionUpload(object):
 
     This tries the new 'deploy' method; if that fails it uses the old 'commit'.
 
+    Returns:
+      An appinfo.AppInfoSummary if one was returned from the Deploy, None
+      otherwise.
+
     Raises:
       Exception: Some required files were not uploaded.
     """
@@ -1670,26 +1835,51 @@ class AppVersionUpload(object):
     def PrintRetryMessage(none, delay):
       StatusUpdate('Will check again in %s seconds.' % delay)
 
+    app_summary = None
     try:
-      self.Deploy()
-      if not RetryWithBackoff(lambda: (self.IsReady(), None),
-                              PrintRetryMessage, 1, 2, 60, 20):
+      app_summary = self.Deploy()
+
+
+      success, contents = RetryWithBackoff(lambda: (self.IsReady(), None),
+                                           PrintRetryMessage, 1, 2, 60, 20)
+      if not success:
+
         logging.warning('Version still not ready to serve, aborting.')
         raise Exception('Version not ready.')
-      self.StartServing()
+
+      result = self.StartServing()
+      if result == '':
+
+
+        self.in_transaction = False
+      else:
+        success, contents = RetryWithBackoff(lambda: (self.IsServing(), None),
+                                             PrintRetryMessage, 1, 1, 1, 60)
+        if not success:
+
+          logging.warning('Version still not serving, aborting.')
+          raise Exception('Version not ready.')
+        self.in_transaction = False
     except urllib2.HTTPError, e:
+
       if e.code != 404:
+
         raise
       StatusUpdate('Closing update.')
-      self.server.Send('/api/appversion/commit', app_id=self.app_id,
-                       version=self.version)
+      self.Send('/api/appversion/commit')
       self.in_transaction = False
+
+    return app_summary
 
   def Deploy(self):
     """Deploys the new app version but does not make it default.
 
     All the files returned by Begin() must have been uploaded with UploadFile()
     before Deploy() can be called.
+
+    Returns:
+      An appinfo.AppInfoSummary if one was returned from the Deploy, None
+      otherwise.
 
     Raises:
       Exception: Some required files were not uploaded.
@@ -1698,10 +1888,14 @@ class AppVersionUpload(object):
     if self.files:
       raise Exception('Not all required files have been uploaded.')
 
-    StatusUpdate('Deploying new version.')
-    self.server.Send('/api/appversion/deploy', app_id=self.app_id,
-                     version=self.version)
+    StatusUpdate('Starting deployment.')
+    result = self.Send('/api/appversion/deploy')
     self.deployed = True
+
+    if result:
+      return yaml_object.BuildSingleObject(appinfo.AppInfoSummary, result)
+    else:
+      return None
 
   def IsReady(self):
     """Check if the new app version is ready to serve traffic.
@@ -1714,9 +1908,8 @@ class AppVersionUpload(object):
     """
     assert self.deployed, 'Deploy() must be called before IsReady().'
 
-    StatusUpdate('Checking if new version is ready to serve.')
-    result = self.server.Send('/api/appversion/isready', app_id=self.app_id,
-                              version=self.version)
+    StatusUpdate('Checking if deployment succeeded.')
+    result = self.Send('/api/appversion/isready')
     return result == '1'
 
   def StartServing(self):
@@ -1724,21 +1917,40 @@ class AppVersionUpload(object):
 
     Raises:
       Exception: Deploy has not yet been called.
-    """
-    assert self.deployed, 'Deploy() must be called before IsReady().'
 
-    StatusUpdate('Closing update: new version is ready to start serving.')
-    self.server.Send('/api/appversion/startserving',
-                     app_id=self.app_id, version=self.version)
-    self.in_transaction = False
+    Returns:
+      The response body, as a string.
+    """
+    assert self.deployed, 'Deploy() must be called before StartServing().'
+
+    StatusUpdate('Deployment successful.')
+    self.params['willcheckserving'] = '1'
+    result = self.Send('/api/appversion/startserving')
+    del self.params['willcheckserving']
+    self.started = True
+    return result
+
+  def IsServing(self):
+    """Check if the new app version is serving.
+
+    Raises:
+      Exception: Deploy has not yet been called.
+
+    Returns:
+      True if the deployed app version is serving.
+    """
+    assert self.started, 'StartServing() must be called before IsServing().'
+
+    StatusUpdate('Checking if updated app version is serving.')
+    result = self.Send('/api/appversion/isserving')
+    return result == '1'
 
   def Rollback(self):
     """Rolls back the transaction if one is in progress."""
     if not self.in_transaction:
       return
     StatusUpdate('Rolling back the update.')
-    self.server.Send('/api/appversion/rollback', app_id=self.app_id,
-                     version=self.version)
+    self.Send('/api/appversion/rollback')
     self.in_transaction = False
     self.files = {}
 
@@ -1749,8 +1961,15 @@ class AppVersionUpload(object):
       paths: An iterator that yields the relative paths of the files to upload.
       max_size: The maximum size file to upload.
       openfunc: A function that takes a path and returns a file-like object.
+
+    Returns:
+      An appinfo.AppInfoSummary if one was returned from the server, None
+      otherwise.
     """
     logging.info('Reading app configuration.')
+
+    StatusUpdate('\nStarting update of %s' % self.Describe())
+
 
     path = ''
     try:
@@ -1780,7 +1999,9 @@ class AppVersionUpload(object):
                     path, e)
       raise
 
+    app_summary = None
     try:
+
       missing_files = self.Begin()
       if missing_files:
         StatusUpdate('Uploading %d files and blobs.' % len(missing_files))
@@ -1795,22 +2016,47 @@ class AppVersionUpload(object):
           if num_files % 500 == 0:
             StatusUpdate('Processed %d out of %s.' %
                          (num_files, len(missing_files)))
+
         self.file_batcher.Flush()
         self.blob_batcher.Flush()
         self.errorblob_batcher.Flush()
         StatusUpdate('Uploaded %d files and blobs' % num_files)
 
+
       if (self.config.derived_file_type and
           appinfo.PYTHON_PRECOMPILED in self.config.derived_file_type):
-        self.Precompile()
+        try:
+          self.Precompile()
+        except urllib2.HTTPError, e:
 
-      self.Commit()
+          ErrorUpdate('Error %d: --- begin server output ---\n'
+                      '%s\n--- end server output ---' %
+                      (e.code, e.read().rstrip('\n')))
+          if e.code == 422 or self.config.runtime == 'go':
+
+
+
+
+
+
+            raise
+          print >>self.error_fh, (
+              'Precompilation failed. Your app can still serve but may '
+              'have reduced startup performance. You can retry the update '
+              'later to retry the precompilation step.')
+          pass
+
+
+      app_summary = self.Commit()
+      StatusUpdate('Completed update of %s' % self.Describe())
 
     except KeyboardInterrupt:
+
       logging.info('User interrupted. Aborting.')
       self.Rollback()
       raise
     except urllib2.HTTPError, err:
+
       logging.info('HTTP Error (%s)', err)
       self.Rollback()
       raise
@@ -1820,6 +2066,7 @@ class AppVersionUpload(object):
       raise
 
     logging.info('Done!')
+    return app_summary
 
 
 def FileIterator(base, skip_files, separator=os.path.sep):
@@ -1839,6 +2086,9 @@ def FileIterator(base, skip_files, separator=os.path.sep):
     for entry in os.listdir(os.path.join(base, current_dir)):
       name = os.path.join(current_dir, entry)
       fullname = os.path.join(base, name)
+
+
+
       if separator == '\\':
         name = name.replace('\\', '/')
       if os.path.isfile(fullname):
@@ -1868,6 +2118,7 @@ def GetFileLength(fh):
     The length of the stream.
   """
   pos = fh.tell()
+
   fh.seek(0, 2)
   length = fh.tell()
   fh.seek(pos, 0)
@@ -1892,6 +2143,7 @@ def GetUserAgent(get_version=GetVersionObject,
   """
   product_tokens = []
 
+
   sdk_name = os.environ.get('APPCFG_SDK_NAME')
   if sdk_name:
     product_tokens.append(sdk_name)
@@ -1902,9 +2154,11 @@ def GetUserAgent(get_version=GetVersionObject,
     else:
       release = version['release']
 
-    product_tokens.append('appcfg_py/%s' % release)
+    product_tokens.append('%s/%s' % (SDK_PRODUCT, release))
+
 
   product_tokens.append(get_platform())
+
 
   python_version = '.'.join(str(i) for i in sys.version_info)
   product_tokens.append('Python/%s' % python_version)
@@ -1950,8 +2204,12 @@ class AppCfgApp(object):
                rpc_server_class=appengine_rpc.HttpRpcServer,
                raw_input_fn=raw_input,
                password_input_fn=getpass.getpass,
+               out_fh=sys.stdout,
                error_fh=sys.stderr,
-               update_check_class=UpdateCheck):
+               update_check_class=UpdateCheck,
+               throttle_class=None,
+               opener=open,
+               file_iterator=FileIterator):
     """Initializer.  Parses the cmdline and selects the Action to use.
 
     Initializes all of the attributes described in the class docstring.
@@ -1965,30 +2223,98 @@ class AppCfgApp(object):
       password_input_fn: Function used for getting user password.
       error_fh: Unexpected HTTPErrors are printed to this file handle.
       update_check_class: UpdateCheck class (can be replaced for testing).
+      throttle_class: A class to use instead of ThrottledHttpRpcServer
+        (only used in the bulkloader).
+      opener: Function used for opening files.
+      file_iterator: Callable that takes (basepath, skip_files, file_separator)
+        and returns a generator that yields all filenames in the file tree
+        rooted at that path, skipping files that match the skip_files compiled
+        regular expression.
     """
     self.parser_class = parser_class
     self.argv = argv
     self.rpc_server_class = rpc_server_class
     self.raw_input_fn = raw_input_fn
     self.password_input_fn = password_input_fn
+    self.out_fh = out_fh
     self.error_fh = error_fh
     self.update_check_class = update_check_class
+    self.throttle_class = throttle_class
+
+
+
+
 
     self.parser = self._GetOptionParser()
     for action in self.actions.itervalues():
       action.options(self, self.parser)
 
+
     self.options, self.args = self.parser.parse_args(argv[1:])
 
     if len(self.args) < 1:
       self._PrintHelpAndExit()
-    if self.args[0] not in self.actions:
-      self.parser.error('Unknown action \'%s\'\n%s' %
-                        (self.args[0], self.parser.get_description()))
-    action_name = self.args.pop(0)
-    self.action = self.actions[action_name]
+
+    if not self.options.allow_any_runtime:
+      appinfo.AppInfoExternal.ATTRIBUTES[appinfo.RUNTIME] = 'python|go'
+
+    action = self.args.pop(0)
+
+    def RaiseParseError(actionname, action):
+
+
+      self.parser, self.options = self._MakeSpecificParser(action)
+      error_desc = action.error_desc
+      if not error_desc:
+        error_desc = "Expected a <directory> argument after '%s'." % (
+            actionname)
+      self.parser.error(error_desc)
+
+
+
+
+    if action == BACKENDS_ACTION:
+      if len(self.args) < 2:
+        RaiseParseError(action, self.actions[BACKENDS_ACTION])
+
+      actions = ['update', 'list', 'start', 'stop', 'delete', 'rollback']
+
+
+      if self.args[0] in actions:
+        action = 'backends ' + self.args.pop(0)
+      elif self.args[1] in actions:
+        action = 'backends ' + self.args.pop(1)
+      else:
+        RaiseParseError(action, self.actions[BACKENDS_ACTION])
+
+
+      if len(self.args) < 1:
+        RaiseParseError(action, self.actions[BACKENDS_ACTION])
+
+    if action not in self.actions:
+      self.parser.error("Unknown action: '%s'\n%s" %
+                        (action, self.parser.get_description()))
+
+
+    self.action = self.actions[action]
+
+
+
+
+    if not self.action.uses_basepath or self.options.help:
+      self.basepath = None
+    else:
+      if not self.args:
+        RaiseParseError(action, self.action)
+      self.basepath = self.args.pop(0)
+
+
+
+
 
     self.parser, self.options = self._MakeSpecificParser(self.action)
+
+
 
     if self.options.help:
       self._PrintHelpAndExit()
@@ -2000,6 +2326,12 @@ class AppCfgApp(object):
 
     global verbosity
     verbosity = self.options.verbose
+
+
+
+
+    self.opener = opener
+    self.file_iterator = file_iterator
 
   def Run(self):
     """Executes the requested action.
@@ -2049,10 +2381,16 @@ class AppCfgApp(object):
     desc = ('Action must be one of:\n%s'
             'Use \'help <action>\' for a detailed description.') % desc
 
+
+
     parser = self.parser_class(usage='%prog [options] <action>',
                                description=desc,
                                formatter=Formatter(),
                                conflict_handler='resolve')
+
+
+
+
     parser.add_option('-h', '--help', action='store_true',
                       dest='help', help='Show the help message and exit.')
     parser.add_option('-q', '--quiet', action='store_const', const=0,
@@ -2064,7 +2402,7 @@ class AppCfgApp(object):
                       dest='verbose', help='Print all logs.')
     parser.add_option('-s', '--server', action='store', dest='server',
                       default='appengine.google.com',
-                      metavar='SERVER', help='The server to connect to.')
+                      metavar='SERVER', help='The App Engine server.')
     parser.add_option('--secure', action='store_true', dest='secure',
                       default=True, help=optparse.SUPPRESS_HELP)
     parser.add_option('--insecure', action='store_false', dest='secure',
@@ -2078,6 +2416,9 @@ class AppCfgApp(object):
     parser.add_option('--no_cookies', action='store_false',
                       dest='save_cookies', default=True,
                       help='Do not save authentication cookies to local disk.')
+    parser.add_option('--skip_sdk_update_check', action='store_true',
+                      dest='skip_sdk_update_check', default=False,
+                      help='Do not check for SDK updates.')
     parser.add_option('--passin', action='store_true',
                       dest='passin', default=False,
                       help='Read the login password from stdin.')
@@ -2085,6 +2426,9 @@ class AppCfgApp(object):
                       help='Override application from app.yaml file.')
     parser.add_option('-V', '--version', action='store', dest='version',
                       help='Override (major) version from app.yaml file.')
+    parser.add_option('-R', '--allow_any_runtime', action='store_true',
+                      dest='allow_any_runtime', default=False,
+                      help='Do not validate the runtime in app.yaml')
     return parser
 
   def _MakeSpecificParser(self, action):
@@ -2128,6 +2472,8 @@ class AppCfgApp(object):
         email = self.raw_input_fn('Email: ')
 
       password_prompt = 'Password for %s: ' % email
+
+
       if self.options.passin:
         password = self.raw_input_fn(password_prompt)
       else:
@@ -2135,14 +2481,15 @@ class AppCfgApp(object):
 
       return (email, password)
 
-    StatusUpdate('Server: %s.' % self.options.server)
+    StatusUpdate('Host: %s' % self.options.server)
+
 
     if self.options.host and self.options.host == 'localhost':
       email = self.options.email
       if email is None:
         email = 'test@example.com'
         logging.info('Using debug user %s.  Override with --email', email)
-      server = self.rpc_server_class(
+      rpcserver = self.rpc_server_class(
           self.options.server,
           lambda: (email, 'password'),
           GetUserAgent(),
@@ -2151,8 +2498,10 @@ class AppCfgApp(object):
           save_cookies=self.options.save_cookies,
 
           secure=False)
-      server.authenticated = True
-      return server
+
+      rpcserver.authenticated = True
+      return rpcserver
+
 
     if self.options.passin:
       auth_tries = 1
@@ -2202,10 +2551,10 @@ class AppCfgApp(object):
       self.parser.error('Directory does not contain an app.yaml '
                         'configuration file.')
 
-    fh = open(appyaml_filename, 'r')
+    fh = self.opener(appyaml_filename, 'r')
     try:
       if includes:
-        appyaml = appinfo_includes.Parse(fh)
+        appyaml = appinfo_includes.Parse(fh, self.opener)
       else:
         appyaml = appinfo.LoadSingleAppInfo(fh)
     finally:
@@ -2219,10 +2568,10 @@ class AppCfgApp(object):
     msg = 'Application: %s' % appyaml.application
     if appyaml.application != orig_application:
       msg += ' (was: %s)' % orig_application
-    msg += '; version: %s' % appyaml.version
-    if appyaml.version != orig_version:
-      msg += ' (was: %s)' % orig_version
-    msg += '.'
+    if self.action.function is 'Update':
+      msg += '; version: %s' % appyaml.version
+      if appyaml.version != orig_version:
+        msg += ' (was: %s)' % orig_version
     StatusUpdate(msg)
     return appyaml
 
@@ -2239,13 +2588,25 @@ class AppCfgApp(object):
     """
     file_name = self._FindYaml(basepath, basename)
     if file_name is not None:
-      fh = open(file_name, 'r')
+      fh = self.opener(file_name, 'r')
       try:
         defns = parser(fh)
       finally:
         fh.close()
       return defns
     return None
+
+  def _ParseBackendsYaml(self, basepath):
+    """Parses the backends.yaml file.
+
+    Args:
+      basepath: the directory of the application.
+
+    Returns:
+      A BackendsInfoExternal object or None if the file does not exist.
+    """
+    return self._ParseYamlFile(basepath, 'backends',
+                               backendinfo.LoadBackendInfo)
 
   def _ParseIndexYaml(self, basepath):
     """Parses the index.yaml file.
@@ -2292,17 +2653,22 @@ class AppCfgApp(object):
     """
     return self._ParseYamlFile(basepath, 'dos', dosinfo.LoadSingleDos)
 
-  def Help(self):
+  def Help(self, action=None):
     """Prints help for a specific action.
 
-    Expects self.args[0] to contain the name of the action in question.
-    Exits the program after printing the help message.
-    """
-    if len(self.args) != 1 or self.args[0] not in self.actions:
-      self.parser.error('Expected a single action argument. Must be one of:\n' +
-                        self._GetActionDescriptions())
+    Args:
+      action: If provided, print help for the action provided.
 
-    action = self.actions[self.args[0]]
+    Expects self.args[0], or 'action', to contain the name of the action in
+    question.  Exits the program after printing the help message.
+    """
+    if not action:
+      if len(self.args) != 1 or self.args[0] not in self.actions:
+        self.parser.error('Expected a single action argument. ' +
+                          'Must be one of:\n' +
+                          self._GetActionDescriptions())
+      action = self.args[0]
+    action = self.actions[action]
     self.parser, unused_options = self._MakeSpecificParser(action)
     self._PrintHelpAndExit(exit_code=0)
 
@@ -2320,6 +2686,8 @@ class AppCfgApp(object):
 
     app_version = self.options.version
 
+
+
     if os.path.exists(out_dir):
       if not os.path.isdir(out_dir):
         self.parser.error('Cannot download to path "%s": '
@@ -2328,28 +2696,24 @@ class AppCfgApp(object):
         self.parser.error('Cannot download to path "%s": directory already '
                           'exists and it isn\'t empty.' % out_dir)
 
-    rpc_server = self._GetRpcServer()
+    rpcserver = self._GetRpcServer()
 
-    updatecheck = self.update_check_class(rpc_server, None)
-    updatecheck.CheckForUpdates()
+    DoDownloadApp(rpcserver, out_dir, app_id, app_version)
 
-    DoDownloadApp(rpc_server, out_dir, app_id, app_version)
+  def UpdateVersion(self, rpcserver, basepath, appyaml, backend=None):
+    """Updates and deploys a new appversion.
 
-  def Update(self):
-    """Updates and deploys a new appversion."""
-    if len(self.args) != 1:
-      self.parser.error('Expected a single <directory> argument.')
+    Args:
+      rpcserver: An AbstractRpcServer instance on which RPC calls can be made.
+      basepath: The root directory of the version to update.
+      appyaml: The AppInfoExternal object parsed from app.yaml
+      backend: The name of the backend to update, if any.
 
-    basepath = self.args[0]
-    appyaml = self._ParseAppYaml(basepath, includes=True)
+    Returns:
+      An appinfo.AppInfoSummary if one was returned from the Deploy, None
+      otherwise.
+    """
 
-    if not appyaml.includes and (not appyaml.builtins or
-        appinfo.BuiltinHandler.ListToTuples(appyaml.builtins)
-        == [('default', 'on')]):
-      del appyaml.builtins
-      del appyaml.includes
-      del appinfo.AppInfoExternal.ATTRIBUTES['builtins']
-      del appinfo.AppInfoExternal.ATTRIBUTES['includes']
 
     if self.options.precompilation:
       if not appyaml.derived_file_type:
@@ -2357,42 +2721,67 @@ class AppCfgApp(object):
       if appinfo.PYTHON_PRECOMPILED not in appyaml.derived_file_type:
         appyaml.derived_file_type.append(appinfo.PYTHON_PRECOMPILED)
 
-    rpc_server = self._GetRpcServer()
+    if self.options.skip_sdk_update_check:
+      logging.info('Skipping update check')
+    else:
+      updatecheck = self.update_check_class(rpcserver, appyaml)
+      updatecheck.CheckForUpdates()
 
-    updatecheck = self.update_check_class(rpc_server, appyaml)
-    updatecheck.CheckForUpdates()
+    appversion = AppVersionUpload(rpcserver, appyaml, self.options.version,
+                                  backend, self.error_fh)
+    return appversion.DoUpload(
+        self.file_iterator(basepath, appyaml.skip_files), self.options.max_size,
+        lambda path: self.opener(os.path.join(basepath, path), 'rb'))
 
-    appversion = AppVersionUpload(rpc_server, appyaml)
-    appversion.DoUpload(FileIterator(basepath, appyaml.skip_files),
-                        self.options.max_size,
-                        lambda path: open(os.path.join(basepath, path), 'rb'))
+  def Update(self):
+    """Updates and deploys a new appversion and global app configs."""
+    if self.args:
+      self.parser.error('Expected a single <directory> argument.')
 
-    index_defs = self._ParseIndexYaml(basepath)
+    appyaml = self._ParseAppYaml(self.basepath, includes=True)
+    rpcserver = self._GetRpcServer()
+
+
+    app_summary = self.UpdateVersion(rpcserver, self.basepath, appyaml)
+
+
+    if self.options.backends:
+      self.BackendsUpdate()
+
+
+
+
+
+
+    index_defs = self._ParseIndexYaml(self.basepath)
     if index_defs:
-      index_upload = IndexDefinitionUpload(rpc_server, appyaml, index_defs)
+      index_upload = IndexDefinitionUpload(rpcserver, appyaml, index_defs)
       try:
         index_upload.DoUpload()
       except urllib2.HTTPError, e:
-        StatusUpdate('Error %d: --- begin server output ---\n'
-                     '%s\n--- end server output ---' %
-                     (e.code, e.read().rstrip('\n')))
+        ErrorUpdate('Error %d: --- begin server output ---\n'
+                    '%s\n--- end server output ---' %
+                    (e.code, e.read().rstrip('\n')))
         print >> self.error_fh, (
             'Your app was updated, but there was an error updating your '
             'indexes. Please retry later with appcfg.py update_indexes.')
 
-    cron_entries = self._ParseCronYaml(basepath)
-    if cron_entries:
-      cron_upload = CronEntryUpload(rpc_server, appyaml, cron_entries)
+
+    cron_yaml = self._ParseCronYaml(self.basepath)
+    if cron_yaml:
+      cron_upload = CronEntryUpload(rpcserver, appyaml, cron_yaml)
       cron_upload.DoUpload()
 
-    queue_entries = self._ParseQueueYaml(basepath)
-    if queue_entries:
-      queue_upload = QueueEntryUpload(rpc_server, appyaml, queue_entries)
+
+    queue_yaml = self._ParseQueueYaml(self.basepath)
+    if queue_yaml:
+      queue_upload = QueueEntryUpload(rpcserver, appyaml, queue_yaml)
       queue_upload.DoUpload()
 
-    dos_entries = self._ParseDosYaml(basepath)
-    if dos_entries:
-      dos_upload = DosEntryUpload(rpc_server, appyaml, dos_entries)
+
+    dos_yaml = self._ParseDosYaml(self.basepath)
+    if dos_yaml:
+      dos_upload = DosEntryUpload(rpcserver, appyaml, dos_yaml)
       dos_upload.DoUpload()
 
   def _UpdateOptions(self, parser):
@@ -2407,22 +2796,25 @@ class AppCfgApp(object):
     parser.add_option('--no_precompilation', action='store_false',
                       dest='precompilation', default=True,
                       help='Disable automatic Python precompilation.')
+    parser.add_option('--backends', action='store_true',
+                      dest='backends', default=False,
+                      help='Update backends when performing appcfg update.')
 
   def VacuumIndexes(self):
     """Deletes unused indexes."""
-    if len(self.args) != 1:
+    if self.args:
       self.parser.error('Expected a single <directory> argument.')
 
-    basepath = self.args[0]
-    config = self._ParseAppYaml(basepath)
+    appyaml = self._ParseAppYaml(self.basepath)
 
-    index_defs = self._ParseIndexYaml(basepath)
+
+    index_defs = self._ParseIndexYaml(self.basepath)
     if index_defs is None:
       index_defs = datastore_index.IndexDefinitions()
 
-    rpc_server = self._GetRpcServer()
-    vacuum = VacuumIndexesOperation(rpc_server,
-                                    config,
+    rpcserver = self._GetRpcServer()
+    vacuum = VacuumIndexesOperation(rpcserver,
+                                    appyaml,
                                     self.options.force_delete)
     vacuum.DoVacuum(index_defs)
 
@@ -2438,86 +2830,201 @@ class AppCfgApp(object):
 
   def UpdateCron(self):
     """Updates any new or changed cron definitions."""
-    if len(self.args) != 1:
+    if self.args:
       self.parser.error('Expected a single <directory> argument.')
 
-    basepath = self.args[0]
-    appyaml = self._ParseAppYaml(basepath)
-    rpc_server = self._GetRpcServer()
+    appyaml = self._ParseAppYaml(self.basepath)
+    rpcserver = self._GetRpcServer()
 
-    cron_entries = self._ParseCronYaml(basepath)
-    if cron_entries:
-      cron_upload = CronEntryUpload(rpc_server, appyaml, cron_entries)
+
+    cron_yaml = self._ParseCronYaml(self.basepath)
+    if cron_yaml:
+      cron_upload = CronEntryUpload(rpcserver, appyaml, cron_yaml)
       cron_upload.DoUpload()
 
   def UpdateIndexes(self):
     """Updates indexes."""
-    if len(self.args) != 1:
+    if self.args:
       self.parser.error('Expected a single <directory> argument.')
 
-    basepath = self.args[0]
-    appyaml = self._ParseAppYaml(basepath)
-    rpc_server = self._GetRpcServer()
 
-    index_defs = self._ParseIndexYaml(basepath)
+    appyaml = self._ParseAppYaml(self.basepath)
+    rpcserver = self._GetRpcServer()
+
+
+    index_defs = self._ParseIndexYaml(self.basepath)
     if index_defs:
-      index_upload = IndexDefinitionUpload(rpc_server, appyaml, index_defs)
+      index_upload = IndexDefinitionUpload(rpcserver, appyaml, index_defs)
       index_upload.DoUpload()
 
   def UpdateQueues(self):
     """Updates any new or changed task queue definitions."""
-    if len(self.args) != 1:
+    if self.args:
       self.parser.error('Expected a single <directory> argument.')
 
-    basepath = self.args[0]
-    appyaml = self._ParseAppYaml(basepath)
-    rpc_server = self._GetRpcServer()
+    appyaml = self._ParseAppYaml(self.basepath)
+    rpcserver = self._GetRpcServer()
 
-    queue_entries = self._ParseQueueYaml(basepath)
-    if queue_entries:
-      queue_upload = QueueEntryUpload(rpc_server, appyaml, queue_entries)
+
+    queue_yaml = self._ParseQueueYaml(self.basepath)
+    if queue_yaml:
+      queue_upload = QueueEntryUpload(rpcserver, appyaml, queue_yaml)
       queue_upload.DoUpload()
 
   def UpdateDos(self):
     """Updates any new or changed dos definitions."""
-    if len(self.args) != 1:
+    if self.args:
       self.parser.error('Expected a single <directory> argument.')
 
-    basepath = self.args[0]
-    appyaml = self._ParseAppYaml(basepath)
-    rpc_server = self._GetRpcServer()
+    appyaml = self._ParseAppYaml(self.basepath)
+    rpcserver = self._GetRpcServer()
 
-    dos_entries = self._ParseDosYaml(basepath)
-    if dos_entries:
-      dos_upload = DosEntryUpload(rpc_server, appyaml, dos_entries)
+
+    dos_yaml = self._ParseDosYaml(self.basepath)
+    if dos_yaml:
+      dos_upload = DosEntryUpload(rpcserver, appyaml, dos_yaml)
       dos_upload.DoUpload()
 
-  def Rollback(self):
-    """Does a rollback of any existing transaction for this app version."""
+  def BackendsUpdate(self):
+    """Updates a backend."""
+    self.backend = None
+    if len(self.args) == 1:
+      self.backend = self.args[0]
+    elif len(self.args) > 1:
+      self.parser.error('Expected an optional <backend> argument.')
+
+    appyaml = self._ParseAppYaml(self.basepath)
+    rpcserver = self._GetRpcServer()
+
+
+    if appyaml.backends:
+      self.parser.error('Backends are not allowed in app.yaml.')
+
+    backends_yaml = self._ParseBackendsYaml(self.basepath)
+    appyaml.backends = backends_yaml.backends
+
+    if not appyaml.backends:
+      self.parser.error('No backends found in backends.yaml.')
+
+    backends = []
+    for backend_entry in appyaml.backends:
+      entry = backendinfo.LoadBackendEntry(backend_entry.ToYAML())
+      if entry.name in backends:
+        self.parser.error('Duplicate entry for backend: %s.' % entry.name)
+      else:
+        backends.append(entry.name)
+
+    backends_to_update = backends
+    if self.backend:
+      if self.backend in backends:
+        backends_to_update = [self.backend]
+      else:
+        self.parser.error("Backend '%s' not found in backends.yaml." %
+                          self.backend)
+
+    for backend in backends_to_update:
+      app_summary = self.UpdateVersion(
+          rpcserver, self.basepath, appyaml, backend)
+
+  def BackendsAction(self):
+    """Placeholder; we never expect this action to be invoked."""
+    pass
+
+  def BackendsList(self):
+    """Lists all backends for an app."""
+    if self.args:
+      self.parser.error('Expected no arguments.')
+
+
+
+
+    appyaml = self._ParseAppYaml(self.basepath)
+    rpcserver = self._GetRpcServer()
+    response = rpcserver.Send('/api/backends/list', app_id=appyaml.application)
+    print >> self.out_fh, response
+
+  def BackendsRollback(self):
+    """Does a rollback of an existing transaction on this backend."""
     if len(self.args) != 1:
+      self.parser.error('Expected a single <backend> argument.')
+
+    self._Rollback(self.args[0])
+
+  def BackendsStart(self):
+    """Starts a backend."""
+    if len(self.args) != 1:
+      self.parser.error('Expected a single <backend> argument.')
+
+    backend = self.args[0]
+    appyaml = self._ParseAppYaml(self.basepath)
+    rpcserver = self._GetRpcServer()
+    response = rpcserver.Send('/api/backends/start',
+                              app_id=appyaml.application,
+                              backend=backend)
+    print >> self.out_fh, response
+
+  def BackendsStop(self):
+    """Stops a backend."""
+    if len(self.args) != 1:
+      self.parser.error('Expected a single <backend> argument.')
+
+    backend = self.args[0]
+    appyaml = self._ParseAppYaml(self.basepath)
+    rpcserver = self._GetRpcServer()
+    response = rpcserver.Send('/api/backends/stop',
+                              app_id=appyaml.application,
+                              backend=backend)
+    print >> self.out_fh, response
+
+  def BackendsDelete(self):
+    """Deletes a backend."""
+    if len(self.args) != 1:
+      self.parser.error('Expected a single <backend> argument.')
+
+    backend = self.args[0]
+    appyaml = self._ParseAppYaml(self.basepath)
+    rpcserver = self._GetRpcServer()
+    response = rpcserver.Send('/api/backends/delete',
+                              app_id=appyaml.application,
+                              backend=backend)
+    print >> self.out_fh, response
+
+  def Rollback(self):
+    """Does a rollback of an existing transaction for this app version."""
+    if self.args:
       self.parser.error('Expected a single <directory> argument.')
+    self._Rollback()
 
-    basepath = self.args[0]
-    appyaml = self._ParseAppYaml(basepath)
+  def _Rollback(self, backend=None):
+    """Does a rollback of an existing transaction.
 
-    appversion = AppVersionUpload(self._GetRpcServer(), appyaml)
+    Args:
+      backend: name of a backend to rollback, or None
+
+    If a backend is specified the rollback will affect only that backend, if no
+    backend is specified the rollback will affect the current app version.
+    """
+    appyaml = self._ParseAppYaml(self.basepath)
+    appversion = AppVersionUpload(self._GetRpcServer(), appyaml,
+                                  self.options.version, backend)
+
+
     appversion.in_transaction = True
     appversion.Rollback()
 
   def SetDefaultVersion(self):
     """Sets the default version."""
-    if len(self.args) != 1:
+    if self.args:
       self.parser.error('Expected a single <directory> argument.')
 
-    basepath = self.args[0]
-    appyaml = self._ParseAppYaml(basepath)
+    appyaml = self._ParseAppYaml(self.basepath)
 
     version_setter = DefaultVersionSet(self._GetRpcServer(), appyaml)
     version_setter.SetVersion()
 
   def RequestLogs(self):
     """Write request logs to a file."""
-    if len(self.args) != 2:
+    if len(self.args) != 1:
       self.parser.error(
           'Expected a <directory> argument and an <output_file> argument.')
     if (self.options.severity is not None and
@@ -2533,10 +3040,9 @@ class AppCfgApp(object):
     except (TypeError, ValueError):
       self.parser.error('End date must be in the format YYYY-MM-DD.')
 
-    basepath = self.args[0]
-    appyaml = self._ParseAppYaml(basepath)
-    rpc_server = self._GetRpcServer()
-    logs_requester = LogsRequester(rpc_server, appyaml, self.args[1],
+    rpcserver = self._GetRpcServer()
+    appyaml = self._ParseAppYaml(self.basepath)
+    logs_requester = LogsRequester(rpcserver, appyaml, self.args[0],
                                    self.options.num_days,
                                    self.options.append,
                                    self.options.severity,
@@ -2546,7 +3052,8 @@ class AppCfgApp(object):
                                    self.options.include_all)
     logs_requester.DownloadLogs()
 
-  def _ParseEndDate(self, date, time_func=time.time):
+  @staticmethod
+  def _ParseEndDate(date, time_func=time.time):
     """Translates an ISO 8601 date to a date object.
 
     Args:
@@ -2604,15 +3111,14 @@ class AppCfgApp(object):
       now: used for testing.
       output: Used for testing.
     """
-    if len(self.args) != 1:
+    if self.args:
       self.parser.error('Expected a single <directory> argument.')
     if now is None:
       now = datetime.datetime.now()
 
-    basepath = self.args[0]
-    cron_entries = self._ParseCronYaml(basepath)
-    if cron_entries and cron_entries.cron:
-      for entry in cron_entries.cron:
+    cron_yaml = self._ParseCronYaml(self.basepath)
+    if cron_yaml and cron_yaml.cron:
+      for entry in cron_yaml.cron:
         description = entry.description
         if not description:
           description = '<no description>'
@@ -2655,6 +3161,7 @@ class AppCfgApp(object):
     Returns:
       The url of the remote_api endpoint as a string, or None
     """
+
     handlers = appyaml.handlers
     handler_suffix = 'remote_api/handler.py'
     app_id = appyaml.application
@@ -2662,14 +3169,19 @@ class AppCfgApp(object):
       if hasattr(handler, 'script') and handler.script:
         if handler.script.endswith(handler_suffix):
           server = self.options.server
+          url = handler.url
+          if url.endswith('(/.*)?'):
+
+
+            url = url[:-6]
           if server == 'appengine.google.com':
-            return 'http://%s.appspot.com%s' % (app_id, handler.url)
+            return 'http://%s.appspot.com%s' % (app_id, url)
           else:
             match = re.match(PREFIXED_BY_ADMIN_CONSOLE_RE, server)
             if match:
-              return 'http://%s%s%s' % (app_id, match.group(1), handler.url)
+              return 'http://%s%s%s' % (app_id, match.group(1), url)
             else:
-              return 'http://%s%s' % (server, handler.url)
+              return 'http://%s%s' % (server, url)
     return None
 
   def RunBulkloader(self, arg_dict):
@@ -2678,7 +3190,9 @@ class AppCfgApp(object):
     Args:
       arg_dict: Dictionary of arguments to pass to bulkloader.Run().
     """
+
     try:
+
       import sqlite3
     except ImportError:
       logging.error('upload_data action requires SQLite3 and the python '
@@ -2689,13 +3203,14 @@ class AppCfgApp(object):
 
   def _SetupLoad(self):
     """Performs common verification and set up for upload and download."""
+
     if len(self.args) != 1 and not self.options.url:
       self.parser.error('Expected either --url or a single <directory> '
                         'argument.')
 
     if len(self.args) == 1:
-      basepath = self.args[0]
-      appyaml = self._ParseAppYaml(basepath)
+      self.basepath = self.args[0]
+      appyaml = self._ParseAppYaml(self.basepath, includes=True)
 
       self.options.app_id = appyaml.application
 
@@ -2708,6 +3223,8 @@ class AppCfgApp(object):
 
     if self.options.batch_size < 1:
       self.parser.error('batch_size must be 1 or larger.')
+
+
 
     if verbosity == 1:
       logging.getLogger().setLevel(logging.INFO)
@@ -2747,6 +3264,7 @@ class AppCfgApp(object):
                      'create_config',
                      )])
     args['application'] = self.options.app_id
+    args['throttle_class'] = self.throttle_class
     return args
 
   def PerformDownload(self, run_fn=None):
@@ -2820,19 +3338,9 @@ class AppCfgApp(object):
     Args:
       parser: An instance of OptionsParser.
     """
-    parser.add_option('--filename', type='string', dest='filename',
-                      action='store',
-                      help='The name of the file containing the input data.'
-                      ' (Required)')
-    parser.add_option('--kind', type='string', dest='kind',
-                      action='store',
-                      help='The kind of the entities to store.')
     parser.add_option('--url', type='string', dest='url',
                       action='store',
                       help='The location of the remote_api endpoint.')
-    parser.add_option('--num_threads', type='int', dest='num_threads',
-                      action='store', default=10,
-                      help='Number of threads to upload records with.')
     parser.add_option('--batch_size', type='int', dest='batch_size',
                       action='store', default=10,
                       help='Number of records to post in each request.')
@@ -2861,6 +3369,9 @@ class AppCfgApp(object):
     parser.add_option('--namespace', type='string', dest='namespace',
                       action='store', default='',
                       help='Namespace to use when accessing datastore.')
+    parser.add_option('--num_threads', type='int', dest='num_threads',
+                      action='store', default=10,
+                      help='Number of threads to transfer records with.')
 
   def _PerformUploadOptions(self, parser):
     """Adds 'upload_data' specific options to the 'parser' passed in.
@@ -2869,6 +3380,13 @@ class AppCfgApp(object):
       parser: An instance of OptionsParser.
     """
     self._PerformLoadOptions(parser)
+    parser.add_option('--filename', type='string', dest='filename',
+                      action='store',
+                      help='The name of the file containing the input data.'
+                      ' (Required)')
+    parser.add_option('--kind', type='string', dest='kind',
+                      action='store',
+                      help='The kind of the entities to store.')
     parser.add_option('--has_header', dest='has_header',
                       action='store_true', default=False,
                       help='Whether the first line of the input file should be'
@@ -2886,6 +3404,13 @@ class AppCfgApp(object):
       parser: An instance of OptionsParser.
     """
     self._PerformLoadOptions(parser)
+    parser.add_option('--filename', type='string', dest='filename',
+                      action='store',
+                      help='The name of the file where output data is to be'
+                      ' written. (Required)')
+    parser.add_option('--kind', type='string', dest='kind',
+                      action='store',
+                      help='The kind of the entities to retrieve.')
     parser.add_option('--exporter_opts', type='string', dest='exporter_opts',
                       help='A string to pass to the Exporter.initialize method.'
                      )
@@ -2904,6 +3429,10 @@ class AppCfgApp(object):
       parser: An instance of OptionsParser.
     """
     self._PerformLoadOptions(parser)
+    parser.add_option('--filename', type='string', dest='filename',
+                      action='store',
+                      help='The name of the file where the generated template '
+                           'is to be written. (Required)')
 
   class Action(object):
     """Contains information about a command line action.
@@ -2915,18 +3444,30 @@ class AppCfgApp(object):
       short_desc: A one-line description of the action.
       long_desc: A detailed description of the action.  Whitespace and
         formatting will be preserved.
+      error_desc: An error message to display when the incorrect arguments are
+        given.
       options: A function that will add extra options to a given OptionParser
         object.
+      uses_basepath: Does the action use a basepath/app-directory (and hence
+        app.yaml).
     """
 
+
+
+
+
+
     def __init__(self, function, usage, short_desc, long_desc='',
-                 options=lambda obj, parser: None):
+                 error_desc=None, options=lambda obj, parser: None,
+                 uses_basepath=True):
       """Initializer for the class attributes."""
       self.function = function
       self.usage = usage
       self.short_desc = short_desc
       self.long_desc = long_desc
+      self.error_desc = error_desc
       self.options = options
+      self.uses_basepath = uses_basepath
 
     def __call__(self, appcfg):
       """Invoke this Action on the specified AppCfg.
@@ -2947,11 +3488,12 @@ class AppCfgApp(object):
       'help': Action(
           function='Help',
           usage='%prog help <action>',
-          short_desc='Print help for a specific action.'),
+          short_desc='Print help for a specific action.',
+          uses_basepath=False),
 
       'update': Action(
           function='Update',
-          usage='%prog [options] update <directory>',
+          usage='%prog [options] update <directory> [version]',
           options=_UpdateOptions,
           short_desc='Create or update an app version.',
           long_desc="""
@@ -2969,7 +3511,8 @@ Temporary or source control files (e.g. foo~, .svn/*) will be skipped."""),
           long_desc="""
 Download a previously-uploaded app to the specified directory.  The app
 ID is specified by the \"-A\" option.  The optional version is specified
-by the \"-V\" option."""),
+by the \"-V\" option.""",
+          uses_basepath=False),
 
       'update_cron': Action(
           function='UpdateCron',
@@ -3003,6 +3546,62 @@ definitions from the optional queue.yaml file."""),
 The 'update_dos' command will update any new, removed or changed dos
 definitions from the optional dos.yaml file."""),
 
+      'backends': Action(
+          function='BackendsAction',
+          usage='%prog [options] backends <directory> <action>',
+          short_desc='Perform a backend action.',
+          long_desc="""
+The 'backends' command will perform a backend action.""",
+          error_desc="""\
+Expected a <directory> and <action> argument."""),
+
+      'backends list': Action(
+          function='BackendsList',
+          usage='%prog [options] backends <directory> list',
+          short_desc='List all backends configured for the app.',
+          long_desc="""
+The 'backends list' command will list all backends configured for the app."""),
+
+      'backends update': Action(
+          function='BackendsUpdate',
+          usage='%prog [options] backends <directory> update [<backend>]',
+          options=_UpdateOptions,
+          short_desc='Update one or more backends.',
+          long_desc="""
+The 'backends update' command will update one or more backends for the app.
+By default, all backends are updated.  If a <backend> argument is provided,
+only that backend will be updated."""),
+
+      'backends rollback': Action(
+          function='BackendsRollback',
+          usage='%prog [options] backends <directory> rollback <backend>',
+          short_desc='Roll back an update of a backend.',
+          long_desc="""
+The 'backends update' command requires a server-side transaction.
+Use 'backends rollback' if you experience an error during 'backends update'
+and want to start the update over again."""),
+
+      'backends start': Action(
+          function='BackendsStart',
+          usage='%prog [options] backends <directory> start <backend>',
+          short_desc='Start a backend.',
+          long_desc="""
+The 'backends start' command will put a backend into the START state."""),
+
+      'backends stop': Action(
+          function='BackendsStop',
+          usage='%prog [options] backends <directory> stop <backend>',
+          short_desc='Stop a backend.',
+          long_desc="""
+The 'backends start' command will put a backend into the STOP state."""),
+
+      'backends delete': Action(
+          function='BackendsDelete',
+          usage='%prog [options] backends <directory> delete <backend>',
+          short_desc='Delete a backend.',
+          long_desc="""
+The 'backend delete' command will delete a backend."""),
+
       'vacuum_indexes': Action(
           function='VacuumIndexes',
           usage='%prog [options] vacuum_indexes <directory>',
@@ -3020,9 +3619,9 @@ option to delete them."""),
           usage='%prog [options] rollback <directory>',
           short_desc='Rollback an in-progress update.',
           long_desc="""
-The 'update' command requires a server-side transaction.  Use 'rollback'
-if you get an error message about another transaction being in progress
-and you are sure that there is no such transaction."""),
+The 'update' command requires a server-side transaction.
+Use 'rollback' if you experience an error during 'update'
+and want to begin a new update transaction."""),
 
       'request_logs': Action(
           function='RequestLogs',
@@ -3032,7 +3631,9 @@ and you are sure that there is no such transaction."""),
           long_desc="""
 The 'request_logs' command exports the request logs from your application
 to a file.  It will write Apache common log format records ordered
-chronologically.  If output file is '-' stdout will be written."""),
+chronologically.  If output file is '-' stdout will be written.""",
+          error_desc="""\
+Expected a <directory> and <output_file> arguments."""),
 
       'cron_info': Action(
           function='CronInfo',
@@ -3043,6 +3644,10 @@ chronologically.  If output file is '-' stdout will be written."""),
 The 'cron_info' command will display the next 'number' runs (default 5) for
 each cron job defined in the cron.yaml file."""),
 
+
+
+
+
       'upload_data': Action(
           function='PerformUpload',
           usage='%prog [options] upload_data <directory>',
@@ -3050,7 +3655,8 @@ each cron job defined in the cron.yaml file."""),
           short_desc='Upload data records to datastore.',
           long_desc="""
 The 'upload_data' command translates input records into datastore entities and
-uploads them into your application's datastore."""),
+uploads them into your application's datastore.""",
+          uses_basepath=False),
 
       'download_data': Action(
           function='PerformDownload',
@@ -3059,7 +3665,8 @@ uploads them into your application's datastore."""),
           short_desc='Download entities from datastore.',
           long_desc="""
 The 'download_data' command downloads datastore entities and writes them to
-file as CSV or developer defined format."""),
+file as CSV or developer defined format.""",
+          uses_basepath=False),
 
       'create_bulkloader_config': Action(
           function='CreateBulkloadConfig',
@@ -3068,7 +3675,9 @@ file as CSV or developer defined format."""),
           short_desc='Create a bulkloader.yaml from a running application.',
           long_desc="""
 The 'create_bulkloader_config' command creates a bulkloader.yaml configuration
-template for use with upload_data or download_data."""),
+template for use with upload_data or download_data.""",
+          uses_basepath=False),
+
 
       'set_default_version': Action(
           function='SetDefaultVersion',
@@ -3078,7 +3687,6 @@ template for use with upload_data or download_data."""),
 The 'set_default_version' command sets the default (serving) version of the app.
 Defaults to using the version specified in app.yaml; use the --version flag to
 override this."""),
-
 
 
   }

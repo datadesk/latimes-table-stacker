@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """XMPP API.
 
 This module allows AppEngine apps to interact with a bot representing that app
@@ -24,10 +27,18 @@ Functions defined in this module:
   get_presence: Gets the presence for a JID.
   send_message: Sends a chat message to any number of JIDs.
   send_invite: Sends an invitation to chat to a JID.
+  send_presence: Sends a presence to a JID.
 
 Classes defined in this module:
   Message: A class to encapsulate received messages.
 """
+
+
+
+
+
+
+
 
 
 
@@ -36,9 +47,12 @@ from google.appengine.api.xmpp import xmpp_service_pb
 from google.appengine.runtime import apiproxy_errors
 
 
+
 NO_ERROR    = xmpp_service_pb.XmppMessageResponse.NO_ERROR
 INVALID_JID = xmpp_service_pb.XmppMessageResponse.INVALID_JID
 OTHER_ERROR = xmpp_service_pb.XmppMessageResponse.OTHER_ERROR
+
+
 
 
 MESSAGE_TYPE_NONE = ""
@@ -53,6 +67,30 @@ _VALID_MESSAGE_TYPES = frozenset([MESSAGE_TYPE_NONE, MESSAGE_TYPE_CHAT,
                                   MESSAGE_TYPE_HEADLINE, MESSAGE_TYPE_NORMAL])
 
 
+
+
+PRESENCE_TYPE_AVAILABLE = ""
+PRESENCE_TYPE_UNAVAILABLE = "unavailable"
+PRESENCE_TYPE_PROBE = "probe"
+_VALID_PRESENCE_TYPES = frozenset([PRESENCE_TYPE_AVAILABLE,
+                                   PRESENCE_TYPE_UNAVAILABLE,
+                                   PRESENCE_TYPE_PROBE])
+
+
+
+
+PRESENCE_SHOW_NONE = ""
+PRESENCE_SHOW_AWAY = "away"
+PRESENCE_SHOW_CHAT = "chat"
+PRESENCE_SHOW_DND = "dnd"
+PRESENCE_SHOW_XA = "xa"
+_VALID_PRESENCE_SHOWS = frozenset([PRESENCE_SHOW_NONE, PRESENCE_SHOW_AWAY,
+                                   PRESENCE_SHOW_CHAT, PRESENCE_SHOW_DND,
+                                   PRESENCE_SHOW_XA])
+
+
+MAX_STATUS_MESSAGE_SIZE = 1024
+
 class Error(Exception):
   """Base error class for this module."""
 
@@ -62,7 +100,7 @@ class InvalidJidError(Error):
 
 
 class InvalidTypeError(Error):
-  """Error that indicates a send message request has an invalid type."""
+  """Error that indicates a request has an invalid type."""
 
 
 class InvalidXmlError(Error):
@@ -75,6 +113,14 @@ class NoBodyError(Error):
 
 class InvalidMessageError(Error):
   """Error that indicates a received message was invalid or incomplete."""
+
+
+class InvalidShowError(Error):
+  """Error that indicates a send presence request has an invalid show."""
+
+
+class InvalidStatusError(Error):
+  """Error that indicates a send presence request has an invalid status."""
 
 
 def get_presence(jid, from_jid=None):
@@ -242,6 +288,82 @@ def send_message(jids, body, from_jid=None, message_type=MESSAGE_TYPE_CHAT,
   return response.status_list()
 
 
+def send_presence(jid, status=None, from_jid=None,
+                  presence_type=PRESENCE_TYPE_AVAILABLE,
+                  presence_show=PRESENCE_SHOW_NONE):
+  """Sends a presence to a given JID.
+
+  Args:
+    jid: A JID to send the presence to.
+    status: The optional status message. Size is limited to 1KB.
+    from_jid: The optional custom JID to use for sending. Currently, the default
+      is <appid>@appspot.com. This is supported as a value. Custom JIDs can be
+      of the form <anything>@<appid>.appspotchat.com.
+    presence_type: Optional type of the presence. This accepts a subset of the
+      types specified in RFC 3921, section 2.2.1. An empty string will result
+      in a presence stanza without a type attribute. For convenience, all of the
+      valid types are in the PRESENCE_TYPE_* constants in this file. The default
+      is PRESENCE_TYPE_AVAILABLE. Anything else will throw an exception.
+    presence_show: Optional show value for the presence. Should be one of the
+      values specified in RFC 3921, section 2.2.2.1. An empty string will result
+      in a presence stanza without a show element. For convenience, all of the
+      valid types are in the PRESENCE_SHOW_* constants in this file. The
+      default is PRESENCE_SHOW_NONE. Anything else will throw an exception.
+
+  Raises:
+    InvalidJidError if there is no valid JID in the list.
+    InvalidTypeError if the type argument is invalid.
+    InvalidShowError if the show argument is invalid.
+    InvalidStatusError if the status argument is too large.
+    Error if another error occurs processing the request.
+  """
+  request = xmpp_service_pb.XmppSendPresenceRequest()
+  response = xmpp_service_pb.XmppSendPresenceResponse()
+
+  if not jid:
+    raise InvalidJidError()
+
+  if presence_type and not _to_str(presence_type) in _VALID_PRESENCE_TYPES:
+    raise InvalidTypeError()
+
+  if presence_show and not _to_str(presence_show) in _VALID_PRESENCE_SHOWS:
+    raise InvalidShowError()
+
+  if status and len(status) > MAX_STATUS_MESSAGE_SIZE:
+    raise InvalidStatusError()
+
+  request.set_jid(_to_str(jid))
+  if status:
+    request.set_status(_to_str(status))
+  if presence_type:
+    request.set_type(_to_str(presence_type))
+  if presence_show:
+    request.set_show(_to_str(presence_show))
+  if from_jid:
+    request.set_from_jid(_to_str(from_jid))
+
+  try:
+    apiproxy_stub_map.MakeSyncCall("xmpp",
+                                   "SendPresence",
+                                   request,
+                                   response)
+  except apiproxy_errors.ApplicationError, e:
+    if (e.application_error ==
+        xmpp_service_pb.XmppServiceError.INVALID_JID):
+      raise InvalidJidError()
+    elif (e.application_error ==
+          xmpp_service_pb.XmppServiceError.INVALID_TYPE):
+      raise InvalidTypeError()
+    elif (e.application_error ==
+          xmpp_service_pb.XmppServiceError.INVALID_SHOW):
+      raise InvalidShowError()
+    raise Error()
+
+  return
+
+
+
+
 class Message(object):
   """Encapsulates an XMPP message received by the application."""
 
@@ -275,6 +397,7 @@ class Message(object):
   def __parse_command(self):
     if self.__arg != None:
       return
+
 
     body = self.__body
     if body.startswith('\\'):

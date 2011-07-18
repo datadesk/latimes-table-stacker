@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """PyYAML event listener
 
 Contains class which interprets YAML events and forwards them to
@@ -24,6 +27,7 @@ a handler object.
 
 from google.appengine.api import yaml_errors
 import yaml
+
 
 
 _EVENT_METHOD_MAP = {
@@ -130,7 +134,9 @@ class EventListener(object):
       raise yaml_errors.ListenerConfigurationError(
         'Must provide event handler of type yaml_listener.EventHandler')
     self._event_method_map = {}
+
     for event, method in _EVENT_METHOD_MAP.iteritems():
+
       self._event_method_map[event] = getattr(event_handler, method)
 
   def HandleEvent(self, event, loader=None):
@@ -142,9 +148,11 @@ class EventListener(object):
     Raises:
       IllegalEvent when receives an unrecognized or unsupported event type.
     """
+
     if event.__class__ not in _EVENT_METHOD_MAP:
       raise yaml_errors.IllegalEvent(
             "%s is not a valid PyYAML class" % event.__class__.__name__)
+
     if event.__class__ in self._event_method_map:
       self._event_method_map[event.__class__](event, loader)
 

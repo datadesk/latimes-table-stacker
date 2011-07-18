@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Channel API.
 
 This module allows App Engine apps to push messages to a client.
@@ -25,6 +28,10 @@ Functions defined in this module:
 """
 
 
+
+
+
+
 import os
 
 from google.appengine.api import api_base_pb
@@ -33,7 +40,17 @@ from google.appengine.api.channel import channel_service_pb
 from google.appengine.runtime import apiproxy_errors
 
 
+
+
+
+
+
 MAXIMUM_CLIENT_ID_LENGTH = 64
+
+
+
+
+
 
 MAXIMUM_MESSAGE_LENGTH = 32767
 
@@ -106,6 +123,7 @@ def _ValidateClientId(client_id):
   return client_id
 
 
+
 def create_channel(client_id):
   """Create a channel.
 
@@ -120,6 +138,7 @@ def create_channel(client_id):
         unicode, or if the (utf-8 encoded) string is longer than 64 characters.
     Other errors returned by _ToChannelError
   """
+
 
   client_id = _ValidateClientId(client_id)
 
@@ -139,6 +158,7 @@ def create_channel(client_id):
   return response.client_id()
 
 
+
 def send_message(client_id, message):
   """Send a message to a channel.
 
@@ -152,6 +172,7 @@ def send_message(client_id, message):
     InvalidMessageError: if the message isn't a string or is too long.
     Errors returned by _ToChannelError
   """
+
   client_id = _ValidateClientId(client_id)
 
   if isinstance(message, unicode):

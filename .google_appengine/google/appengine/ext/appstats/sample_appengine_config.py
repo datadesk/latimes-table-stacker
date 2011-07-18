@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Sample Appstats Configuration.
 
 There are four sections:
@@ -23,6 +26,8 @@ There are four sections:
 1) Django version declaration.
 2) Configuration constants.
 3) Configuration functions.
+
+Also a section at the end for the remote_api handler.
 
 """
 
@@ -198,11 +203,13 @@ def appstats_normalize_path(path):
 # on the request object (mostly the query string) to produce a more
 # fine-grained path key.  The argument is a StatsProto object; this is
 # a class defined in recording.py.  Useful methods are:
-# #   - http_method()
+
+#   - http_method()
 #   - http_path()
 #   - http_query()
 #   - http_status()
-# # Note that the StatsProto argument is loaded only with summary
+
+# Note that the StatsProto argument is loaded only with summary
 # information; this means you cannot access the request headers.
 
 def appstats_extract_key(request):
@@ -210,3 +217,14 @@ def appstats_extract_key(request):
   if request.http_method() != 'GET':
     key = '%s %s' % (request.http_method(), key)
   return key
+
+
+# ########################################
+# Remote_API Authentication configuration.
+
+# See google/appengine/ext/remote_api/handler.py for more information.
+# In most cases, you will not want to configure this.
+
+# remoteapi_CUSTOM_ENVIRONMENT_AUTHENTICATION = (
+#     'HTTP_X_APPENGINE_INBOUND_APPID', ['a trusted appid here'])
+

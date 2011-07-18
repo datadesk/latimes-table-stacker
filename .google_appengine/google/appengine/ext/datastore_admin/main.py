@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Main module for datastore admin receiver.
 
 To use, add this to app.yaml:
@@ -23,29 +26,34 @@ To use, add this to app.yaml:
 """
 
 
-import datetime
 import os
 
+from google.appengine.api import datastore_errors
 from google.appengine.ext import webapp
+from google.appengine.ext.datastore_admin import copy_handler
 from google.appengine.ext.datastore_admin import delete_handler
 from google.appengine.ext.datastore_admin import utils
 from google.appengine.ext.db import stats
+from google.appengine.ext.db import metadata
 from google.appengine.ext.webapp import util
 
+
+
+
+
 GET_ACTIONS = {
+    'Copy to Another App': copy_handler.ConfirmCopyHandler.Render,
     'Delete Entities': delete_handler.ConfirmDeleteHandler.Render,
 }
 
 
-def _GetDatastoreStats(get_schema_kinds_list):
+def _GetDatastoreStats(kinds_list, use_stats_kinds=False):
   """Retrieves stats for kinds.
 
-  If get_schema_kinds_list is empty, relies on datastore statistics for a list
-  of kinds.  Otherwise, only adds kinds to the dictionary result if they are
-  members of get_schema_kinds_list.
-
   Args:
-    get_schema_kinds_list: identifies what kinds should have statistics.
+    kinds_list: List of known kinds.
+    use_stats_kinds: If stats are available, kinds_list will be ignored and
+      all kinds found in stats will be used instead.
 
   Returns:
     timestamp: records time that statistics were last updated.
@@ -58,25 +66,28 @@ def _GetDatastoreStats(get_schema_kinds_list):
   """
   global_stat = stats.GlobalStat.all().fetch(1)
   if not global_stat:
-    return _KindsListToTuple(get_schema_kinds_list)
+    return _KindsListToTuple(kinds_list)
 
-  global_bytes = global_stat[0].bytes
   global_ts = global_stat[0].timestamp
 
-  all_kinds = stats.KindStat.all().filter('timestamp =', global_ts).fetch(1000)
-  if not all_kinds:
-    return _KindsListToTuple(get_schema_kinds_list)
+  kind_stats = stats.KindStat.all().filter('timestamp =', global_ts).fetch(1000)
+  if not kind_stats:
+    return _KindsListToTuple(kinds_list)
 
   results = {}
-  for kind_ent in all_kinds:
-    if not kind_ent.kind_name.startswith('__') and (
-        not get_schema_kinds_list
-        or kind_ent.kind_name in get_schema_kinds_list):
+  for kind_ent in kind_stats:
+
+
+
+    if (not kind_ent.kind_name.startswith('__')
+        and (use_stats_kinds or kind_ent.kind_name in kinds_list)):
       results[kind_ent.kind_name] = _PresentatableKindStats(kind_ent)
 
   utils.CacheStats(results.values())
 
-  for kind_str in get_schema_kinds_list or []:
+
+
+  for kind_str in kinds_list or []:
     if kind_str not in results:
       results[kind_str] = {'kind_name': kind_str}
 
@@ -84,15 +95,9 @@ def _GetDatastoreStats(get_schema_kinds_list):
           sorted(results.values(), key=lambda x: x['kind_name']))
 
 
-def _KindsListToTuple(get_schema_kinds_list):
-  """Called to return default tuple when no datastore statistics are available.
-  """
-  results = []
-  if get_schema_kinds_list:
-    for kind_str in sorted(get_schema_kinds_list):
-      results.append({'kind_name': kind_str})
-
-  return '', results
+def _KindsListToTuple(kinds_list):
+  """Build default tuple when no datastore statistics are available. """
+  return '', [{'kind_name': kind} for kind in sorted(kinds_list)]
 
 
 def _PresentatableKindStats(kind_ent):
@@ -113,8 +118,17 @@ class RouteByActionHandler(webapp.RequestHandler):
 
   def ListActions(self, error=None):
     """Handler for get requests to datastore_admin/confirm_delete."""
-    kinds = self.request.get('kind', allow_multiple=True)
-    last_stats_update, kind_stats = _GetDatastoreStats(kinds)
+    use_stats_kinds = False
+    kinds = []
+    try:
+      kinds = self.GetKinds()
+      if not kinds:
+        use_stats_kinds = True
+    except datastore_errors.Error:
+      use_stats_kinds = True
+
+    last_stats_update, kind_stats = _GetDatastoreStats(
+        kinds, use_stats_kinds=use_stats_kinds)
 
     template_params = {
         'kind_stats': kind_stats,
@@ -124,6 +138,7 @@ class RouteByActionHandler(webapp.RequestHandler):
         'namespace': self.request.get('namespace'),
         'action_list': sorted(GET_ACTIONS.keys()),
         'error': error,
+        'operations': utils.DatastoreAdminOperation.all().fetch(100),
     }
     utils.RenderToResponse(self, 'list_actions.html', template_params)
 
@@ -140,9 +155,29 @@ class RouteByActionHandler(webapp.RequestHandler):
   def get(self):
     self.RouteAction(GET_ACTIONS)
 
+  def post(self):
+    self.RouteAction(GET_ACTIONS)
+
+  def GetKinds(self):
+    """Obtain list of all entity kinds from the datastore."""
+    kinds = metadata.Kind.all().fetch(99999999)
+    kind_names = []
+    for kind in kinds:
+      kind_name = kind.kind_name
+      if (kind_name.startswith('__') or
+          kind_name == utils.DatastoreAdminOperation.kind()):
+        continue
+      kind_names.append(kind_name)
+    return kind_names
+
 
 class StaticResourceHandler(webapp.RequestHandler):
   """Read static files from disk."""
+
+
+
+
+
 
   _BASE_FILE_PATH = os.path.dirname(__file__)
 
@@ -165,6 +200,8 @@ class StaticResourceHandler(webapp.RequestHandler):
     self.response.headers['Cache-Control'] = 'public; max-age=300'
     self.response.headers['Content-Type'] = self._RESOURCE_MAP[relative_path]
     if relative_path == 'static/css/compiled.css':
+
+
       self.response.out.write(
           open(path).read().replace('url(/img/', 'url(../img/'))
     else:
@@ -186,8 +223,9 @@ def CreateApplication():
                    delete_handler.DoDeleteHandler.SUFFIX),
        delete_handler.DoDeleteHandler),
       (r'%s/%s' % (utils.config.BASE_PATH,
-                   delete_handler.DeleteDoneHandler.SUFFIX),
-       delete_handler.DeleteDoneHandler),
+                   utils.MapreduceDoneHandler.SUFFIX),
+       utils.MapreduceDoneHandler),
+      ] + copy_handler.handlers_list(utils.config.BASE_PATH) + [
       (r'%s/static.*' % utils.config.BASE_PATH, StaticResourceHandler),
       (r'.*', RouteByActionHandler),
       ])

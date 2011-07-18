@@ -15,6 +15,14 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
+
 """Contains a metaclass and helper functions used to create
 protocol message classes from Descriptor objects at runtime.
 
@@ -37,6 +45,7 @@ except ImportError:
   from StringIO import StringIO
 import struct
 import weakref
+
 
 from google.net.proto2.python.internal import containers
 from google.net.proto2.python.internal import decoder
@@ -65,6 +74,7 @@ def InitMessage(descriptor, cls):
     cls._decoders_by_tag[decoder.MESSAGE_SET_ITEM_TAG] = (
         decoder.MessageSetItemDecoder(cls._extensions_by_number))
 
+
   for field in descriptor.fields:
     _AttachFieldHelpers(cls, field)
 
@@ -79,6 +89,12 @@ def InitMessage(descriptor, cls):
 
 
 
+
+
+
+
+
+
 def _PropertyName(proto_field_name):
   """Returns the name of the public property attribute which
   clients can use to get and (in some cases) set the value
@@ -88,6 +104,23 @@ def _PropertyName(proto_field_name):
     proto_field_name: The protocol message field name, exactly
       as it appears (or would appear) in a .proto file.
   """
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   return proto_field_name
 
 
@@ -165,6 +198,8 @@ def _AttachFieldHelpers(cls, field_descriptor):
              False)
 
   if is_repeated and wire_format.IsTypePackable(field_descriptor.type):
+
+
     AddDecoder(wire_format.WIRETYPE_LENGTH_DELIMITED, True)
 
 
@@ -206,6 +241,8 @@ def _DefaultValueConstructorForField(field):
       raise ValueError('Repeated field default value not empty list: %s' % (
           field.default_value))
     if field.cpp_type == _FieldDescriptor.CPPTYPE_MESSAGE:
+
+
       message_type = field.message_type
       def MakeRepeatedMessageDefault(message):
         return containers.RepeatedCompositeFieldContainer(
@@ -219,6 +256,7 @@ def _DefaultValueConstructorForField(field):
       return MakeRepeatedScalarDefault
 
   if field.cpp_type == _FieldDescriptor.CPPTYPE_MESSAGE:
+
     message_type = field.message_type
     def MakeSubMessageDefault(message):
       result = message_type._concrete_class()
@@ -287,6 +325,8 @@ def _AddPropertiesForFields(descriptor, cls):
     _AddPropertiesForField(field, cls)
 
   if descriptor.is_extendable:
+
+
     cls.Extensions = property(lambda self: _ExtensionDict(self))
 
 
@@ -300,6 +340,8 @@ def _AddPropertiesForField(field, cls):
     field: A FieldDescriptor for this field.
     cls: The class we're constructing.
   """
+
+
   assert _FieldDescriptor.MAX_CPPTYPE == 10
 
   constant_name = field.name.upper() + "_FIELD_NUMBER"
@@ -333,12 +375,21 @@ def _AddPropertiesForRepeatedField(field, cls):
   def getter(self):
     field_value = self._fields.get(field)
     if field_value is None:
+
       field_value = field._default_constructor(self)
+
+
+
+
+
+
 
       field_value = self._fields.setdefault(field, field_value)
     return field_value
   getter.__module__ = None
   getter.__doc__ = 'Getter for %s.' % proto_field_name
+
+
 
   def setter(self, new_value):
     raise AttributeError('Assignment not allowed to repeated field '
@@ -372,11 +423,14 @@ def _AddPropertiesForNonRepeatedScalarField(field, cls):
   def setter(self, new_value):
     type_checker.CheckValue(new_value)
     self._fields[field] = new_value
+
+
     if not self._cached_byte_size_dirty:
       self._Modified()
 
   setter.__module__ = None
   setter.__doc__ = 'Setter for %s.' % proto_field_name
+
 
   doc = 'Magic attribute generated for "%s" proto field.' % proto_field_name
   setattr(cls, property_name, property(getter, setter, doc=doc))
@@ -393,6 +447,8 @@ def _AddPropertiesForNonRepeatedCompositeField(field, cls):
     field: A FieldDescriptor for this field.
     cls: The class we're constructing.
   """
+
+
   proto_field_name = field.name
   property_name = _PropertyName(proto_field_name)
   message_type = field.message_type
@@ -400,17 +456,27 @@ def _AddPropertiesForNonRepeatedCompositeField(field, cls):
   def getter(self):
     field_value = self._fields.get(field)
     if field_value is None:
+
       field_value = message_type._concrete_class()
       field_value._SetListener(self._listener_for_children)
+
+
+
+
+
+
 
       field_value = self._fields.setdefault(field, field_value)
     return field_value
   getter.__module__ = None
   getter.__doc__ = 'Getter for %s.' % proto_field_name
 
+
+
   def setter(self, new_value):
     raise AttributeError('Assignment not allowed to composite field '
                          '"%s" in protocol message object.' % proto_field_name)
+
 
   doc = 'Magic attribute generated for "%s" proto field.' % proto_field_name
   setattr(cls, property_name, property(getter, setter, doc=doc))
@@ -425,9 +491,12 @@ def _AddPropertiesForExtensions(descriptor, cls):
 
 
 def _AddStaticMethods(cls):
+
   def RegisterExtension(extension_handle):
     extension_handle.containing_type = cls.DESCRIPTOR
     _AttachFieldHelpers(cls, extension_handle)
+
+
 
     actual_handle = cls._extensions_by_number.setdefault(
         extension_handle.number, extension_handle)
@@ -442,6 +511,7 @@ def _AddStaticMethods(cls):
 
     handle = extension_handle
     if _IsMessageSetExtension(handle):
+
       cls._extensions_by_name[
           extension_handle.message_type.full_name] = extension_handle
 
@@ -509,7 +579,13 @@ def _AddClearFieldMethod(message_descriptor, cls):
       raise ValueError('Protocol message has no "%s" field.' % field_name)
 
     if field in self._fields:
+
+
+
       del self._fields[field]
+
+
+
 
     self._Modified()
 
@@ -521,6 +597,7 @@ def _AddClearExtensionMethod(cls):
   def ClearExtension(self, extension_handle):
     _VerifyExtensionHandle(self, extension_handle)
 
+
     if extension_handle in self._fields:
       del self._fields[extension_handle]
     self._Modified()
@@ -530,6 +607,7 @@ def _AddClearExtensionMethod(cls):
 def _AddClearMethod(message_descriptor, cls):
   """Helper for _AddMessageMethods()."""
   def Clear(self):
+
     self._fields = {}
     self._Modified()
   cls.Clear = Clear
@@ -633,6 +711,7 @@ def _AddSerializeToStringMethod(message_descriptor, cls):
   """Helper for _AddMessageMethods()."""
 
   def SerializeToString(self):
+
     errors = []
     if not self.IsInitialized():
       raise message_mod.EncodeError(
@@ -663,6 +742,8 @@ def _AddMergeFromStringMethod(message_descriptor, cls):
     length = len(serialized)
     try:
       if self._InternalParse(serialized, 0, length) != length:
+
+
         raise message_mod.DecodeError('Unexpected end-group tag.')
     except IndexError:
       raise message_mod.DecodeError('Truncated message.')
@@ -709,6 +790,7 @@ def _AddIsInitializedMethod(message_descriptor, cls):
     Returns:
       True iff the specified message has all required fields set.
     """
+
 
 
     for field in required_fields:
@@ -791,6 +873,7 @@ def _AddMergeFromMethod(cls):
       if field.label == LABEL_REPEATED:
         field_value = fields.get(field)
         if field_value is None:
+
           field_value = field._default_constructor(self)
           fields[field] = field_value
         field_value.MergeFrom(value)
@@ -798,6 +881,7 @@ def _AddMergeFromMethod(cls):
         if value._is_present_in_parent:
           field_value = fields.get(field)
           if field_value is None:
+
             field_value = field._default_constructor(self)
             fields[field] = field_value
           field_value.MergeFrom(value)
@@ -835,6 +919,10 @@ def _AddPrivateHelperMethods(cls):
     and propagates this to our listener iff this was a state change.
     """
 
+
+
+
+
     if not self._cached_byte_size_dirty:
       self._cached_byte_size_dirty = True
       self._listener_for_children.dirty = True
@@ -864,10 +952,17 @@ class _Listener(object):
       parent_message: The message whose _Modified() method we should call when
         we receive Modified() messages.
     """
+
+
+
+
     if isinstance(parent_message, weakref.ProxyType):
       self._parent_message_weakref = parent_message
     else:
       self._parent_message_weakref = weakref.proxy(parent_message)
+
+
+
 
     self.dirty = False
 
@@ -875,9 +970,17 @@ class _Listener(object):
     if self.dirty:
       return
     try:
+
       self._parent_message_weakref._Modified()
     except ReferenceError:
+
+
+
       pass
+
+
+
+
 
 
 class _ExtensionDict(object):
@@ -913,7 +1016,15 @@ class _ExtensionDict(object):
       except ReferenceError:
         pass
     else:
+
+
       return extension_handle.default_value
+
+
+
+
+
+
 
     result = self._extended_message._fields.setdefault(
         extension_handle, result)
@@ -927,6 +1038,7 @@ class _ExtensionDict(object):
     my_fields = self._extended_message.ListFields()
     other_fields = other._extended_message.ListFields()
 
+
     my_fields    = [ field for field in my_fields    if field.is_extension ]
     other_fields = [ field for field in other_fields if field.is_extension ]
 
@@ -937,6 +1049,10 @@ class _ExtensionDict(object):
 
   def __hash__(self):
     raise TypeError('unhashable object')
+
+
+
+
 
   def __setitem__(self, extension_handle, value):
     """If extension_handle specifies a non-repeated, scalar extension
@@ -950,6 +1066,8 @@ class _ExtensionDict(object):
       raise TypeError(
           'Cannot assign to extension "%s" because it is a repeated or '
           'composite type.' % extension_handle.full_name)
+
+
 
     type_checker = type_checkers.GetTypeChecker(
         extension_handle.cpp_type, extension_handle.type)

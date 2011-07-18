@@ -15,6 +15,19 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 """Pure Python zipfile importer.
 
 This approximates the standard zipimport module, which isn't supported
@@ -36,11 +49,22 @@ used.
 __all__ = ['ZipImportError', 'zipimporter']
 
 
+
+
+
+
+
+
+
+
+
 import os
 import sys
 import types
 import UserDict
 import zipfile
+
+
 
 
 _SEARCH_ORDER = [
@@ -50,11 +74,14 @@ _SEARCH_ORDER = [
 ]
 
 
+
+
 _zipfile_cache = {}
 
 
 class ZipImportError(ImportError):
   """Exception raised by zipimporter objects."""
+
 
 
 class zipimporter:
@@ -78,32 +105,45 @@ class zipimporter:
       ZipImportError if the path_entry does not represent a valid
       zipfile with optional prefix.
     """
+
     archive = path_entry
     prefix = ''
+
     while not os.path.lexists(archive):
       head, tail = os.path.split(archive)
       if head == archive:
         msg = 'Nothing found for %r' % path_entry
+
         raise ZipImportError(msg)
       archive = head
       prefix = os.path.join(tail, prefix)
     if not os.path.isfile(archive):
       msg = 'Non-file %r found for %r' % (archive, path_entry)
+
       raise ZipImportError(msg)
+
     self.archive = archive
     self.prefix = os.path.join(prefix, '')
+
     self.zipfile = _zipfile_cache.get(archive)
     if self.zipfile is None:
+
       try:
         self.zipfile = zipfile.ZipFile(self.archive)
       except (EnvironmentError, zipfile.BadZipfile), err:
+
+
         msg = 'Can\'t open zipfile %s: %s: %s' % (self.archive,
                                                   err.__class__.__name__, err)
         import logging
         logging.warn(msg)
         raise ZipImportError(msg)
       else:
+
         _zipfile_cache[archive] = self.zipfile
+
+
+
         import logging
         logging.info('zipimporter(%r, %r)', archive, prefix)
 
@@ -142,6 +182,7 @@ class zipimporter:
         return submodname, is_package, relpath
     msg = ('Can\'t find module %s in zipfile %s with prefix %r' %
            (fullmodname, self.archive, self.prefix))
+
     raise ZipImportError(msg)
 
   def _get_source(self, fullmodname):
@@ -181,8 +222,10 @@ class zipimporter:
     try:
       submodname, is_package, relpath = self._get_info(fullmodname)
     except ImportError:
+
       return None
     else:
+
       return self
 
   def load_module(self, fullmodname):
@@ -199,6 +242,7 @@ class zipimporter:
       ImportError if there was a problem accessing the source code.
       Whatever else can be raised by executing the module's source code.
     """
+
     submodname, is_package, fullpath, source = self._get_source(fullmodname)
     code = compile(source, fullpath, 'exec')
     mod = sys.modules.get(fullmodname)
@@ -218,18 +262,21 @@ class zipimporter:
     return mod
 
 
+
   def get_data(self, fullpath):
     """Return (binary) content of a data file in the zipfile."""
     prefix = os.path.join(self.archive, '')
     if fullpath.startswith(prefix):
+
       relpath = fullpath[len(prefix):]
     elif os.path.isabs(fullpath):
       raise IOError('Absolute path %r doesn\'t start with zipfile name %r' %
                     (fullpath, prefix))
     else:
+
       relpath = fullpath
     try:
-      return self.zipfile.read(relpath)
+      return self.zipfile.read(relpath.replace(os.sep, '/'))
     except KeyError:
       raise IOError('Path %r not found in zipfile %r' %
                     (relpath, self.archive))
@@ -257,6 +304,7 @@ class ZipFileCache(UserDict.DictMixin):
   """
 
   def __init__(self, archive):
+
     _zipfile_cache[archive]
 
     self._archive = archive
@@ -265,7 +313,7 @@ class ZipFileCache(UserDict.DictMixin):
     return _zipfile_cache[self._archive].namelist()
 
   def __getitem__(self, filename):
-    info = _zipfile_cache[self._archive].getinfo(filename)
+    info = _zipfile_cache[self._archive].getinfo(filename.replace(os.sep, '/'))
     dt = info.date_time
     dostime = dt[3] << 11 | dt[4] << 5 | (dt[5] // 2)
     dosdate = (dt[0] - 1980) << 9 | dt[1] << 5 | dt[2]
@@ -284,7 +332,12 @@ class ZipDirectoryCache(UserDict.DictMixin):
     return ZipFileCache(archive)
 
 
+
+
+
 _zip_directory_cache = ZipDirectoryCache()
+
+
 
 
 sys.modules['zipimport'] = sys.modules[__name__]

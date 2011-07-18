@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Logging utilities for use by applications.
 
 Classes defined here:
@@ -25,13 +29,20 @@ Classes defined here:
 
 
 
+
+
+
+
 import logging
 import sys
 import types
 
+from google.appengine.api import logservice
+
+
+
 
 NEWLINE_REPLACEMENT = "\0"
-
 
 class AppLogsHandler(logging.StreamHandler):
   """Logging handler that will direct output to a persistent store of
@@ -44,6 +55,16 @@ class AppLogsHandler(logging.StreamHandler):
 
 
 
+
+
+
+
+
+
+
+
+
+
   def __init__(self, stream=None):
     """Constructor.
 
@@ -51,6 +72,8 @@ class AppLogsHandler(logging.StreamHandler):
       # stream is optional. it defaults to sys.stderr.
       stream: destination for output
     """
+
+
     logging.StreamHandler.__init__(self, stream)
 
   def close(self):
@@ -71,7 +94,10 @@ class AppLogsHandler(logging.StreamHandler):
       if isinstance(message, unicode):
         message = message.encode("UTF-8")
       self.stream.write(message)
+
+
       self.flush()
+      logservice.auto_flush(lines_emitted=1)
     except (KeyboardInterrupt, SystemExit):
       raise
     except:
@@ -80,7 +106,12 @@ class AppLogsHandler(logging.StreamHandler):
   def _AppLogsMessage(self, record):
     """Converts the log record into a log line."""
 
-    message = self.format(record).replace("\n", NEWLINE_REPLACEMENT)
+
+
+    message = self.format(record).replace("\r\n", NEWLINE_REPLACEMENT)
+    message = message.replace("\r", NEWLINE_REPLACEMENT)
+    message = message.replace("\n", NEWLINE_REPLACEMENT)
+
     return "LOG %d %d %s\n" % (self._AppLogsLevel(record.levelno),
                                long(record.created * 1000 * 1000),
                                message)

@@ -15,10 +15,17 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
 """Key range representation and splitting."""
 
 
 import os
+
 
 try:
   import simplejson
@@ -51,6 +58,7 @@ class KeyRange(object):
   and a scan direction (KeyRange.DESC or KeyRange.ASC).
   """
 
+
   DESC = "DESC"
   ASC = "ASC"
 
@@ -73,6 +81,10 @@ class KeyRange(object):
       namespace: The namespace for this range. If None then the current
           namespace is used.
     """
+
+
+
+
     if direction is None:
       direction = KeyRange.ASC
     assert direction in (KeyRange.ASC, KeyRange.DESC)
@@ -95,7 +107,7 @@ class KeyRange(object):
     if self.include_end:
       right_side = "]"
     else:
-      right_side = "("
+      right_side = ")"
     return "%s%s%r to %r%s" % (self.direction, left_side, self.key_start,
                                self.key_end, right_side)
 
@@ -298,6 +310,7 @@ class KeyRange(object):
     else:
       key_split = KeyRange.split_keys(key_start, key_end, batch_size)
       first_include_end = True
+
       if key_split == key_start:
         first_include_end = first_include_end and include_start
 
@@ -306,6 +319,7 @@ class KeyRange(object):
                         KeyRange.DESC))
 
       second_include_end = include_end
+
       if key_split == key_end:
         second_include_end = False
       key_pairs.append((key_split, False,
@@ -407,6 +421,8 @@ class KeyRange(object):
     start += "\0"
     end += "\0"
     midpoint = []
+
+
     expected_max = 127
     for i in xrange(min(len(start), len(end))):
       if start[i] == end[i]:
@@ -420,8 +436,11 @@ class KeyRange(object):
           else:
             ord_start = 0
           if ord_start < expected_max:
+
+
             ord_split = (expected_max + ord_start) / 2
           else:
+
             ord_split = (0xFFFF + ord_start) / 2
           midpoint.append(unichr(ord_split))
         break
@@ -469,6 +488,9 @@ class KeyRange(object):
         out_path.append(split_kind)
         out_path.append(unichr(0))
         break
+
+
+
 
       last = (len1 == len2 == 2*(i + 1))
 
@@ -520,6 +542,7 @@ class KeyRange(object):
           not isinstance(id_or_name2, basestring)):
         raise KeyRangeError("Wrong key order: %r, %r" %
                             (id_or_name1, id_or_name2))
+
       zero_ch = unichr(0)
       if id_or_name2 == zero_ch:
         return (id_or_name1 + 2**63 - 1) / 2
@@ -567,10 +590,13 @@ class KeyRange(object):
     full_path = key_start.to_path()
     for index, piece in enumerate(full_path):
       if index % 2 == 0:
+
         continue
       elif isinstance(piece, basestring):
+
         full_path[index] = u"\xffff"
       else:
+
         full_path[index] = 2**63 - 1
 
     key_end = datastore.Key.from_path(*full_path,
@@ -588,6 +614,8 @@ class KeyRange(object):
           keys_only=True).Get(1)
       if results:
         if results[0].name() and not key_start.name():
+
+
           return KeyRange.guess_end_key(
               kind, results[0], probe_count - 1, split_rate)
         else:

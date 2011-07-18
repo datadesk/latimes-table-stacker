@@ -15,11 +15,29 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """Simple quota system backed by memcache storage."""
 
 
 
+
 _QUOTA_NAMESPACE = "quota"
+
+
 
 _OFFSET = 2**32
 
@@ -73,7 +91,8 @@ class QuotaManager(object):
     if new_quota >= _OFFSET:
       return amount
 
-    if consume_some and _OFFSET - new_quota < amount:
+    if consume_some and new_quota is not None and _OFFSET - new_quota < amount:
+
       self.put(bucket, _OFFSET - new_quota)
       return amount - (_OFFSET - new_quota)
     else:

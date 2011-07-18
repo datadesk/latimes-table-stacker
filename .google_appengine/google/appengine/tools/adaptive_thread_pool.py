@@ -15,11 +15,18 @@
 # limitations under the License.
 #
 
+
+
+
 """Provides thread-pool-like functionality for workers accessing App Engine.
 
 The pool adapts to slow or timing out requests by reducing the number of
 active workers, or increasing the number when requests latency reduces.
 """
+
+
+
+
 
 
 
@@ -34,9 +41,14 @@ from google.appengine.tools.requeue import ReQueue
 
 logger = logging.getLogger('google.appengine.tools.adaptive_thread_pool')
 
+
 _THREAD_SHOULD_EXIT = '_THREAD_SHOULD_EXIT'
 
+
+
+
 INITIAL_BACKOFF = 1.0
+
 
 BACKOFF_FACTOR = 2.0
 
@@ -89,6 +101,9 @@ class WorkerThread(threading.Thread):
     """
     threading.Thread.__init__(self)
 
+
+
+
     self.setDaemon(True)
 
     self.exit_flag = False
@@ -105,6 +120,8 @@ class WorkerThread(threading.Thread):
   def run(self):
     """Perform the work of the thread."""
     logger.debug('[%s] %s: started', self.getName(), self.__class__.__name__)
+
+
 
     try:
       self.WorkOnItems()
@@ -129,19 +146,28 @@ class WorkerThread(threading.Thread):
     while not self.exit_flag:
       item = None
       self.__thread_gate.StartWork()
+
       try:
+
         status, instruction = WorkItem.FAILURE, ThreadGate.DECREASE
+
+
         try:
           if self.exit_flag:
+
             instruction = ThreadGate.HOLD
             break
+
 
           try:
             item = self.__work_queue.get(block=True, timeout=1.0)
           except Queue.Empty:
+
             instruction = ThreadGate.HOLD
             continue
           if item == _THREAD_SHOULD_EXIT or self.exit_flag:
+
+
             status, instruction = WorkItem.SUCCESS, ThreadGate.HOLD
             break
 
@@ -155,11 +181,15 @@ class WorkerThread(threading.Thread):
           raise
 
       finally:
+
         try:
+
           if item:
             if status == WorkItem.SUCCESS:
               self.__work_queue.task_done()
             elif status == WorkItem.RETRY:
+
+
               try:
                 self.__work_queue.reput(item, block=False)
               except Queue.Full:
@@ -171,8 +201,10 @@ class WorkerThread(threading.Thread):
                   self.__error = item.error
                   self.__traceback = item.traceback
                 else:
+
                   self.__error = WorkItemError(
                       'Fatal error while processing %s' % item)
+
                 raise self.__error
 
         finally:
@@ -272,11 +304,13 @@ class AdaptiveThreadPool(object):
 
     Tasks may remain unexecuted in the submit queue.
     """
+
     while not self.requeue.empty():
       try:
         unused_item = self.requeue.get_nowait()
         self.requeue.task_done()
       except Queue.Empty:
+
         pass
     for thread in self.__threads:
       thread.exit_flag = True
@@ -338,6 +372,7 @@ class ThreadGate(object):
   lock-free, should never block absent a demonic scheduler.
   """
 
+
   INCREASE = 'increase'
   HOLD = 'hold'
   DECREASE = 'decrease'
@@ -352,7 +387,9 @@ class ThreadGate(object):
       sleep: Used for dependency injection.
     """
     self.__enabled_count = 1
+
     self.__lock = threading.Lock()
+
     self.__thread_semaphore = threading.Semaphore(self.__enabled_count)
     self.__num_threads = num_threads
     self.__backoff_time = 0
@@ -382,7 +419,9 @@ class ThreadGate(object):
     simultaneously operating threads. The critical section is ended by
     calling self.FinishWork().
     """
+
     self.__thread_semaphore.acquire()
+
     if self.__backoff_time > 0.0:
       if not threading.currentThread().exit_flag:
         logger.info('[%s] Backing off due to errors: %.1f seconds',
@@ -393,30 +432,36 @@ class ThreadGate(object):
   def FinishWork(self, instruction=None):
     """Ends a critical section started with self.StartWork()."""
     if not instruction or instruction == ThreadGate.HOLD:
+
       self.__thread_semaphore.release()
 
     elif instruction == ThreadGate.INCREASE:
+
       if self.__backoff_time > 0.0:
         logger.info('Resetting backoff to 0.0')
         self.__backoff_time = 0.0
       do_enable = False
       self.__lock.acquire()
       try:
+
         if self.__num_threads > self.__enabled_count:
           do_enable = True
           self.__enabled_count += 1
       finally:
         self.__lock.release()
+
       if do_enable:
         logger.debug('Increasing active thread count to %d',
                      self.__enabled_count)
         self.__thread_semaphore.release()
+
       self.__thread_semaphore.release()
 
     elif instruction == ThreadGate.DECREASE:
       do_disable = False
       self.__lock.acquire()
       try:
+
         if self.__enabled_count > 1:
           do_disable = True
           self.__enabled_count -= 1
@@ -427,15 +472,18 @@ class ThreadGate(object):
             self.__backoff_time *= BACKOFF_FACTOR
       finally:
         self.__lock.release()
+
         if do_disable:
           logger.debug('Decreasing the number of active threads to %d',
                        self.__enabled_count)
+
         else:
           self.__thread_semaphore.release()
 
 
 class WorkItem(object):
   """Holds a unit of work."""
+
 
   SUCCESS = 'success'
   RETRY = 'retry'

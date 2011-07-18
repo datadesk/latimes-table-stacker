@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """A mechanism for library configuration.
 
 Whenever App Engine library code has the need for a user-configurable
@@ -150,11 +153,26 @@ class LibConfigRegistry(object):
       import_func(self._modname)
     except ImportError, err:
       if str(err) != 'No module named %s' % self._modname:
+
         raise
       self._module = object()
       sys.modules[self._modname] = self._module
     else:
       self._module = sys.modules[self._modname]
+
+  def reset(self):
+    """Drops the imported config module.
+
+    If the config module has not been imported then this is a no-op.
+    """
+    if self._module is None:
+
+      return
+
+    self._module = None
+    for handle in self._registrations.itervalues():
+      handle._clear_cache()
+      handle._initialized = False
 
   def _pairs(self, prefix):
     """Generate (key, value) pairs from the config module matching prefix.
@@ -290,8 +308,10 @@ class ConfigHandle(object):
       value = self._defaults[suffix]
     else:
       raise AttributeError(suffix)
+
     setattr(self, suffix, value)
     return value
+
 
 
 _default_registry = LibConfigRegistry(DEFAULT_MODNAME)

@@ -15,12 +15,20 @@
 # limitations under the License.
 #
 
+
+
+
+
 """GQL -- the SQL-like interface to the datastore.
 
 Defines the GQL-based query class, which is a query mechanism
 for the datastore which provides an alternative model for interacting with
 data stored.
 """
+
+
+
+
 
 
 
@@ -37,9 +45,14 @@ from google.appengine.api import datastore_errors
 from google.appengine.api import datastore_types
 from google.appengine.api import users
 
+
+
 MultiQuery = datastore.MultiQuery
 
+
 LOG_LEVEL = logging.DEBUG - 1
+
+
 
 _EPOCH = datetime.datetime.utcfromtimestamp(0)
 
@@ -59,9 +72,18 @@ def Execute(query_string, *args, **keyword_args):
   Returns:
     the result of running the query with *args.
   """
+
   app = keyword_args.pop('_app', None)
   proto_query = GQL(query_string, _app=app)
+
+
+
   return proto_query.Bind(args, keyword_args).Run()
+
+
+
+
+
 
 
 class GQL(object):
@@ -148,6 +170,25 @@ class GQL(object):
   an iterable set of Keys.
   """
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   TOKENIZE_REGEX = re.compile(r"""
     (?:'[^'\n\r]*')+|
     <=|>=|!=|=|<|>|
@@ -160,7 +201,12 @@ class GQL(object):
     \S+
     """, re.VERBOSE | re.IGNORECASE)
 
+
+
   MAX_ALLOWABLE_QUERIES = datastore.MAX_ALLOWABLE_QUERIES
+
+
+
 
   __ANCESTOR = -1
 
@@ -179,20 +225,28 @@ class GQL(object):
     Raises:
       datastore_errors.BadQueryError: if the query is not parsable.
     """
+
     self._entity = ''
+
     self.__filters = {}
+
+
     self.__has_ancestor = False
     self.__orderings = []
     self.__offset = -1
     self.__limit = -1
     self.__hint = ''
     self.__app = _app
+
     self.__namespace = namespace
     self.__auth_domain = _auth_domain
+
+
 
     self.__symbols = self.TOKENIZE_REGEX.findall(query_string)
     self.__next_symbol = 0
     if not self.__Select():
+
       raise datastore_errors.BadQueryError(
           'Unable to parse query')
     else:
@@ -241,6 +295,7 @@ class GQL(object):
     logging.log(LOG_LEVEL,
                 'Binding with %i positional args %s and %i keywords %s'
                 , len(args), args, len(keyword_args), keyword_args)
+
     for ((identifier, condition), value_list) in self.__filters.iteritems():
       for (operator, params) in value_list:
         value = self.__Operate(args, keyword_args, used_args, operator, params)
@@ -248,25 +303,33 @@ class GQL(object):
           for query in queries:
             self.__AddFilterToQuery(identifier, condition, value, query)
 
+
+
     unused_args = input_args - used_args
     if unused_args:
       unused_values = [unused_arg + 1 for unused_arg in unused_args]
       raise datastore_errors.BadArgumentError('Unused positional arguments %s' %
                                               unused_values)
 
+
     if enumerated_queries:
       logging.log(LOG_LEVEL,
                   'Multiple Queries Bound: %s',
                   enumerated_queries)
 
+
+
       for (query, enumerated_query) in zip(queries, enumerated_queries):
         query.update(enumerated_query)
+
 
     if self.__orderings:
       for query in queries:
         query.Order(*tuple(self.__orderings))
 
     if query_count > 1:
+
+
       return MultiQuery(queries, self.__orderings)
     else:
       return queries[0]
@@ -292,6 +355,7 @@ class GQL(object):
       to satisfy the GQL query with the given input arguments.
     """
     enumerated_queries = []
+
 
     for ((identifier, condition), value_list) in self.__filters.iteritems():
       for (operator, params) in value_list:
@@ -354,6 +418,7 @@ class GQL(object):
     if len(values) != 1:
       self.__CastError('user', values, 'requires one and only one value')
     elif values[0] is None:
+
       self.__CastError('user', values, 'must be non-null')
     else:
       return users.User(email=values[0], _auth_domain=self.__auth_domain)
@@ -382,6 +447,8 @@ class GQL(object):
     """
 
     if len(values) == 1:
+
+
       value = self.__EncodeIfNeeded(values[0])
       if isinstance(value, str):
         try:
@@ -391,8 +458,11 @@ class GQL(object):
       else:
         self.__CastError('DATE', values, 'Single input value not a string')
     elif len(values) == 3:
+
       time_tuple = (values[0], values[1], values[2], 0, 0, 0)
     else:
+
+
       self.__CastError('DATE', values,
                        'function takes 1 string or 3 integer values')
 
@@ -415,6 +485,10 @@ class GQL(object):
       datetime.datetime value parsed from the input values.
     """
     if len(values) == 1:
+
+
+
+
       value = self.__EncodeIfNeeded(values[0])
       if isinstance(value, str):
         try:
@@ -424,11 +498,14 @@ class GQL(object):
         time_tuple = (1970, 1, 1) + time_tuple[3:]
         time_tuple = time_tuple[0:6]
       elif isinstance(value, int):
+
+
         time_tuple = (1970, 1, 1, value)
       else:
         self.__CastError('TIME', values,
                          'Single input value not a string or integer hour')
     elif len(values) <= 4:
+
       time_tuple = (1970, 1, 1) + tuple(values)
     else:
       self.__CastError('TIME', values,
@@ -452,6 +529,8 @@ class GQL(object):
     Returns:
       datetime.datetime value parsed from the input values.
     """
+
+
     if len(values) == 1:
       value = self.__EncodeIfNeeded(values[0])
       if isinstance(value, str):
@@ -467,6 +546,7 @@ class GQL(object):
     try:
       return datetime.datetime(*time_tuple)
     except ValueError, err:
+
       self.__CastError('DATETIME', values, err)
 
   def __Operate(self, args, keyword_args, used_args, operator, params):
@@ -536,6 +616,7 @@ class GQL(object):
     """
     num_args = len(args)
     if isinstance(reference, int):
+
       if reference <= num_args:
         return args[reference - 1]
       else:
@@ -550,6 +631,7 @@ class GQL(object):
             'Missing named arguments for bind, requires argument %s' %
             reference)
     else:
+
       assert False, 'Unknown reference %s' % reference
 
   def __AddMultiQuery(self, identifier, condition, value, enumerated_queries):
@@ -629,6 +711,8 @@ class GQL(object):
       value: test value passed from the caller
       query: query to add the filter to
     """
+
+
     if identifier != self.__ANCESTOR:
       filter_condition = '%s %s' % (identifier, condition)
       logging.log(LOG_LEVEL, 'Setting filter on "%s" with value "%s"',
@@ -653,21 +737,30 @@ class GQL(object):
       A list of results if a query count limit was passed.
       A result iterator if no limit was given.
     """
+
+
     bind_results = self.Bind(args, keyword_args)
+
 
     offset = self.offset()
 
+
     if self.__limit == -1:
       it = bind_results.Run()
+
       try:
         for i in xrange(offset):
           it.next()
       except StopIteration:
         pass
 
+
       return it
     else:
       res = bind_results.Get(self.__limit, offset)
+
+
+
       return res
 
   def filters(self):
@@ -697,7 +790,12 @@ class GQL(object):
     """Returns True if this query returns Keys, False if it returns Entities."""
     return self._keys_only
 
+
   __iter__ = Run
+
+
+
+
 
   __result_type_regex = re.compile(r'(\*|__key__)')
   __quoted_string_regex = re.compile(r'((?:\'[^\'\n\r]*\')+)')
@@ -860,12 +958,15 @@ class GQL(object):
     self.__CheckFilterSyntax(identifier, condition)
 
     if not self.__AddSimpleFilter(identifier, condition, self.__Reference()):
+
       if not self.__AddSimpleFilter(identifier, condition, self.__Literal()):
+
         type_cast = self.__TypeCast()
         if (not type_cast or
             not self.__AddProcessedParameterFilter(identifier, condition,
                                                    *type_cast)):
           self.__Error('Invalid WHERE condition')
+
 
     if self.__Accept('AND'):
       return self.__FilterList()
@@ -911,11 +1012,19 @@ class GQL(object):
     """
     if identifier.lower() == 'ancestor':
       if condition.lower() == 'is':
+
+
+
         if self.__has_ancestor:
           self.__Error('Only one ANCESTOR IS" clause allowed')
       else:
         self.__Error('"IS" expected to follow "ANCESTOR"')
     elif condition.lower() == 'is':
+
+
+
+
+
       self.__Error('"IS" can only be used when comparing against "ANCESTOR"')
 
   def __AddProcessedParameterFilter(self, identifier, condition,
@@ -945,6 +1054,7 @@ class GQL(object):
       self.__has_ancestor = True
       filter_rule = (self.__ANCESTOR, 'is')
       assert condition.lower() == 'is'
+
 
     if operator == 'list' and condition.lower() != 'in':
       self.__Error('Only IN can process a list of values')
@@ -980,6 +1090,7 @@ class GQL(object):
     logging.log(LOG_LEVEL, 'Try Reference')
     reference = self.__AcceptRegex(self.__ordinal_regex)
     if reference:
+
       return int(reference)
     else:
       reference = self.__AcceptRegex(self.__named_regex)
@@ -1004,6 +1115,9 @@ class GQL(object):
     else:
       self.__next_symbol += 1
 
+
+
+
     if literal is None:
       try:
         literal = float(self.__symbols[self.__next_symbol])
@@ -1013,11 +1127,16 @@ class GQL(object):
         self.__next_symbol += 1
 
     if literal is None:
+
+
+
       literal = self.__AcceptRegex(self.__quoted_string_regex)
       if literal:
         literal = literal[1:-1].replace("''", "'")
 
     if literal is None:
+
+
       if self.__Accept('TRUE'):
         literal = True
       elif self.__Accept('FALSE'):
@@ -1025,6 +1144,8 @@ class GQL(object):
 
     if literal is not None:
       return Literal(literal)
+
+
 
     if self.__Accept('NULL'):
       return Literal(None)
@@ -1044,10 +1165,14 @@ class GQL(object):
 
       None - if there is no TypeCast function.
     """
+
+
+
     logging.log(LOG_LEVEL, 'Try Type Cast')
     cast_op = self.__AcceptRegex(self.__cast_regex)
     if not cast_op:
       if self.__Accept('('):
+
         cast_op = 'list'
       else:
         return None
@@ -1060,6 +1185,7 @@ class GQL(object):
 
     logging.log(LOG_LEVEL, 'Got casting operator %s with params %s',
                 cast_op, repr(params))
+
     return (cast_op, params)
 
   def __OrderBy(self):
@@ -1071,6 +1197,8 @@ class GQL(object):
 
   def __OrderList(self):
     """Consume variables and sort order for ORDER BY clause."""
+
+
     identifier = self.__AcceptRegex(self.__identifier_regex)
     if identifier:
       if self.__Accept('DESC'):
@@ -1090,19 +1218,26 @@ class GQL(object):
   def __Limit(self):
     """Consume the LIMIT clause."""
     if self.__Accept('LIMIT'):
+
       maybe_limit = self.__AcceptRegex(self.__number_regex)
 
       if maybe_limit:
+
         if self.__Accept(','):
           self.__offset = int(maybe_limit)
           if self.__offset < 0:
+
+
             self.__Error('Bad offset in LIMIT Value')
           else:
             logging.log(LOG_LEVEL, 'Set offset to %i', self.__offset)
             maybe_limit = self.__AcceptRegex(self.__number_regex)
 
+
         self.__limit = int(maybe_limit)
         if self.__limit < 1:
+
+
           self.__Error('Bad Limit in LIMIT Value')
         else:
           logging.log(LOG_LEVEL, 'Set limit to %i', self.__limit)
@@ -1117,11 +1252,15 @@ class GQL(object):
       if self.__offset != -1:
         self.__Error('Offset already defined in LIMIT clause')
 
+
       offset = self.__AcceptRegex(self.__number_regex)
 
       if offset:
+
         self.__offset = int(offset)
         if self.__offset < 0:
+
+
           self.__Error('Bad offset in OFFSET clause')
         else:
           logging.log(LOG_LEVEL, 'Set offset to %i', self.__offset)
@@ -1152,6 +1291,9 @@ class GQL(object):
         self.__Error('Unknown HINT')
         return False
     return self.__AcceptTerminal()
+
+
+
 
 
 class Literal(object):

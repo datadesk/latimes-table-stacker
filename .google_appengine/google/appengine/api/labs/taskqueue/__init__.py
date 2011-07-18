@@ -15,7 +15,22 @@
 # limitations under the License.
 #
 
-"""Shim module so that the old labs import path still works."""
+
+
+
+"""Task Queue API module (labs compatibility)."""
+
+
+
+
+
+
+
+import os
+import warnings
+
+from taskqueue import *
+
 
 
 
@@ -34,39 +49,8 @@ __all__ = [
     'Queue', 'Task', 'add']
 
 
-import os
-import sys
-import warnings
-
-from google.appengine.api.taskqueue import *
-
 
 if os.environ.get('DATACENTER', None) is None:
   warnings.warn('google.appengine.api.labs.taskqueue is deprecated, please use '
                 'google.appengine.api.taskqueue', DeprecationWarning,
                 stacklevel=2)
-
-
-def _map_module(module_name):
-  """Map a module from the new path to the labs path.
-
-  Args:
-    module_name: Name of the module to be mapped.
-
-  Raises:
-    ImportError: If the specified module we are mapping from does not exist.
-
-  Returns:
-    The module object of the module that was mapped.
-  """
-  labs_module_name = '%s.%s' % (__name__, module_name)
-  module_prefix = '.'.join(__name__.split('.')[:2])
-  new_module_name = '%s.api.taskqueue.%s' % (module_prefix, module_name)
-
-  __import__(new_module_name)
-  sys.modules[labs_module_name] = sys.modules[new_module_name]
-  return sys.modules[labs_module_name]
-
-taskqueue = _map_module('taskqueue')
-taskqueue_service_pb = _map_module('taskqueue_service_pb')
-taskqueue_stub = _map_module('taskqueue_stub')

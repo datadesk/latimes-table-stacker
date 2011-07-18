@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """The Python datastore API used by app developers.
 
 Defines Entity, Query, and Iterator classes, as well as methods for all of the
@@ -25,6 +28,15 @@ The datastore errors are defined in the datastore_errors module. That module is
 only required to avoid circular imports. datastore imports datastore_types,
 which needs BadValueError, so it can't be defined in datastore.
 """
+
+
+
+
+
+
+
+
+
 
 
 
@@ -47,32 +59,50 @@ from google.appengine.api import capabilities
 from google.appengine.api import datastore_errors
 from google.appengine.api import datastore_types
 from google.appengine.datastore import datastore_pb
-from google.appengine.datastore import datastore_rpc
 from google.appengine.datastore import datastore_query
+from google.appengine.datastore import datastore_rpc
 from google.appengine.datastore import entity_pb
+
 
 MAX_ALLOWABLE_QUERIES = 30
 
+
 MAXIMUM_RESULTS = 1000
 
+
+
+
+
 DEFAULT_TRANSACTION_RETRIES = 3
+
 
 READ_CAPABILITY = capabilities.CapabilitySet('datastore_v3')
 WRITE_CAPABILITY = capabilities.CapabilitySet(
     'datastore_v3',
     capabilities=['write'])
 
+
+
+
+
+
+
 _MAX_INDEXED_PROPERTIES = 5000
+
 
 _MAX_ID_BATCH_SIZE = datastore_rpc._MAX_ID_BATCH_SIZE
 
 Key = datastore_types.Key
 typename = datastore_types.typename
 
+
 _ALLOWED_API_KWARGS = frozenset(['rpc', 'config'])
+
 
 STRONG_CONSISTENCY = datastore_rpc.Configuration.STRONG_CONSISTENCY
 EVENTUAL_CONSISTENCY = datastore_rpc.Configuration.EVENTUAL_CONSISTENCY
+
+
 
 _MAX_INT_32 = 2**31-1
 
@@ -100,19 +130,25 @@ def NormalizeAndTypeCheck(arg, types):
   assert list not in types and tuple not in types
 
   if isinstance(arg, types):
+
     return [arg], False
   else:
+
+
     if isinstance(arg, basestring):
       raise datastore_errors.BadArgumentError(
           'Expected an instance or iterable of %s; received %s (a %s).' %
           (types, arg, typename(arg)))
 
     try:
+
       arg_list = list(arg)
     except TypeError:
+
       raise datastore_errors.BadArgumentError(
           'Expected an instance or iterable of %s; received %s (a %s).' %
           (types, arg, typename(arg)))
+
 
     for val in arg_list:
       if not isinstance(val, types):
@@ -173,6 +209,7 @@ def _GetConfigFromKwargs(kwargs):
     if config is not None:
       raise datastore_errors.BadArgumentError(
         'Expected rpc= or config= argument but not both')
+
     if isinstance(rpc, (apiproxy_stub_map.UserRPC,
                         datastore_rpc.Configuration)):
       return rpc
@@ -208,11 +245,22 @@ class DatastoreAdapter(datastore_rpc.AbstractAdapter):
 _adapter = DatastoreAdapter()
 _thread_local = threading.local()
 
+
 _ENV_KEY = '__DATASTORE_CONNECTION_INITIALIZED__'
 
 
 def _GetConnection():
   """Retrieve a datastore connection local to the thread."""
+
+
+
+
+
+
+
+
+
+
   connection = None
   if os.getenv(_ENV_KEY):
     try:
@@ -228,7 +276,10 @@ def _GetConnection():
 def _SetConnection(connection):
   """Sets the datastore connection local to the thread."""
   _thread_local.connection = connection
+
   os.environ[_ENV_KEY] = '1'
+
+
 
 
 
@@ -350,40 +401,25 @@ def _Rpc2Config(rpc):
                                      config=_GetConnection().config)
 
 
-def Put(entities, **kwargs):
-  """Store one or more entities in the datastore.
+def PutAsync(entities, **kwargs):
+  """Asynchronously store one or more entities in the datastore.
 
-  The entities may be new or previously existing. For new entities, Put() will
-  fill in the app id and key assigned by the datastore.
-
-  If the argument is a single Entity, a single Key will be returned. If the
-  argument is a list of Entity, a list of Keys will be returned.
-
-  Args:
-    entities: Entity or list of Entities
-    config: Optional Configuration to use for this request.
-
-  Returns:
-    Key or list of Keys
-
-  Raises:
-    TransactionFailedError, if the Put could not be committed.
+  Identical to datastore.Put() except returns an asynchronous object. Call
+  get_result() on the return value to block on the call and get the results.
   """
+  extra_hook = kwargs.pop('extra_hook', None)
   config = _GetConfigFromKwargs(kwargs)
   if getattr(config, 'read_policy', None) == EVENTUAL_CONSISTENCY:
     raise datastore_errors.BadRequestError(
         'read_policy is only supported on read operations.')
   entities, multiple = NormalizeAndTypeCheck(entities, Entity)
 
-  if multiple and not entities:
-    return []
-
   for entity in entities:
     if not entity.kind() or not entity.app():
       raise datastore_errors.BadRequestError(
           'App and kind must not be empty, in entity: %s' % entity)
 
-  def extra_hook(keys):
+  def local_extra_hook(keys):
     num_keys = len(keys)
     num_entities = len(entities)
     if num_keys != num_entities:
@@ -397,11 +433,62 @@ def Put(entities, **kwargs):
         entity._Entity__key._Key__reference.CopyFrom(key._Key__reference)
 
     if multiple:
-      return keys
+      result = keys
     else:
-      return keys[0]
+      result = keys[0]
 
-  return _GetConnection().async_put(config, entities, extra_hook).get_result()
+    if extra_hook:
+      return extra_hook(result)
+    return result
+
+  return _GetConnection().async_put(config, entities, local_extra_hook)
+
+
+def Put(entities, **kwargs):
+  """Store one or more entities in the datastore.
+
+  The entities may be new or previously existing. For new entities, Put() will
+  fill in the app id and key assigned by the datastore.
+
+  If the argument is a single Entity, a single Key will be returned. If the
+  argument is a list of Entity, a list of Keys will be returned.
+
+  Args:
+    entities: Entity or list of Entities
+    config: Optional Configuration to use for this request, must be specified
+      as a keyword argument.
+
+  Returns:
+    Key or list of Keys
+
+  Raises:
+    TransactionFailedError, if the Put could not be committed.
+  """
+  return PutAsync(entities, **kwargs).get_result()
+
+
+def GetAsync(keys, **kwargs):
+  """Asynchronously retrieves one or more entities from the datastore.
+
+  Identical to datastore.Get() except returns an asynchronous object. Call
+  get_result() on the return value to block on the call and get the results.
+  """
+  extra_hook = kwargs.pop('extra_hook', None)
+  config = _GetConfigFromKwargs(kwargs)
+  keys, multiple = NormalizeAndTypeCheckKeys(keys)
+
+  def local_extra_hook(entities):
+    if multiple:
+      result = entities
+    else:
+      if entities[0] is None:
+        raise datastore_errors.EntityNotFoundError()
+      result = entities[0]
+    if extra_hook:
+      return extra_hook(result)
+    return result
+
+  return _GetConnection().async_get(config, keys, local_extra_hook)
 
 
 def Get(keys, **kwargs):
@@ -419,28 +506,29 @@ def Get(keys, **kwargs):
   that were found and None placeholders for keys that were not found.
 
   Args:
-    # the primary key(s) of the entity(ies) to retrieve
     keys: Key or string or list of Keys or strings
-    config: Optional Configuration to use for this request.
+    config: Optional Configuration to use for this request, must be specified
+      as a keyword argument.
 
   Returns:
     Entity or list of Entity objects
   """
+  return GetAsync(keys, **kwargs).get_result()
+
+
+def DeleteAsync(keys, **kwargs):
+  """Asynchronously deletes one or more entities from the datastore.
+
+  Identical to datastore.Delete() except returns an asynchronous object. Call
+  get_result() on the return value to block on the call.
+  """
   config = _GetConfigFromKwargs(kwargs)
-  keys, multiple = NormalizeAndTypeCheckKeys(keys)
+  if getattr(config, 'read_policy', None) == EVENTUAL_CONSISTENCY:
+    raise datastore_errors.BadRequestError(
+        'read_policy is only supported on read operations.')
+  keys, _ = NormalizeAndTypeCheckKeys(keys)
 
-  if multiple and not keys:
-    return []
-
-  def extra_hook(entities):
-    if multiple:
-      return entities
-    else:
-      if entities[0] is None:
-        raise datastore_errors.EntityNotFoundError()
-      return entities[0]
-
-  return _GetConnection().async_get(config, keys, extra_hook).get_result()
+  return _GetConnection().async_delete(config, keys)
 
 
 def Delete(keys, **kwargs):
@@ -453,21 +541,13 @@ def Delete(keys, **kwargs):
   Args:
     # the primary key(s) of the entity(ies) to delete
     keys: Key or string or list of Keys or strings
-    config: Optional Configuration to use for this request.
+    config: Optional Configuration to use for this request, must be specified
+      as a keyword argument.
 
   Raises:
     TransactionFailedError, if the Delete could not be committed.
   """
-  config = _GetConfigFromKwargs(kwargs)
-  if getattr(config, 'read_policy', None) == EVENTUAL_CONSISTENCY:
-    raise datastore_errors.BadRequestError(
-        'read_policy is only supported on read operations.')
-  keys, multiple = NormalizeAndTypeCheckKeys(keys)
-
-  if multiple and not keys:
-    return
-
-  _GetConnection().async_delete(config, keys).get_result()
+  return DeleteAsync(keys, **kwargs).get_result()
 
 
 class Entity(dict):
@@ -498,14 +578,23 @@ class Entity(dict):
       namespace: string
       # if provided, overrides the default namespace_manager setting.
     """
+
+
+
+
+
     ref = entity_pb.Reference()
     _app = datastore_types.ResolveAppId(_app)
     ref.set_app(_app)
 
     _namespace = kwds.pop('_namespace', None)
+
     if kwds:
       raise datastore_errors.BadArgumentError(
           'Excess keyword arguments ' + repr(kwds))
+
+
+
 
     if namespace is None:
       namespace = _namespace
@@ -515,12 +604,15 @@ class Entity(dict):
 
     datastore_types.ValidateString(kind, 'kind',
                                    datastore_errors.BadArgumentError)
+
     if parent is not None:
       parent = _GetCompleteKeyOrError(parent)
       if _app != parent.app():
         raise datastore_errors.BadArgumentError(
             " %s doesn't match parent's app %s" %
             (_app, parent.app()))
+
+
       if namespace is None:
         namespace = parent.namespace()
       elif namespace != parent.namespace():
@@ -538,6 +630,7 @@ class Entity(dict):
     if name is not None and id is not None:
       raise datastore_errors.BadArgumentError(
           "Cannot set both name and id on an Entity")
+
 
     if name is not None:
       datastore_types.ValidateString(name, 'name')
@@ -595,9 +688,11 @@ class Entity(dict):
 
   def unindexed_properties(self):
     """Returns this entity's unindexed properties, as a frozenset of strings."""
+
     return getattr(self, '_Entity__unindexed_properties', [])
 
   def set_unindexed_properties(self, unindexed_properties):
+
     unindexed_properties, multiple = NormalizeAndTypeCheck(unindexed_properties, basestring)
     if not multiple:
       raise datastore_errors.BadArgumentError(
@@ -614,6 +709,7 @@ class Entity(dict):
     BadPropertyError. If the value is not a supported type, raises
     BadValueError.
     """
+
     datastore_types.ValidateProperty(name, value)
     dict.__setitem__(self, name, value)
 
@@ -624,6 +720,7 @@ class Entity(dict):
     BadPropertyError. If the value is not a supported type, raises
     BadValueError.
     """
+
     datastore_types.ValidateProperty(name, value)
     return dict.setdefault(self, name, value)
 
@@ -653,6 +750,7 @@ class Entity(dict):
     This is *not* optimized. It shouldn't be used anywhere near code that's
     performance-critical.
     """
+
     xml = u'<entity kind=%s' % saxutils.quoteattr(self.kind())
     if self.__key.has_id_or_name():
       xml += ' key=%s' % saxutils.quoteattr(str(self.__key))
@@ -661,10 +759,13 @@ class Entity(dict):
       xml += '\n  <key>%s</key>' % self.__key.ToTagUri()
 
 
+
+
     properties = self.keys()
     if properties:
       properties.sort()
       xml += '\n  ' + '\n  '.join(self._PropertiesToXml(properties))
+
 
     xml += '\n</entity>\n'
     return xml
@@ -745,16 +846,23 @@ class Entity(dict):
       entity_pb.Entity
     """
 
+
+
+
+
     pb = entity_pb.EntityProto()
     pb.mutable_key().CopyFrom(self.key()._ToPb())
     last_path = pb.key().path().element_list()[-1]
+
     if mark_key_as_saved and last_path.has_name() and last_path.has_id():
       last_path.clear_id()
+
 
     group = pb.mutable_entity_group()
     if self.__key.has_id_or_name():
       root = pb.key().path().element(0)
       group.add_element().CopyFrom(root)
+
 
     properties = self.items()
     properties.sort()
@@ -769,6 +877,7 @@ class Entity(dict):
           pb.raw_property_list().append(prop)
         else:
           pb.property_list().append(prop)
+
 
     if pb.property_size() > _MAX_INDEXED_PROPERTIES:
       raise datastore_errors.BadRequestError(
@@ -813,6 +922,7 @@ class Entity(dict):
       # the Entity representation of the argument
       Entity
     """
+
     assert pb.key().path().element_size() > 0
 
     last_path = pb.key().path().element_list()[-1]
@@ -824,7 +934,9 @@ class Entity(dict):
         assert last_path.has_name()
         assert last_path.name()
 
+
     unindexed_properties = [p.name() for p in pb.raw_property_list()]
+
 
     if pb.key().has_name_space():
       namespace = pb.key().name_space()
@@ -835,6 +947,8 @@ class Entity(dict):
                _app=pb.key().app(), namespace=namespace)
     ref = e.__key._Key__reference
     ref.CopyFrom(pb.key())
+
+
 
     temporary_values = {}
 
@@ -862,8 +976,13 @@ class Entity(dict):
         else:
           cur_value.extend(value)
 
+
+
     for name, value in temporary_values.iteritems():
       decoded_name = unicode(name.decode('utf-8'))
+
+
+
 
       datastore_types.ValidateReadProperty(
           decoded_name, value, read_only=(not validate_reserved_properties))
@@ -950,12 +1069,15 @@ class Query(dict):
   the query. The returned count is cached; successive Count() calls will not
   re-scan the datastore unless the query is changed.
   """
+
   ASCENDING = datastore_query.PropertyOrder.ASCENDING
   DESCENDING = datastore_query.PropertyOrder.DESCENDING
+
 
   ORDER_FIRST = datastore_query.QueryOptions.ORDER_FIRST
   ANCESTOR_FIRST = datastore_query.QueryOptions.ANCESTOR_FIRST
   FILTER_FIRST = datastore_query.QueryOptions.FILTER_FIRST
+
 
   OPERATORS = {'==': datastore_query.PropertyFilter._OPERATORS['=']}
   OPERATORS.update(datastore_query.PropertyFilter._OPERATORS)
@@ -975,11 +1097,17 @@ class Query(dict):
   __ancestor_pb = None
   __compile = None
 
+
   __cursor = None
+
   __end_cursor = None
+
+
+
 
   __filter_order = None
   __filter_counter = 0
+
 
   __inequality_prop = None
   __inequality_count = 0
@@ -1001,10 +1129,19 @@ class Query(dict):
       namespace: string
     """
 
+
+
+
+
+
     _namespace = kwds.pop('_namespace', None)
+
     if kwds:
       raise datastore_errors.BadArgumentError(
           'Excess keyword arguments ' + repr(kwds))
+
+
+
 
     if namespace is None:
       namespace = _namespace
@@ -1075,12 +1212,14 @@ class Query(dict):
     """
     orderings = list(orderings)
 
+
     for (order, i) in zip(orderings, range(len(orderings))):
       if not (isinstance(order, basestring) or
               (isinstance(order, tuple) and len(order) in [2, 3])):
         raise datastore_errors.BadArgumentError(
           'Order() expects strings or 2- or 3-tuples; received %s (a %s). ' %
           (order, typename(order)))
+
 
       if isinstance(order, basestring):
         order = (order,)
@@ -1089,12 +1228,14 @@ class Query(dict):
                                      datastore_errors.BadArgumentError)
       property = order[0]
 
+
       direction = order[-1]
       if direction not in (Query.ASCENDING, Query.DESCENDING):
         if len(order) == 3:
           raise datastore_errors.BadArgumentError(
             'Order() expects Query.ASCENDING or DESCENDING; received %s' %
             str(direction))
+
         direction = Query.ASCENDING
 
       if (self.__kind is None and
@@ -1105,6 +1246,7 @@ class Query(dict):
             datastore_types._KEY_SPECIAL_PROPERTY)
 
       orderings[i] = (property, direction)
+
 
     if (orderings and self.__inequality_prop and
         orderings[0][0] != self.__inequality_prop):
@@ -1203,6 +1345,7 @@ class Query(dict):
       current Query.
     """
 
+
     orders = [datastore_query.PropertyOrder(property, direction)
               for property, direction in self.__orderings]
     if orders:
@@ -1216,12 +1359,14 @@ class Query(dict):
       datastore_query.FilterPredicate or None if no filters are set on the
       current Query.
     """
+
     ordered_filters = [(i, f) for f, i in self.__filter_order.iteritems()]
     ordered_filters.sort()
 
     property_filters = []
     for _, filter_str in ordered_filters:
       if filter_str not in self:
+
         continue
 
       values = self[filter_str]
@@ -1230,6 +1375,7 @@ class Query(dict):
 
       op = match.group(3)
       if op is None or op == '==':
+
         op = '='
 
       property_filters.append(datastore_query.make_filter(name, op, values))
@@ -1255,6 +1401,8 @@ class Query(dict):
       requests.
     """
     try:
+
+
       cursor = self.__cursor_source()
       if not cursor:
         raise AttributeError()
@@ -1277,6 +1425,8 @@ class Query(dict):
       # an iterator that provides access to the query results
       Iterator
     """
+
+
     query_options = self.GetQueryOptions().merge(config)
     return self.GetQuery().run(_GetConnection(), query_options)
 
@@ -1291,10 +1441,6 @@ class Query(dict):
     more efficient.
 
     Args:
-      limit: integer, limit for the query.
-      offset: integer, offset for the query.
-      prefetch_count: integer, number of results to return in the first query.
-      next_count: number of results to return in subsequent next queries.
       config: Optional Configuration to use for this request.
 
     Returns:
@@ -1303,7 +1449,9 @@ class Query(dict):
     """
     config = _Rpc2Config(_GetConfigFromKwargs(kwargs))
     itr = Iterator(self.GetBatcher(config=config))
+
     self.__cursor_source = itr.cursor
+
     self.__compiled_query_source = itr._compiled_query
     return itr
 
@@ -1415,11 +1563,13 @@ class Query(dict):
 
     if (operator in self.INEQUALITY_OPERATORS and
         property != datastore_types._UNAPPLIED_LOG_TIMESTAMP_SPECIAL_PROPERTY):
+
       if self.__inequality_prop is None:
         self.__inequality_prop = property
       else:
         assert self.__inequality_prop == property
       self.__inequality_count += 1
+
 
     if filter not in self.__filter_order:
       self.__filter_order[filter] = self.__filter_counter
@@ -1441,6 +1591,7 @@ class Query(dict):
     """
     dict.__delitem__(self, filter)
     del self.__filter_order[filter]
+
 
     match = Query.FILTER_REGEX.match(filter)
     property = match.group(1)
@@ -1534,6 +1685,10 @@ class Query(dict):
             datastore_types._UNAPPLIED_LOG_TIMESTAMP_SPECIAL_PROPERTY))
 
     if property in datastore_types._SPECIAL_PROPERTIES:
+
+
+
+
       if property == datastore_types._KEY_SPECIAL_PROPERTY:
         for value in values:
           if not isinstance(value, Key):
@@ -1555,6 +1710,7 @@ class Query(dict):
         batch_size=next_count))
 
   def _ToPb(self, limit=None, offset=None, count=None):
+
     query_options = datastore_query.QueryOptions(
         config=self.GetQueryOptions(),
         limit=limit,
@@ -1568,6 +1724,8 @@ class Query(dict):
     Do not use.
     """
     try:
+
+
       compiled_query = self.__compiled_query_source()
       if not compiled_query:
         raise AttributeError()
@@ -1579,6 +1737,28 @@ class Query(dict):
 
   GetCompiledQuery = _GetCompiledQuery
   GetCompiledCursor = GetCursor
+
+
+def AllocateIdsAsync(model_key, size=None, **kwargs):
+  """Asynchronously allocates a range of IDs.
+
+  Identical to datastore.AllocateIds() except returns an asynchronous object.
+  Call get_result() on the return value to block on the call and get the
+  results.
+  """
+  max = kwargs.pop('max', None)
+  config = _GetConfigFromKwargs(kwargs)
+  if getattr(config, 'read_policy', None) == EVENTUAL_CONSISTENCY:
+    raise datastore_errors.BadRequestError(
+        'read_policy is only supported on read operations.')
+  keys, _ = NormalizeAndTypeCheckKeys(model_key)
+
+  if len(keys) > 1:
+    raise datastore_errors.BadArgumentError(
+        'Cannot allocate IDs for more than one model key at a time')
+
+  rpc = _GetConnection().async_allocate_ids(config, keys[0], size, max)
+  return rpc
 
 
 def AllocateIds(model_key, size=None, **kwargs):
@@ -1608,19 +1788,9 @@ def AllocateIds(model_key, size=None, **kwargs):
   Returns:
     (start, end) of the allocated range, inclusive.
   """
-  max = kwargs.pop('max', None)
-  config = _GetConfigFromKwargs(kwargs)
-  if getattr(config, 'read_policy', None) == EVENTUAL_CONSISTENCY:
-    raise datastore_errors.BadRequestError(
-        'read_policy is only supported on read operations.')
-  keys, _ = NormalizeAndTypeCheckKeys(model_key)
+  return AllocateIdsAsync(model_key, size, **kwargs).get_result()
 
-  if len(keys) > 1:
-    raise datastore_errors.BadArgumentError(
-        'Cannot allocate IDs for more than one model key at a time')
 
-  rpc = _GetConnection().async_allocate_ids(config, keys[0], size, max)
-  return rpc.get_result()
 
 
 class MultiQuery(Query):
@@ -1674,13 +1844,18 @@ class MultiQuery(Query):
     count = 1
     result = []
 
+
+
+
     iterator = self.Run(config=config)
+
 
     try:
       for i in xrange(offset):
         val = iterator.next()
     except StopIteration:
       pass
+
 
     try:
       while count <= limit:
@@ -1750,10 +1925,13 @@ class MultiQuery(Query):
         Zero if self == that
         Positive if self > that
       """
+
       if not self.__entity:
         return cmp(self.__entity, that.__entity)
 
+
       for (identifier, order) in self.__orderings:
+
         value1 = self.__GetValueForId(self, identifier, order)
         value2 = self.__GetValueForId(that, identifier, order)
 
@@ -1765,6 +1943,9 @@ class MultiQuery(Query):
       return 0
 
     def __GetValueForId(self, sort_order_entity, identifier, sort_order):
+
+
+
       value = _GetPropertyValue(sort_order_entity.__entity, identifier)
       if isinstance(value, list):
         entity_key = sort_order_entity.__entity.key()
@@ -1796,6 +1977,7 @@ class MultiQuery(Query):
       if property_compare:
         return property_compare
       else:
+
         return cmp(self.__entity.key(), that.__entity.key())
 
   def Run(self, **kwargs):
@@ -1827,13 +2009,20 @@ class MultiQuery(Query):
       Yields:
         The next result in sorted order.
       """
+
+
       result_heap = []
       for result in results:
         heap_value = MultiQuery.SortOrderEntity(result, self.__orderings)
         if heap_value.GetEntity():
           heapq.heappush(result_heap, heap_value)
 
+
+
+
+
       used_keys = set()
+
 
       while result_heap:
         top_result = heapq.heappop(result_heap)
@@ -1842,21 +2031,29 @@ class MultiQuery(Query):
         if top_result.GetEntity().key() not in used_keys:
           yield top_result.GetEntity()
         else:
+
           pass
 
         used_keys.add(top_result.GetEntity().key())
+
 
         results_to_push = []
         while result_heap:
           next = heapq.heappop(result_heap)
           if cmp(top_result, next):
+
             results_to_push.append(next)
             break
           else:
+
+
             results_to_push.append(next.GetNext())
         results_to_push.append(top_result.GetNext())
 
+
         for popped_result in results_to_push:
+
+
           if popped_result.GetEntity():
             heapq.heappush(result_heap, popped_result)
 
@@ -1876,13 +2073,21 @@ class MultiQuery(Query):
     Returns:
       count of the number of entries returned.
     """
+
+
     config = _GetConfigFromKwargs(kwargs)
     if limit is None:
+
+
+
+
       count = 0
       for _ in self.Run(config=config):
         count += 1
       return count
     else:
+
+
       return len(self.Get(limit, config=config))
 
   def GetCursor(self):
@@ -1955,6 +2160,7 @@ class MultiQuery(Query):
   def __iter__(self):
     return iter(self.__bound_queries)
 
+
   GetCompiledCursor = GetCursor
   GetCompiledQuery = _GetCompiledQuery
 
@@ -1979,6 +2185,9 @@ def RunInTransaction(function, *args, **kwargs):
   """
   return RunInTransactionCustomRetries(
       DEFAULT_TRANSACTION_RETRIES, function, *args, **kwargs)
+
+
+
 
 
 def RunInTransactionCustomRetries(retries, function, *args, **kwargs):
@@ -2051,15 +2260,25 @@ def RunInTransactionCustomRetries(retries, function, *args, **kwargs):
     TransactionFailedError, if the transaction could not be committed.
   """
 
+
+
+
+
+
+
+
+
   if retries < 0:
     raise datastore_errors.BadRequestError(
       'Number of retries should be non-negative number.')
+
 
   if IsInTransaction():
     raise datastore_errors.BadRequestError(
       'Nested transactions are not supported.')
 
   old_connection = _GetConnection()
+
   for i in range(0, retries + 1):
     new_connection = old_connection.new_transaction()
     _SetConnection(new_connection)
@@ -2069,6 +2288,7 @@ def RunInTransactionCustomRetries(retries, function, *args, **kwargs):
         return result
     finally:
       _SetConnection(old_connection)
+
 
   raise datastore_errors.TransactionFailedError(
     'The transaction could not be committed. Please try again.')
@@ -2093,6 +2313,9 @@ def _DoOneTry(new_connection, function, args, kwargs):
     try:
       new_connection.rollback()
     except Exception:
+
+
+
       logging.exception('Exception sending Rollback:')
 
     type, value, trace = original_exception
@@ -2105,6 +2328,8 @@ def _DoOneTry(new_connection, function, args, kwargs):
     if new_connection.commit():
       return True, result
     else:
+
+
       logging.warning('Transaction collision. Retrying... %s', '')
       return False, None
 
@@ -2131,7 +2356,39 @@ def IsInTransaction():
   Returns:
     True if already running in transaction, else False.
   """
+
   return isinstance(_GetConnection(), datastore_rpc.TransactionalConnection)
+
+
+datastore_rpc._positional(1)
+def Transactional(func=None, require_new=False,
+                  retries=DEFAULT_TRANSACTION_RETRIES):
+  """A decorator that makes sure a function is run in a transaction.
+
+  WARNING: Reading from the datastore while in a transaction will not see any
+  changes made in the same transaction. If the function being decorated relies
+  on seeing all changes made in the calling scoope, set require_new=True.
+
+  Args:
+    require_new: A bool that indicates the function requires its own transaction
+      and cannot share a transaction with the calling scope (nested transactions
+      are not currently supported by the datastore).
+    retries: An integer that indicates how many times the function should be
+      tried not including the inital attempt. This value is ignored if using
+      a transaction from the calling scope.
+
+  Returns:
+    A wrapper for the given function that creates a new transaction if needed.
+  """
+  if func is None:
+    return lambda function: Transactional(func=function,
+                                          require_new=require_new,
+                                          retries=retries)
+  def wrapper(*args, **kwds):
+    if not require_new and IsInTransaction():
+      return func(*args, **kwds)
+    return RunInTransactionCustomRetries(retries, func, *args, **kwds)
+  return wrapper
 
 
 def _GetCompleteKeyOrError(arg):
@@ -2144,9 +2401,11 @@ def _GetCompleteKeyOrError(arg):
   Returns:
     Key
   """
+
   if isinstance(arg, Key):
     key = arg
   elif isinstance(arg, basestring):
+
     key = Key(arg)
   elif isinstance(arg, Entity):
     key = arg.key()
@@ -2155,6 +2414,7 @@ def _GetCompleteKeyOrError(arg):
       'Expects argument to be an Entity or Key; received %s (a %s).' %
       (arg, typename(arg)))
   assert isinstance(key, Key)
+
 
   if not key.has_id_or_name():
     raise datastore_errors.BadKeyError('Key %r is not complete.' % key)
@@ -2180,6 +2440,7 @@ def _GetPropertyValue(entity, property):
   if property in datastore_types._SPECIAL_PROPERTIES:
     if property == datastore_types._UNAPPLIED_LOG_TIMESTAMP_SPECIAL_PROPERTY:
       raise KeyError(property)
+
     assert property == datastore_types._KEY_SPECIAL_PROPERTY
     return entity.key()
   else:
@@ -2228,6 +2489,7 @@ class Iterator(datastore_query.ResultsIterator):
     return self.cursor()
 
   _Get = _Next
+
 
 
 DatastoreRPC = apiproxy_stub_map.UserRPC

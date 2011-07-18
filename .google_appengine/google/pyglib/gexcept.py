@@ -15,6 +15,13 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
 """
 Generic exceptions.
 """
@@ -23,10 +30,12 @@ class TimeoutException(Exception):
   def __init__(self, msg=""):
     Exception.__init__(self, msg)
 
+
 class NestedException(Exception):
   def __init__(self, exc_info):
     Exception.__init__(self, exc_info[1])
     self.exc_info_ = exc_info
+
   def exc_info(self):
     return self.exc_info_
 
@@ -37,3 +46,4 @@ class AbstractMethod(Exception):
             raise gexcept.AbstractMethod"""
   def __init__(self):
     Exception.__init__(self)
+

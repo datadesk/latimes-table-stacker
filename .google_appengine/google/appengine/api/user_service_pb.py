@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+
+
 from google.net.proto import ProtocolBuffer
 import array
 import dummy_thread as thread
@@ -22,9 +24,8 @@ import dummy_thread as thread
 __pychecker__ = """maxreturns=0 maxbranches=0 no-callinit
                    unusednames=printElemNumber,debug_strs no-special"""
 
-from google.appengine.api.api_base_pb import *
-import google.appengine.api.api_base_pb
 class UserServiceError(ProtocolBuffer.ProtocolMessage):
+
 
   OK           =    0
   REDIRECT_URL_TOO_LONG =    1
@@ -64,7 +65,11 @@ class UserServiceError(ProtocolBuffer.ProtocolMessage):
 
   def ByteSize(self):
     n = 0
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    return n
 
   def Clear(self):
     pass
@@ -72,9 +77,14 @@ class UserServiceError(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     pass
 
+  def OutputPartial(self, out):
+    pass
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -95,6 +105,7 @@ class UserServiceError(ProtocolBuffer.ProtocolMessage):
   _TYPES = _BuildTagLookupTable({
     0: ProtocolBuffer.Encoder.NUMERIC,
   }, 0, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -180,6 +191,15 @@ class CreateLoginURLRequest(ProtocolBuffer.ProtocolMessage):
     if (self.has_federated_identity_): n += 1 + self.lengthString(len(self.federated_identity_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_destination_url_):
+      n += 1
+      n += self.lengthString(len(self.destination_url_))
+    if (self.has_auth_domain_): n += 1 + self.lengthString(len(self.auth_domain_))
+    if (self.has_federated_identity_): n += 1 + self.lengthString(len(self.federated_identity_))
+    return n
+
   def Clear(self):
     self.clear_destination_url()
     self.clear_auth_domain()
@@ -188,6 +208,17 @@ class CreateLoginURLRequest(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(10)
     out.putPrefixedString(self.destination_url_)
+    if (self.has_auth_domain_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.auth_domain_)
+    if (self.has_federated_identity_):
+      out.putVarInt32(26)
+      out.putPrefixedString(self.federated_identity_)
+
+  def OutputPartial(self, out):
+    if (self.has_destination_url_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.destination_url_)
     if (self.has_auth_domain_):
       out.putVarInt32(18)
       out.putPrefixedString(self.auth_domain_)
@@ -207,6 +238,8 @@ class CreateLoginURLRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 26:
         self.set_federated_identity(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -239,6 +272,7 @@ class CreateLoginURLRequest(ProtocolBuffer.ProtocolMessage):
     2: ProtocolBuffer.Encoder.STRING,
     3: ProtocolBuffer.Encoder.STRING,
   }, 3, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -286,6 +320,13 @@ class CreateLoginURLResponse(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.login_url_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_login_url_):
+      n += 1
+      n += self.lengthString(len(self.login_url_))
+    return n
+
   def Clear(self):
     self.clear_login_url()
 
@@ -293,12 +334,19 @@ class CreateLoginURLResponse(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(10)
     out.putPrefixedString(self.login_url_)
 
+  def OutputPartial(self, out):
+    if (self.has_login_url_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.login_url_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 10:
         self.set_login_url(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -323,6 +371,7 @@ class CreateLoginURLResponse(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -389,6 +438,14 @@ class CreateLogoutURLRequest(ProtocolBuffer.ProtocolMessage):
     if (self.has_auth_domain_): n += 1 + self.lengthString(len(self.auth_domain_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_destination_url_):
+      n += 1
+      n += self.lengthString(len(self.destination_url_))
+    if (self.has_auth_domain_): n += 1 + self.lengthString(len(self.auth_domain_))
+    return n
+
   def Clear(self):
     self.clear_destination_url()
     self.clear_auth_domain()
@@ -396,6 +453,14 @@ class CreateLogoutURLRequest(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(10)
     out.putPrefixedString(self.destination_url_)
+    if (self.has_auth_domain_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.auth_domain_)
+
+  def OutputPartial(self, out):
+    if (self.has_destination_url_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.destination_url_)
     if (self.has_auth_domain_):
       out.putVarInt32(18)
       out.putPrefixedString(self.auth_domain_)
@@ -409,6 +474,8 @@ class CreateLogoutURLRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 18:
         self.set_auth_domain(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -437,6 +504,7 @@ class CreateLogoutURLRequest(ProtocolBuffer.ProtocolMessage):
     1: ProtocolBuffer.Encoder.STRING,
     2: ProtocolBuffer.Encoder.STRING,
   }, 2, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -484,6 +552,13 @@ class CreateLogoutURLResponse(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.logout_url_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_logout_url_):
+      n += 1
+      n += self.lengthString(len(self.logout_url_))
+    return n
+
   def Clear(self):
     self.clear_logout_url()
 
@@ -491,12 +566,19 @@ class CreateLogoutURLResponse(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(10)
     out.putPrefixedString(self.logout_url_)
 
+  def OutputPartial(self, out):
+    if (self.has_logout_url_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.logout_url_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 10:
         self.set_logout_url(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -522,20 +604,38 @@ class CreateLogoutURLResponse(ProtocolBuffer.ProtocolMessage):
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class GetOAuthUserRequest(ProtocolBuffer.ProtocolMessage):
+  has_scope_ = 0
+  scope_ = ""
 
   def __init__(self, contents=None):
-    pass
     if contents is not None: self.MergeFromString(contents)
+
+  def scope(self): return self.scope_
+
+  def set_scope(self, x):
+    self.has_scope_ = 1
+    self.scope_ = x
+
+  def clear_scope(self):
+    if self.has_scope_:
+      self.has_scope_ = 0
+      self.scope_ = ""
+
+  def has_scope(self): return self.has_scope_
 
 
   def MergeFrom(self, x):
     assert x is not self
+    if (x.has_scope()): self.set_scope(x.scope())
 
   def Equals(self, x):
     if x is self: return 1
+    if self.has_scope_ != x.has_scope_: return 0
+    if self.has_scope_ and self.scope_ != x.scope_: return 0
     return 1
 
   def IsInitialized(self, debug_strs=None):
@@ -544,37 +644,60 @@ class GetOAuthUserRequest(ProtocolBuffer.ProtocolMessage):
 
   def ByteSize(self):
     n = 0
-    return n + 0
+    if (self.has_scope_): n += 1 + self.lengthString(len(self.scope_))
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_scope_): n += 1 + self.lengthString(len(self.scope_))
+    return n
 
   def Clear(self):
-    pass
+    self.clear_scope()
 
   def OutputUnchecked(self, out):
-    pass
+    if (self.has_scope_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.scope_)
+
+  def OutputPartial(self, out):
+    if (self.has_scope_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.scope_)
 
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
+      if tt == 10:
+        self.set_scope(d.getPrefixedString())
+        continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
 
   def __str__(self, prefix="", printElemNumber=0):
     res=""
+    if self.has_scope_: res+=prefix+("scope: %s\n" % self.DebugFormatString(self.scope_))
     return res
 
 
   def _BuildTagLookupTable(sparse, maxtag, default=None):
     return tuple([sparse.get(i, default) for i in xrange(0, 1+maxtag)])
 
+  kscope = 1
 
   _TEXT = _BuildTagLookupTable({
     0: "ErrorCode",
-  }, 0)
+    1: "scope",
+  }, 1)
 
   _TYPES = _BuildTagLookupTable({
     0: ProtocolBuffer.Encoder.NUMERIC,
-  }, 0, ProtocolBuffer.Encoder.MAX_TYPE)
+    1: ProtocolBuffer.Encoder.STRING,
+  }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -706,6 +829,21 @@ class GetOAuthUserResponse(ProtocolBuffer.ProtocolMessage):
     if (self.has_is_admin_): n += 2
     return n + 3
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_email_):
+      n += 1
+      n += self.lengthString(len(self.email_))
+    if (self.has_user_id_):
+      n += 1
+      n += self.lengthString(len(self.user_id_))
+    if (self.has_auth_domain_):
+      n += 1
+      n += self.lengthString(len(self.auth_domain_))
+    if (self.has_user_organization_): n += 1 + self.lengthString(len(self.user_organization_))
+    if (self.has_is_admin_): n += 2
+    return n
+
   def Clear(self):
     self.clear_email()
     self.clear_user_id()
@@ -720,6 +858,23 @@ class GetOAuthUserResponse(ProtocolBuffer.ProtocolMessage):
     out.putPrefixedString(self.user_id_)
     out.putVarInt32(26)
     out.putPrefixedString(self.auth_domain_)
+    if (self.has_user_organization_):
+      out.putVarInt32(34)
+      out.putPrefixedString(self.user_organization_)
+    if (self.has_is_admin_):
+      out.putVarInt32(40)
+      out.putBoolean(self.is_admin_)
+
+  def OutputPartial(self, out):
+    if (self.has_email_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.email_)
+    if (self.has_user_id_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.user_id_)
+    if (self.has_auth_domain_):
+      out.putVarInt32(26)
+      out.putPrefixedString(self.auth_domain_)
     if (self.has_user_organization_):
       out.putVarInt32(34)
       out.putPrefixedString(self.user_organization_)
@@ -745,6 +900,8 @@ class GetOAuthUserResponse(ProtocolBuffer.ProtocolMessage):
       if tt == 40:
         self.set_is_admin(d.getBoolean())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -786,6 +943,7 @@ class GetOAuthUserResponse(ProtocolBuffer.ProtocolMessage):
     5: ProtocolBuffer.Encoder.NUMERIC,
   }, 5, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class CheckOAuthSignatureRequest(ProtocolBuffer.ProtocolMessage):
@@ -808,7 +966,11 @@ class CheckOAuthSignatureRequest(ProtocolBuffer.ProtocolMessage):
 
   def ByteSize(self):
     n = 0
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    return n
 
   def Clear(self):
     pass
@@ -816,9 +978,14 @@ class CheckOAuthSignatureRequest(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     pass
 
+  def OutputPartial(self, out):
+    pass
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -839,6 +1006,7 @@ class CheckOAuthSignatureRequest(ProtocolBuffer.ProtocolMessage):
   _TYPES = _BuildTagLookupTable({
     0: ProtocolBuffer.Encoder.NUMERIC,
   }, 0, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -886,6 +1054,13 @@ class CheckOAuthSignatureResponse(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.oauth_consumer_key_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_oauth_consumer_key_):
+      n += 1
+      n += self.lengthString(len(self.oauth_consumer_key_))
+    return n
+
   def Clear(self):
     self.clear_oauth_consumer_key()
 
@@ -893,12 +1068,19 @@ class CheckOAuthSignatureResponse(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(10)
     out.putPrefixedString(self.oauth_consumer_key_)
 
+  def OutputPartial(self, out):
+    if (self.has_oauth_consumer_key_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.oauth_consumer_key_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 10:
         self.set_oauth_consumer_key(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -923,6 +1105,7 @@ class CheckOAuthSignatureResponse(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -1012,6 +1195,17 @@ class CreateFederatedLoginRequest(ProtocolBuffer.ProtocolMessage):
     if (self.has_authority_): n += 1 + self.lengthString(len(self.authority_))
     return n + 2
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_claimed_id_):
+      n += 1
+      n += self.lengthString(len(self.claimed_id_))
+    if (self.has_continue_url_):
+      n += 1
+      n += self.lengthString(len(self.continue_url_))
+    if (self.has_authority_): n += 1 + self.lengthString(len(self.authority_))
+    return n
+
   def Clear(self):
     self.clear_claimed_id()
     self.clear_continue_url()
@@ -1022,6 +1216,17 @@ class CreateFederatedLoginRequest(ProtocolBuffer.ProtocolMessage):
     out.putPrefixedString(self.claimed_id_)
     out.putVarInt32(18)
     out.putPrefixedString(self.continue_url_)
+    if (self.has_authority_):
+      out.putVarInt32(26)
+      out.putPrefixedString(self.authority_)
+
+  def OutputPartial(self, out):
+    if (self.has_claimed_id_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.claimed_id_)
+    if (self.has_continue_url_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.continue_url_)
     if (self.has_authority_):
       out.putVarInt32(26)
       out.putPrefixedString(self.authority_)
@@ -1038,6 +1243,8 @@ class CreateFederatedLoginRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 26:
         self.set_authority(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1070,6 +1277,7 @@ class CreateFederatedLoginRequest(ProtocolBuffer.ProtocolMessage):
     2: ProtocolBuffer.Encoder.STRING,
     3: ProtocolBuffer.Encoder.STRING,
   }, 3, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -1117,6 +1325,13 @@ class CreateFederatedLoginResponse(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.redirected_url_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_redirected_url_):
+      n += 1
+      n += self.lengthString(len(self.redirected_url_))
+    return n
+
   def Clear(self):
     self.clear_redirected_url()
 
@@ -1124,12 +1339,19 @@ class CreateFederatedLoginResponse(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(10)
     out.putPrefixedString(self.redirected_url_)
 
+  def OutputPartial(self, out):
+    if (self.has_redirected_url_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.redirected_url_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 10:
         self.set_redirected_url(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1154,6 +1376,7 @@ class CreateFederatedLoginResponse(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -1201,6 +1424,13 @@ class CreateFederatedLogoutRequest(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.destination_url_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_destination_url_):
+      n += 1
+      n += self.lengthString(len(self.destination_url_))
+    return n
+
   def Clear(self):
     self.clear_destination_url()
 
@@ -1208,12 +1438,19 @@ class CreateFederatedLogoutRequest(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(10)
     out.putPrefixedString(self.destination_url_)
 
+  def OutputPartial(self, out):
+    if (self.has_destination_url_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.destination_url_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 10:
         self.set_destination_url(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1238,6 +1475,7 @@ class CreateFederatedLogoutRequest(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -1285,6 +1523,13 @@ class CreateFederatedLogoutResponse(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.logout_url_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_logout_url_):
+      n += 1
+      n += self.lengthString(len(self.logout_url_))
+    return n
+
   def Clear(self):
     self.clear_logout_url()
 
@@ -1292,12 +1537,19 @@ class CreateFederatedLogoutResponse(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(10)
     out.putPrefixedString(self.logout_url_)
 
+  def OutputPartial(self, out):
+    if (self.has_logout_url_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.logout_url_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 10:
         self.set_logout_url(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1322,6 +1574,7 @@ class CreateFederatedLogoutResponse(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""

@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Handler library for Blobstore API.
 
 Contains handlers to help with uploading and downloading blobs.
@@ -30,6 +33,10 @@ Public Exceptions (indentation indications class hierarchy):
       UnsupportedRangeFormatError: Raised when range header has valid format
         but a particular feature or unit type is not supported.
 """
+
+
+
+
 
 
 
@@ -103,19 +110,24 @@ def _check_ranges(start, end, use_range_set, use_range, range_header):
   if end is not None and start is None:
     raise ValueError('May not specify end value without start.')
 
+
   use_indexes = start is not None
   if use_indexes:
     if end is not None:
+
+
       if start > end:
         raise ValueError('start must be < end.')
 
     range_indexes = byterange.Range.serialize_bytes(_BYTES_UNIT, [(start, end)])
+
 
   if use_range_set and use_range and use_indexes:
     if range_header != range_indexes:
       raise ValueError('May not provide non-equivalent range indexes and '
                        'range headers: (header) %s != (indexes) %s'
                        % (range_header, range_indexes))
+
 
   if use_range and range_header is not None:
     return range_header
@@ -170,6 +182,7 @@ class BlobstoreDownloadHandler(webapp.RequestHandler):
                         % sorted(invalid_keywords))
 
 
+
     use_range = kwargs.get('use_range', self.__use_range_unset)
     use_range_set = use_range is not self.__use_range_unset
 
@@ -196,6 +209,8 @@ class BlobstoreDownloadHandler(webapp.RequestHandler):
         content_type = content_type.encode('utf-8')
       self.response.headers['Content-Type'] = content_type
     else:
+
+
       del self.response.headers['Content-Type']
 
     def send_attachment(filename):
@@ -236,6 +251,9 @@ class BlobstoreDownloadHandler(webapp.RequestHandler):
       return None
 
     try:
+
+
+
       original_stdout = sys.stdout
       sys.stdout = cStringIO.StringIO()
       try:

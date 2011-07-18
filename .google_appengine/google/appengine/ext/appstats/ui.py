@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Web-based User Interface for appstats.
 
 This is a simple set of webapp-based request handlers that display the
@@ -44,6 +47,8 @@ from google.appengine.ext.webapp import util
 
 from google.appengine.ext.appstats import recording
 
+
+
 DEBUG = recording.config.DEBUG
 from google.appengine.ext.webapp import template
 import django
@@ -67,22 +72,33 @@ class SummaryHandler(webapp.RequestHandler):
   def get(self):
     recording.dont_record()
 
+
+
+
+
     if not self.request.path.endswith('/'):
       self.redirect(self.request.path + '/')
       return
 
+
     summaries = recording.load_summary_protos()
+
 
     allstats = {}
     pathstats = {}
     pivot_path_rpc = {}
     pivot_rpc_path = {}
     for index, summary in enumerate(summaries):
+
+
+
+
       path_key = recording.config.extract_key(summary)
       if path_key not in pathstats:
         pathstats[path_key] = [1, index+1]
       else:
         values = pathstats[path_key]
+
         values[0] += 1
         if len(values) >= 11:
           if values[-1]:
@@ -91,6 +107,7 @@ class SummaryHandler(webapp.RequestHandler):
           values.append(index+1)
       if path_key not in pivot_path_rpc:
         pivot_path_rpc[path_key] = {}
+
       for x in summary.rpc_stats_list():
         rpc_key = x.service_call_name()
         value = x.total_amount_of_calls()
@@ -107,12 +124,14 @@ class SummaryHandler(webapp.RequestHandler):
           pivot_rpc_path[rpc_key][path_key] = 0
         pivot_rpc_path[rpc_key][path_key] += value
 
+
     allstats_by_count = []
     for k, v in allstats.iteritems():
       pivot = sorted(pivot_rpc_path[k].iteritems(),
                      key=lambda x: (-x[1], x[0]))
       allstats_by_count.append((k, v, pivot))
     allstats_by_count.sort(key=lambda x: (-x[1], x[0]))
+
 
     pathstats_by_count = []
     for path_key, values in pathstats.iteritems():
@@ -122,6 +141,7 @@ class SummaryHandler(webapp.RequestHandler):
       pathstats_by_count.append((path_key, rpc_count,
                                  values[0], values[1:], pivot))
     pathstats_by_count.sort(key=lambda x: (-x[1], -x[2], x[0]))
+
 
     data = {'requests': summaries,
             'allstats_by_count': allstats_by_count,
@@ -136,6 +156,7 @@ class DetailsHandler(webapp.RequestHandler):
   def get(self):
     recording.dont_record()
 
+
     time_key = self.request.get('time')
     timestamp = None
     record = None
@@ -147,10 +168,13 @@ class DetailsHandler(webapp.RequestHandler):
     if timestamp:
       record = recording.load_full_proto(timestamp)
 
+
     if record is None:
       self.response.set_status(404)
+
       self.response.out.write(render('details.html', {}))
       return
+
 
     rpcstats_map = {}
     for rpc_stat in record.individual_stats_list():
@@ -164,6 +188,7 @@ class DetailsHandler(webapp.RequestHandler):
         (name, count, real, recording.mcycles_to_msecs(api))
         for name, (count, real, api) in rpcstats_map.iteritems()]
     rpcstats_by_count.sort(key=lambda x: -x[1])
+
 
     real_total = 0
     api_total_mcycles = 0
@@ -193,21 +218,31 @@ class FileHandler(webapp.RequestHandler):
   """
 
 
+
+
+
+
+
+
   def get(self):
     recording.dont_record()
+
     lineno = self.request.get('n')
     try:
       lineno = int(lineno)
     except:
       lineno = 0
+
     filename = self.request.get('f') or ''
     orig_filename = filename
+
     match = re.match('<path\[(\d+)\]>(.*)', filename)
     if match:
       index, tail = match.groups()
       index = int(index)
       if index < len(sys.path):
         filename = sys.path[index] + tail
+
     try:
       fp = open(filename)
     except IOError, err:
@@ -215,6 +250,7 @@ class FileHandler(webapp.RequestHandler):
                               cgi.escape(str(err)))
       self.response.set_status(404)
     else:
+
       try:
         data = {'fp': fp,
                 'filename': filename,
@@ -253,11 +289,15 @@ class StaticHandler(webapp.RequestHandler):
     self.response.headers['Expires'] = expiration
 
 
+
+
 if django.VERSION[:2] < (0, 97):
   from django.template import defaultfilters
   def safe(text, dummy=None):
     return text
   defaultfilters.register.filter("safe", safe)
+
+
 
 
 URLMAP = [

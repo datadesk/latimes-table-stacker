@@ -15,13 +15,31 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """Counters-related operations."""
 
 
 __all__ = ['Increment']
 
 
-class Increment(object):
+from google.appengine.ext.mapreduce.operation import base
+
+
+class Increment(base.Operation):
   """Increment counter operation."""
 
   def __init__(self, counter_name, delta=1):

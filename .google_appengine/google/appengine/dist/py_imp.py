@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Stub replacement for Python's imp module."""
 
 
@@ -28,6 +31,8 @@ PKG_DIRECTORY, C_BUILTIN, PY_FROZEN = 5, 6, 7
 
 def get_magic():
   """Return the magic string used to recognize byte-compiled code files."""
+
+
   return '\xb3\xf2\r\n'
 
 
@@ -37,11 +42,13 @@ _PKG_DIRECTORY_SUFFIX = ('', '', PKG_DIRECTORY)
 
 def get_suffixes():
   """Return a list that describes the files that find_module() looks for."""
+
   return [_PY_SOURCE_SUFFIX]
 
 
 def find_module(name, path=None):
   """Try to find the named module on the given search path or sys.path."""
+
   if path == None:
     path = sys.path
 

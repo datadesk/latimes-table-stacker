@@ -15,10 +15,20 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Bulkloader Simple Text writing.
 
 Handle the simpletext format specified in a bulkloader.yaml file.
 """
+
+
+
+
+
+
 
 
 

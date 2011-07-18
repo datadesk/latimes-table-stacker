@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """A thread-safe queue in which removed objects put back to the front."""
 
 
@@ -110,6 +113,7 @@ class ReQueue(object):
           result = action()
           success = True
         except Exception, e:
+
           if not isinstance(e, exc):
             raise e
           if timeout is not None:
@@ -185,11 +189,16 @@ class ReQueue(object):
       Queue.Empty if the queue is empty and the timeout expires.
     """
     def GetAction():
+
       try:
         result = self.requeue.get(block=False)
+
+
         self.requeue.task_done()
       except Queue.Empty:
+
         result = self.queue.get(block=False)
+
       return result
     return self._DoWithTimeout(GetAction,
                                Queue.Empty,

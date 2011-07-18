@@ -15,6 +15,11 @@
 # limitations under the License.
 #
 
+
+
+
+
+
 """Contains a metaclass and helper functions used to create
 protocol message classes from Descriptor objects at runtime.
 
@@ -69,6 +74,8 @@ class GeneratedProtocolMessageType(type):
   myproto.foo_field = 23
   ...
   """
+
+
 
   _DESCRIPTOR_KEY = 'DESCRIPTOR'
 

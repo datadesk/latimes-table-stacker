@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Generates and emails daily exception reports.
 
 See google/appengine/ext/ereporter/__init__.py for usage details.
@@ -32,6 +35,10 @@ to:       If specified, send reports to this address. If not specified, all
           admins are sent the report.
 versions: 'all' to report on all minor versions, or 'latest' for the latest.
 """
+
+
+
+
 
 
 
@@ -72,6 +79,7 @@ class ReportGenerator(webapp.RequestHandler):
                mail_admins=mail.send_mail_to_admins):
     super(ReportGenerator, self).__init__()
 
+
     self.send_mail = send_mail
     self.send_mail_to_admins = mail_admins
 
@@ -99,6 +107,7 @@ class ReportGenerator(webapp.RequestHandler):
     Returns:
       An HTML exception report.
     """
+
     exceptions.sort(key=lambda e: (e.minor_version, -e.count))
     versions = [(minor, list(excs)) for minor, excs
                 in itertools.groupby(exceptions, lambda e: e.minor_version)]
@@ -160,6 +169,7 @@ class ReportGenerator(webapp.RequestHandler):
     try:
       exceptions = self.GetQuery(order='-minor_version').fetch(self.max_results)
     except db.NeedIndexError:
+
       exceptions = self.GetQuery().fetch(self.max_results)
 
     if exceptions:
@@ -168,6 +178,7 @@ class ReportGenerator(webapp.RequestHandler):
         self.response.out.write(report)
       else:
         self.SendReport(report)
+
 
       if self.delete:
         db.delete(exceptions)

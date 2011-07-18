@@ -15,10 +15,17 @@
 # limitations under the License.
 #
 
+
+
+
 """DEPRECATED mix-in handler for bulk loading data into an application.
 
 Please use the new bulkloader.
 """
+
+
+
+
 
 
 
@@ -113,6 +120,7 @@ class Loader(object):
 
     self.__properties = properties
 
+
     Loader.__loaders[kind] = self
 
 
@@ -189,6 +197,7 @@ class Loader(object):
   def RegisteredLoaders():
     """ Returns a list of the Loader instances that have been created.
     """
+
     return dict(Loader.__loaders)
 
 
@@ -242,9 +251,14 @@ class BulkLoad(webapp.RequestHandler):
     page += ('The bulk load endpoint is: <a href="%s">%s</a><br />\n' %
             (uri, uri))
 
+
     cookies = os.environ.get('HTTP_COOKIE', None)
     if cookies:
       cookie = Cookie.BaseCookie(cookies)
+
+
+
+
       for param in ['ACSID', 'dev_appserver_login']:
         value = cookie.get(param)
         if value:
@@ -264,6 +278,8 @@ class BulkLoad(webapp.RequestHandler):
     Args:
       reader: a csv reader for the input data.
     """
+
+
     line_num = 1
     for columns in reader:
       yield (line_num, columns)
@@ -315,6 +331,7 @@ class BulkLoad(webapp.RequestHandler):
         response code: integer HTTP response code to return
         output: string containing the HTTP response body
     """
+
     data = data.encode('utf-8')
     Validate(kind, basestring)
     Validate(data, basestring)
@@ -332,6 +349,7 @@ class BulkLoad(webapp.RequestHandler):
     try:
       csv.field_size_limit(800000)
     except AttributeError:
+
       pass
 
     return self.LoadEntities(self.IterRows(reader), loader)

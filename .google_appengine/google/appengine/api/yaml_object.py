@@ -15,11 +15,18 @@
 # limitations under the License.
 #
 
+
+
+
 """Builder for mapping YAML documents to object instances.
 
 ObjectBuilder is responsible for mapping a YAML document to classes defined
 using the validation mechanism (see google.appengine.api.validation.py).
 """
+
+
+
+
 
 
 
@@ -85,10 +92,10 @@ class _ObjectSequencer(object):
 class ObjectBuilder(yaml_builder.Builder):
   """Builder used for constructing validated objects.
 
-  Given a class that implements validation.Validated, it will parse a YAML
-  document and attempt to build an instance of the class.  It does so by mapping
-  YAML keys to Python attributes.  ObjectBuilder will only map YAML fields
-  to attributes defined in the Validated subclasses 'ATTRIBUTE' definitions.
+  Given a class that implements validation.ValidatedBase, it will parse a YAML
+  document and attempt to build an instance of the class.
+  ObjectBuilder will only map YAML fields that are accepted by the
+  ValidatedBase's GetValidator function.
   Lists are mapped to validated.  Repeated attributes and maps are mapped to
   validated.Type properties.
 
@@ -141,6 +148,8 @@ class ObjectBuilder(yaml_builder.Builder):
       New instance of object mapper.
     """
     result = _ObjectMapper()
+
+
     if isinstance(top_value, self.default_class):
       result.value = top_value
     return result
@@ -157,12 +166,18 @@ class ObjectBuilder(yaml_builder.Builder):
     try:
       mapping.value.CheckInitialized()
     except validation.ValidationError:
+
       raise
     except Exception, e:
+
+
+
+
       try:
         error_str = str(e)
       except Exception:
         error_str = '<unknown>'
+
 
       raise validation.ValidationError("Invalid object:\n%s" % error_str, e)
 
@@ -189,23 +204,31 @@ class ObjectBuilder(yaml_builder.Builder):
       UnexpectedAttribute when the key is not a validated attribute of
       the subject value class.
     """
-    assert subject.value is not None
-    if key not in subject.value.ATTRIBUTES:
-      raise yaml_errors.UnexpectedAttribute(
-          'Unexpected attribute \'%s\' for object of type %s.' %
-          (key, str(subject.value.__class__)))
+    assert isinstance(subject.value, validation.ValidatedBase)
+
+    try:
+      attribute = subject.value.GetValidator(key)
+    except validation.ValidationError, err:
+      raise yaml_errors.UnexpectedAttribute(err)
 
     if isinstance(value, _ObjectMapper):
-      value.set_value(subject.value.GetAttribute(key).expected_type())
+
+
+      value.set_value(attribute.expected_type())
       value = value.value
     elif isinstance(value, _ObjectSequencer):
-      value.set_constructor(self._GetRepeated(subject.value.ATTRIBUTES[key]))
+
+      value.set_constructor(self._GetRepeated(attribute))
       value = value.value
 
     subject.see(key)
     try:
-      setattr(subject.value, key, value)
+      subject.value.Set(key, value)
     except validation.ValidationError, e:
+
+
+
+
       try:
         error_str = str(e)
       except Exception:
@@ -215,6 +238,7 @@ class ObjectBuilder(yaml_builder.Builder):
         value_str = str(value)
       except Exception:
         value_str = '<unknown>'
+
 
       e.message = ("Unable to assign value '%s' to attribute '%s':\n%s" %
                    (value_str, key, error_str))
@@ -230,6 +254,7 @@ class ObjectBuilder(yaml_builder.Builder):
       except Exception:
         value_str = '<unknown>'
 
+
       message = ("Unable to assign value '%s' to attribute '%s':\n%s" %
                  (value_str, key, error_str))
       raise validation.ValidationError(message, e)
@@ -242,9 +267,11 @@ class ObjectBuilder(yaml_builder.Builder):
       value: Value that is being appended to sequence.
     """
     if isinstance(value, _ObjectMapper):
+
       value.set_value(subject.constructor())
       subject.value.append(value.value)
     else:
+
       subject.value.append(value)
 
 

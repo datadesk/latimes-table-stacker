@@ -15,6 +15,21 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """Status page handler for mapreduce framework."""
 
 
@@ -28,32 +43,21 @@ from google.appengine.api import yaml_listener
 from google.appengine.api import yaml_object
 from google.appengine.ext import db
 from google.appengine.ext.mapreduce import base_handler
+from google.appengine.ext.mapreduce import errors
 from google.appengine.ext.mapreduce import model
 from google.appengine.ext.webapp import template
+
+
+
+
 
 
 
 MR_YAML_NAMES = ["mapreduce.yaml", "mapreduce.yml"]
 
 
-class Error(Exception):
-  """Base class for exceptions in this module."""
-
-
 class BadStatusParameterError(Exception):
   """A parameter passed to a status handler was invalid."""
-
-
-class BadYamlError(Error):
-  """Raised when the mapreduce.yaml file is invalid."""
-
-
-class MissingYamlError(BadYamlError):
-  """Raised when the mapreduce.yaml file could not be found."""
-
-
-class MultipleDocumentsInMrYaml(BadYamlError):
-  """There's more than one document in mapreduce.yaml file."""
 
 
 class UserParam(validation.Validated):
@@ -72,6 +76,7 @@ class MapperInfo(validation.Validated):
   ATTRIBUTES = {
     "handler": r".+",
     "input_reader": r".+",
+    "output_writer": validation.Optional(r".+"),
     "params": validation.Optional(validation.Repeated(UserParam)),
     "params_validator": validation.Optional(r".+"),
   }
@@ -155,9 +160,14 @@ class MapReduceYaml(validation.Validated):
         for param in config.params:
           param_defaults[param.name] = param.default or param.value
         out["params"] = param_defaults
+      if config.mapper.output_writer:
+        out["mapper_output_writer"] = config.mapper.output_writer
       all_configs.append(out)
 
     return all_configs
+
+
+
 
 
 def find_mapreduce_yaml(status_file=__file__):
@@ -214,7 +224,7 @@ def parse_mapreduce_yaml(contents):
     MapReduceYaml object with all the data from original file.
 
   Raises:
-    BadYamlError: when contents is not a valid mapreduce.yaml file.
+    errors.BadYamlError: when contents is not a valid mapreduce.yaml file.
   """
   try:
     builder = yaml_object.ObjectBuilder(MapReduceYaml)
@@ -224,17 +234,19 @@ def parse_mapreduce_yaml(contents):
 
     mr_info = handler.GetResults()
   except (ValueError, yaml_errors.EventError), e:
-    raise BadYamlError(e)
+    raise errors.BadYamlError(e)
 
   if len(mr_info) < 1:
-    raise BadYamlError("No configs found in mapreduce.yaml")
+    raise errors.BadYamlError("No configs found in mapreduce.yaml")
   if len(mr_info) > 1:
-    raise MultipleDocumentsInMrYaml("Found %d YAML documents" % len(mr_info))
+    raise errors.MultipleDocumentsInMrYaml("Found %d YAML documents" %
+                                           len(mr_info))
 
   jobs = mr_info[0]
   job_names = set(j.name for j in jobs.mapreduce)
   if len(jobs.mapreduce) != len(job_names):
-    raise BadYamlError("Overlapping mapreduce names; names must be unique")
+    raise errors.BadYamlError(
+        "Overlapping mapreduce names; names must be unique")
 
   return jobs
 
@@ -249,12 +261,12 @@ def get_mapreduce_yaml(parse=parse_mapreduce_yaml):
     MapReduceYaml object.
 
   Raises:
-    BadYamlError: when contents is not a valid mapreduce.yaml file or the
+    errors.BadYamlError: when contents is not a valid mapreduce.yaml file or the
     file is missing.
   """
   mr_yaml_path = find_mapreduce_yaml()
   if not mr_yaml_path:
-    raise MissingYamlError()
+    raise errors.MissingYamlError()
   mr_yaml_file = open(mr_yaml_path)
   try:
     return parse(mr_yaml_file.read())

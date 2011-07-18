@@ -15,13 +15,33 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """DB-related operations."""
 
 
 __all__ = ['Put', 'Delete']
 
 
-class Put(object):
+from google.appengine.ext.mapreduce.operation import base
+
+
+
+
+class Put(base.Operation):
   """Put entity into datastore via mutation_pool.
 
   See mapreduce.context.MutationPool.
@@ -44,7 +64,7 @@ class Put(object):
     context.mutation_pool.put(self.entity)
 
 
-class Delete(object):
+class Delete(base.Operation):
   """Delete entity from datastore via mutation_pool.
 
   See mapreduce.context.MutationPool.

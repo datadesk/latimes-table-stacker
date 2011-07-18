@@ -43,16 +43,29 @@ class InvalidCertificateException(httplib.HTTPException):
             'http://code.google.com/appengine/kb/general.html#rpcssl' %
             (self.host, self.reason, self.cert))
 
+
+try:
+  import ssl
+  _CAN_VALIDATE_CERTS = True
+except ImportError:
+  _CAN_VALIDATE_CERTS = False
+
+
 def can_validate_certs():
   """Return True if we have the SSL package and can validate certificates."""
-  try:
-    import ssl
-    return True
-  except ImportError:
-    return False
+  return _CAN_VALIDATE_CERTS
 
-def _create_fancy_connection(tunnel_host=None, key_file=None,
-                             cert_file=None, ca_certs=None):
+
+# Reexport SSLError so clients don't have to to do their own checking for ssl's
+# existence.
+if can_validate_certs():
+  SSLError = ssl.SSLError
+else:
+  SSLError = None
+
+
+def create_fancy_connection(tunnel_host=None, key_file=None,
+                            cert_file=None, ca_certs=None):
   # This abomination brought to you by the fact that
   # the HTTPHandler creates the connection instance in the middle
   # of do_open so we need to add the tunnel host to the class.
@@ -70,14 +83,11 @@ def _create_fancy_connection(tunnel_host=None, key_file=None,
       self.key_file = key_file
       self.cert_file = cert_file
       self.ca_certs = ca_certs
-      try:
-        import ssl
+      if can_validate_certs():
         if self.ca_certs:
           self.cert_reqs = ssl.CERT_REQUIRED
         else:
           self.cert_reqs = ssl.CERT_NONE
-      except ImportError:
-        pass
 
     def _tunnel(self):
       self._set_hostport(self._tunnel_host, None)
@@ -141,9 +151,11 @@ def _create_fancy_connection(tunnel_host=None, key_file=None,
         self._tunnel()
 
       # ssl and FakeSocket got deprecated. Try for the new hotness of wrap_ssl,
-      # with fallback.
-      try:
-        import ssl
+      # with fallback. Note: Since can_validate_certs() just checks for the
+      # ssl module, it's equivalent to attempting to import ssl from
+      # the function, but doesn't require a dynamic import, which doesn't
+      # play nicely with dev_appserver.
+      if can_validate_certs():
         self.sock = ssl.wrap_socket(self.sock,
                                     keyfile=self.key_file,
                                     certfile=self.cert_file,
@@ -156,11 +168,11 @@ def _create_fancy_connection(tunnel_host=None, key_file=None,
           if not self._validate_certificate_hostname(cert, hostname):
             raise InvalidCertificateException(hostname, cert,
                                               'hostname mismatch')
-      except ImportError:
-        ssl = socket.ssl(self.sock,
-                         keyfile=self.key_file,
-                         certfile=self.cert_file)
-        self.sock = httplib.FakeSocket(self.sock, ssl)
+      else:
+        ssl_socket = socket.ssl(self.sock,
+                                keyfile=self.key_file,
+                                certfile=self.cert_file)
+        self.sock = httplib.FakeSocket(self.sock, ssl_socket)
 
   return PresetProxyHTTPSConnection
 
@@ -335,10 +347,10 @@ class FancyHTTPSHandler(urllib2.HTTPSHandler):
     try:
       return urllib2.HTTPSHandler.do_open(
           self,
-          _create_fancy_connection(req._tunnel_host,
-                                   req._key_file,
-                                   req._cert_file,
-                                   req._ca_certs),
+          create_fancy_connection(req._tunnel_host,
+                                  req._key_file,
+                                  req._cert_file,
+                                  req._ca_certs),
           req)
     except urllib2.URLError, url_error:
       try:

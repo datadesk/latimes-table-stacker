@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Trivial implementation of the UserService."""
 
 
@@ -27,11 +31,15 @@ from google.appengine.api import user_service_pb
 
 _DEFAULT_LOGIN_URL = 'https://www.google.com/accounts/Login?continue=%s'
 _DEFAULT_LOGOUT_URL = 'https://www.google.com/accounts/Logout?continue=%s'
+_DEFAULT_AUTH_DOMAIN = 'gmail.com'
+
+
+
 
 _OAUTH_CONSUMER_KEY = 'example.com'
 _OAUTH_EMAIL = 'example@example.com'
 _OAUTH_USER_ID = '0'
-_OAUTH_AUTH_DOMAIN = 'gmail.com'
+_OAUTH_AUTH_DOMAIN = _DEFAULT_AUTH_DOMAIN
 
 
 class UserServiceStub(apiproxy_stub.APIProxyStub):
@@ -40,7 +48,8 @@ class UserServiceStub(apiproxy_stub.APIProxyStub):
   def __init__(self,
                login_url=_DEFAULT_LOGIN_URL,
                logout_url=_DEFAULT_LOGOUT_URL,
-               service_name='user'):
+               service_name='user',
+               auth_domain=_DEFAULT_AUTH_DOMAIN):
     """Initializer.
 
     Args:
@@ -57,7 +66,9 @@ class UserServiceStub(apiproxy_stub.APIProxyStub):
     self._login_url = login_url
     self._logout_url = logout_url
 
-    os.environ['AUTH_DOMAIN'] = 'gmail.com'
+
+
+    os.environ['AUTH_DOMAIN'] = auth_domain
 
   def num_requests(self):
     return self.__num_requests
@@ -125,6 +136,7 @@ class UserServiceStub(apiproxy_stub.APIProxyStub):
     host = os.environ['SERVER_NAME']
     if os.environ['SERVER_PORT'] != '80':
       host = host + ":" + os.environ['SERVER_PORT']
+
 
     if path == '':
       path = '/'

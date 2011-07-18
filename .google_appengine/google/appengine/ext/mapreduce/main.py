@@ -15,6 +15,21 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """Main module for map-reduce implementation.
 
 This module should be specified as a handler for mapreduce URLs in app.yaml:
@@ -28,10 +43,16 @@ This module should be specified as a handler for mapreduce URLs in app.yaml:
 
 import wsgiref.handlers
 
+import google
 from google.appengine.ext import webapp
 from google.appengine.ext.mapreduce import handlers
 from google.appengine.ext.mapreduce import status
 from google.appengine.ext.webapp import util
+
+try:
+  from appengine_pipeline.src import pipeline
+except ImportError:
+  pipeline = None
 
 
 STATIC_RE = r".*/([^/]*\.(?:css|js)|status|detail)$"
@@ -48,18 +69,23 @@ class RedirectHandler(webapp.RequestHandler):
     self.redirect(new_path)
 
 
-def create_application():
-  """Create new WSGIApplication and register all handlers.
+def create_handlers_map():
+  """Create new handlers map.
 
   Returns:
-    an instance of webapp.WSGIApplication with all mapreduce handlers
-    registered.
+    list of (regexp, handler) pairs for WSGIApplication constructor.
   """
-  return webapp.WSGIApplication([
+  pipeline_handlers_map = []
+
+  if pipeline:
+    pipeline_handlers_map = pipeline.create_handlers_map(prefix=".*/pipeline")
+
+  return pipeline_handlers_map + [
 
       (r".*/worker_callback", handlers.MapperWorkerCallbackHandler),
       (r".*/controller_callback", handlers.ControllerCallbackHandler),
       (r".*/kickoffjob_callback", handlers.KickOffJobHandler),
+      (r".*/finalizejob_callback", handlers.FinalizeJobHandler),
 
 
 
@@ -75,8 +101,17 @@ def create_application():
 
 
       (r".*", RedirectHandler),
-  ],
-  debug=True)
+      ]
+
+def create_application():
+  """Create new WSGIApplication and register all handlers.
+
+  Returns:
+    an instance of webapp.WSGIApplication with all mapreduce handlers
+    registered.
+  """
+  return webapp.WSGIApplication(create_handlers_map(),
+                                debug=True)
 
 
 APP = create_application()

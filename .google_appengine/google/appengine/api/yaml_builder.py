@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """PyYAML event builder handler
 
 Receives events from YAML listener and forwards them to a builder
@@ -25,10 +28,15 @@ object so that it can construct a properly structured object.
 
 
 
+
+
+
+
 from google.appengine.api import yaml_errors
 from google.appengine.api import yaml_listener
 
 import yaml
+
 
 _TOKEN_DOCUMENT = 'document'
 _TOKEN_SEQUENCE = 'sequence'
@@ -200,6 +208,7 @@ class BuilderHandler(yaml_listener.EventHandler):
       value: Value to associate with given token.  Construction of value is
         determined by the builder provided to this handler at construction.
     """
+
     self._top = (token, value)
     self._stack.append(self._top)
 
@@ -213,6 +222,7 @@ class BuilderHandler(yaml_listener.EventHandler):
     """
     assert self._stack != [] and self._stack is not None
     token, value = self._stack.pop()
+
     if self._stack:
       self._top = self._stack[-1]
     else:
@@ -231,6 +241,8 @@ class BuilderHandler(yaml_listener.EventHandler):
     Raises:
       NotImplementedError if event attempts to use an anchor.
     """
+
+
     if hasattr(event, 'anchor') and event.anchor is not None:
       raise NotImplementedError, 'Anchors not supported in this handler'
 
@@ -254,17 +266,29 @@ class BuilderHandler(yaml_listener.EventHandler):
     """
     token, top_value = self._top
 
+
+
     if token == _TOKEN_KEY:
+
       key = self._Pop()
+
       mapping_token, mapping = self._top
       assert _TOKEN_MAPPING == mapping_token
+
       self._builder.MapTo(mapping, key, value)
+
+
+
+
 
     elif token == _TOKEN_MAPPING:
       self._Push(_TOKEN_KEY, value)
 
+
     elif token == _TOKEN_SEQUENCE:
       self._builder.AppendTo(top_value, value)
+
+
 
     elif token == _TOKEN_DOCUMENT:
       self._builder.InitializeDocument(top_value, value)
@@ -334,10 +358,14 @@ class BuilderHandler(yaml_listener.EventHandler):
     """
     self._HandleAnchor(event)
     if event.tag is None and self._top[0] != _TOKEN_MAPPING:
+
+
       try:
         tag = loader.resolve(yaml.nodes.ScalarNode,
                              event.value, event.implicit)
       except IndexError:
+
+
         tag = loader.DEFAULT_SCALAR_TAG
     else:
       tag = event.tag
@@ -345,6 +373,7 @@ class BuilderHandler(yaml_listener.EventHandler):
     if tag is None:
       value = event.value
     else:
+
       node = yaml.nodes.ScalarNode(tag,
                                    event.value,
                                    event.start_mark,
@@ -365,6 +394,7 @@ class BuilderHandler(yaml_listener.EventHandler):
     """
     self._HandleAnchor(event)
     token, parent = self._top
+
 
     if token == _TOKEN_KEY:
       token, parent = self._stack[-2]
@@ -396,6 +426,11 @@ class BuilderHandler(yaml_listener.EventHandler):
     """
     self._HandleAnchor(event)
     token, parent = self._top
+
+
+
+
+
 
     if token == _TOKEN_KEY:
       token, parent = self._stack[-2]

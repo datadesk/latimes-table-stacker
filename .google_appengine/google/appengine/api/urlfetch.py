@@ -15,11 +15,18 @@
 # limitations under the License.
 #
 
+
+
+
 """URL downloading API.
 
 Methods defined in this module:
    Fetch(): fetchs a given URL using an HTTP GET or POST
 """
+
+
+
+
 
 
 
@@ -35,7 +42,10 @@ from google.appengine.api import urlfetch_service_pb
 from google.appengine.api.urlfetch_errors import *
 from google.appengine.runtime import apiproxy_errors
 
+
+
 MAX_REDIRECTS = 5
+
 
 GET = 1
 POST = 2
@@ -75,6 +85,7 @@ class _CaselessDict(UserDict.IterableUserDict):
       item: Item to store.
     """
     caseless_key = key.lower()
+
     if caseless_key in self.caseless_keys:
       del self.data[self.caseless_keys[caseless_key]]
     self.caseless_keys[caseless_key] = key
@@ -144,9 +155,13 @@ class _CaselessDict(UserDict.IterableUserDict):
       try:
         keys = dict.keys()
       except AttributeError:
+
         for k, v in dict:
           self[k] = v
       else:
+
+
+
         for k in keys:
           self[k] = dict[k]
     if kwargs:
@@ -202,7 +217,7 @@ def create_rpc(deadline=None, callback=None):
 
 def fetch(url, payload=None, method=GET, headers={},
           allow_truncated=False, follow_redirects=True,
-          deadline=None):
+          deadline=None, validate_certificate=None):
   """Fetches the given HTTP URL, blocking until the result is returned.
 
   Other optional parameters are:
@@ -221,6 +236,10 @@ def fetch(url, payload=None, method=GET, headers={},
        including the 'Location' header, and redirects are not
        followed.
      deadline: deadline in seconds for the operation.
+     validate_certificate: if true, do not send request to server unless the
+       certificate is valid, signed by a trusted CA and the hostname matches
+       the certificate. A value of None indicates that the behaviour will be
+       chosen by the underlying urlfetch implementation.
 
   We use a HTTP/1.1 compliant proxy to fetch the result.
 
@@ -237,12 +256,13 @@ def fetch(url, payload=None, method=GET, headers={},
   """
   rpc = create_rpc(deadline=deadline)
   make_fetch_call(rpc, url, payload, method, headers,
-                  allow_truncated, follow_redirects)
+                  allow_truncated, follow_redirects, validate_certificate)
   return rpc.get_result()
 
 
 def make_fetch_call(rpc, url, payload=None, method=GET, headers={},
-                    allow_truncated=False, follow_redirects=True):
+                    allow_truncated=False, follow_redirects=True,
+                    validate_certificate=None):
   """Executes the RPC call to fetch a given HTTP URL.
 
   The first argument is a UserRPC instance.  See urlfetch.fetch for a
@@ -261,6 +281,9 @@ def make_fetch_call(rpc, url, payload=None, method=GET, headers={},
 
   request = urlfetch_service_pb.URLFetchRequest()
   response = urlfetch_service_pb.URLFetchResponse()
+
+  if isinstance(url, unicode):
+    url = url.encode('UTF-8')
   request.set_url(url)
 
   if method == GET:
@@ -274,18 +297,28 @@ def make_fetch_call(rpc, url, payload=None, method=GET, headers={},
   elif method == DELETE:
     request.set_method(urlfetch_service_pb.URLFetchRequest.DELETE)
 
+
   if payload and (method == POST or method == PUT):
     request.set_payload(payload)
+
 
   for key, value in headers.iteritems():
     header_proto = request.add_header()
     header_proto.set_key(key)
+
+
+
+
     header_proto.set_value(str(value))
 
   request.set_followredirects(follow_redirects)
+  if validate_certificate is not None:
+    request.set_mustvalidateservercertificate(validate_certificate)
 
   if rpc.deadline is not None:
     request.set_deadline(rpc.deadline)
+
+
 
   rpc.make_call('Fetch', request, response, _get_fetch_result, allow_truncated)
 
@@ -328,7 +361,10 @@ def _get_fetch_result(rpc):
       raise ResponseTooLargeError(None)
     if (err.application_error ==
         urlfetch_service_pb.URLFetchServiceError.DEADLINE_EXCEEDED):
-      raise DownloadError(str(err))
+      raise DeadlineExceededError(str(err))
+    if (err.application_error ==
+        urlfetch_service_pb.URLFetchServiceError.SSL_CERTIFICATE_ERROR):
+      raise SSLCertificateError(str(err))
     raise err
 
   response = rpc.response

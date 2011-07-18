@@ -15,8 +15,15 @@
 # limitations under the License.
 #
 
+
+
+
 """Stub version of the mail API, writes email to logs and can optionally
 send real email via SMTP or sendmail."""
+
+
+
+
 
 
 
@@ -28,6 +35,7 @@ from email import MIMEText
 import logging
 import mail
 import mimetypes
+import re
 import subprocess
 import smtplib
 
@@ -77,6 +85,7 @@ class MailServiceStub(apiproxy_stub.APIProxyStub):
     self._smtp_password = password
     self._enable_sendmail = enable_sendmail
     self._show_mail_body = show_mail_body
+    self._cached_messages = []
 
   def _GenerateLog(self, method, message, log):
     """Generate a list of log messages representing sent mail.
@@ -88,6 +97,7 @@ class MailServiceStub(apiproxy_stub.APIProxyStub):
     log('MailService.%s' % method)
     log('  From: %s' % message.sender())
 
+
     for address in message.to_list():
       log('  To: %s' % address)
     for address in message.cc_list():
@@ -98,7 +108,9 @@ class MailServiceStub(apiproxy_stub.APIProxyStub):
     if message.replyto():
       log('  Reply-to: %s' % message.replyto())
 
+
     log('  Subject: %s' % message.subject())
+
 
     if message.has_textbody():
       log('  Body:')
@@ -107,6 +119,7 @@ class MailServiceStub(apiproxy_stub.APIProxyStub):
       if self._show_mail_body:
         log('-----\n' + message.textbody() + '\n-----')
 
+
     if message.has_htmlbody():
       log('  Body:')
       log('    Content-type: text/html')
@@ -114,10 +127,52 @@ class MailServiceStub(apiproxy_stub.APIProxyStub):
       if self._show_mail_body:
         log('-----\n' + message.htmlbody() + '\n-----')
 
+
     for attachment in message.attachment_list():
       log('  Attachment:')
       log('    File name: %s' % attachment.filename())
       log('    Data length: %s' % len(attachment.data()))
+
+  def _CacheMessage(self, message):
+    """Cache a message that were sent for later inspection.
+
+    Args:
+      message: Message to cache.
+    """
+    self._cached_messages.append(message)
+
+
+  def get_sent_messages(self, to=None, sender=None, subject=None, body=None,
+                        html=None):
+    """Get a list of mail messages sent via the Mail API.
+
+    Args:
+      to: A regular expression that at least one recipient must match.
+      sender: A regular expression that the sender must match.
+      subject: A regular expression that the message subject must match.
+      body: A regular expression that the text body must match.
+      html: A regular expression that the HTML body must match.
+
+    Returns:
+      A list of matching mail.EmailMessage objects.
+    """
+    messages = self._cached_messages
+
+    def recipient_matches(recipient):
+      return re.search(to, recipient)
+
+    if to:
+      messages = [m for m in messages if filter(recipient_matches, m.to_list())]
+    if sender:
+      messages = [m for m in messages if re.search(sender, m.sender())]
+    if subject:
+      messages = [m for m in messages if re.search(subject, m.subject())]
+    if body:
+      messages = [m for m in messages if re.search(body, m.textbody())]
+    if html:
+      messages = [m for m in messages if re.search(html, m.htmlbody())]
+
+    return messages
 
   def _SendSMTP(self, mime_message, smtp_lib=smtplib.SMTP):
     """Send MIME message via SMTP.
@@ -130,15 +185,16 @@ class MailServiceStub(apiproxy_stub.APIProxyStub):
       mime_message: MimeMessage to send.  Create using ToMIMEMessage.
       smtp_lib: Class of SMTP library.  Used for dependency injection.
     """
+
     smtp = smtp_lib()
     try:
       smtp.connect(self._smtp_host, self._smtp_port)
       if self._smtp_user:
         smtp.login(self._smtp_user, self._smtp_password)
 
-      tos = ', '.join([mime_message[to] for to in ['To', 'Cc', 'Bcc']
-                       if mime_message[to]])
-      smtp.sendmail(mime_message['From'], tos, str(mime_message))
+
+      tos = [mime_message[to] for to in ['To', 'Cc', 'Bcc'] if mime_message[to]]
+      smtp.sendmail(mime_message['From'], tos, mime_message.as_string())
     finally:
       smtp.quit()
 
@@ -155,6 +211,9 @@ class MailServiceStub(apiproxy_stub.APIProxyStub):
       popen: popen function to create a new sub-process.
     """
     try:
+
+
+
       tos = [mime_message[to] for to in ['To', 'Cc', 'Bcc'] if mime_message[to]]
       sendmail_command = '%s %s' % (sendmail_command, ' '.join(tos))
 
@@ -167,9 +226,11 @@ class MailServiceStub(apiproxy_stub.APIProxyStub):
         logging.error('Unable to open pipe to sendmail')
         raise
       try:
-        child.stdin.write(str(mime_message))
+        child.stdin.write(mime_message.as_string())
         child.stdin.close()
       finally:
+
+
         while child.poll() is None:
           child.stdout.read(100)
         child.stdout.close()
@@ -195,19 +256,26 @@ class MailServiceStub(apiproxy_stub.APIProxyStub):
       popen2: popen2 function to use for opening pipe to other process.
         Used for dependency injection.
     """
+    self._CacheMessage(request)
     self._GenerateLog('Send', request, log)
 
     if self._smtp_host and self._enable_sendmail:
       log('Both SMTP and sendmail are enabled.  Ignoring sendmail.')
 
+
+
+
+
     import email
 
     mime_message = mail.MailMessageToMIMEMessage(request)
     if self._smtp_host:
+
       self._SendSMTP(mime_message, smtp_lib)
     elif self._enable_sendmail:
       self._SendSendmail(mime_message, popen, sendmail_command)
     else:
+
       logging.info('You are not currently sending out real email.  '
                    'If you have sendmail installed you can use it '
                    'by using the server with --enable_sendmail')

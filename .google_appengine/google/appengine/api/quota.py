@@ -15,7 +15,15 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Access to quota usage for this application."""
+
+
+
+
 
 
 
@@ -36,6 +44,7 @@ def get_request_cpu_usage():
 
   if _apphosting_runtime___python__apiproxy:
     return _apphosting_runtime___python__apiproxy.get_request_cpu_usage()
+
   return 0
 
 def get_request_api_cpu_usage():
@@ -49,6 +58,7 @@ def get_request_api_cpu_usage():
 
   if _apphosting_runtime___python__apiproxy:
     return _apphosting_runtime___python__apiproxy.get_request_api_cpu_usage()
+
   return 0
 
 MCYCLES_PER_SECOND = 1200.0

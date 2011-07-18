@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Code for decoding protocol buffer primitives.
 
 This code is very similar to encoder.py -- read the docs for that module first.
@@ -72,9 +75,13 @@ from google.net.proto2.python.internal import wire_format
 from google.net.proto2.python.public import message
 
 
+
+
 _POS_INF = 1e10000
 _NEG_INF = -_POS_INF
 _NAN = _POS_INF * 0
+
+
 
 
 _DecodeError = message.DecodeError
@@ -134,6 +141,7 @@ def _SignedVarintDecoder(mask):
 _DecodeVarint = _VarintDecoder((1 << 64) - 1)
 _DecodeSignedVarint = _SignedVarintDecoder((1 << 64) - 1)
 
+
 _DecodeVarint32 = _VarintDecoder((1 << 32) - 1)
 _DecodeSignedVarint32 = _SignedVarintDecoder((1 << 32) - 1)
 
@@ -154,6 +162,7 @@ def ReadTag(buffer, pos):
     pos += 1
   pos += 1
   return (buffer[start:pos], pos)
+
 
 
 
@@ -196,8 +205,11 @@ def _SimpleDecoder(wire_type, decode_value):
         while 1:
           (element, new_pos) = decode_value(buffer, pos)
           value.append(element)
+
+
           pos = new_pos + tag_len
           if buffer[new_pos:pos] != tag_bytes or new_pos >= end:
+
             if new_pos > end:
               raise _DecodeError('Truncated message.')
             return new_pos
@@ -220,6 +232,8 @@ def _ModifiedDecoder(wire_type, decode_value, modify_value):
   """
 
 
+
+
   def InnerDecode(buffer, pos):
     (result, new_pos) = decode_value(buffer, pos)
     return (modify_value(result), new_pos)
@@ -236,6 +250,11 @@ def _StructPackDecoder(wire_type, format):
 
   value_size = struct.calcsize(format)
   local_unpack = struct.unpack
+
+
+
+
+
 
 
 
@@ -256,16 +275,26 @@ def _FloatDecoder():
   local_unpack = struct.unpack
 
   def InnerDecode(buffer, pos):
+
+
     new_pos = pos + 4
     float_bytes = buffer[pos:new_pos]
 
+
+
+
     if ((float_bytes[3] in '\x7F\xFF')
         and (float_bytes[2] >= '\x80')):
+
       if float_bytes[0:3] != '\x00\x00\x80':
         return (_NAN, new_pos)
+
       if float_bytes[3] == '\xFF':
         return (_NEG_INF, new_pos)
       return (_POS_INF, new_pos)
+
+
+
 
     result = local_unpack('<f', float_bytes)[0]
     return (result, new_pos)
@@ -281,17 +310,26 @@ def _DoubleDecoder():
   local_unpack = struct.unpack
 
   def InnerDecode(buffer, pos):
+
+
     new_pos = pos + 8
     double_bytes = buffer[pos:new_pos]
+
+
+
 
     if ((double_bytes[7] in '\x7F\xFF')
         and (double_bytes[6] >= '\xF0')
         and (double_bytes[0:7] != '\x00\x00\x00\x00\x00\x00\xF0')):
       return (_NAN, new_pos)
 
+
+
+
     result = local_unpack('<d', double_bytes)[0]
     return (result, new_pos)
   return _SimpleDecoder(wire_format.WIRETYPE_FIXED64, InnerDecode)
+
 
 
 
@@ -309,6 +347,10 @@ SInt32Decoder = _ModifiedDecoder(
     wire_format.WIRETYPE_VARINT, _DecodeVarint32, wire_format.ZigZagDecode)
 SInt64Decoder = _ModifiedDecoder(
     wire_format.WIRETYPE_VARINT, _DecodeVarint, wire_format.ZigZagDecode)
+
+
+
+
 
 Fixed32Decoder  = _StructPackDecoder(wire_format.WIRETYPE_FIXED32, '<I')
 Fixed64Decoder  = _StructPackDecoder(wire_format.WIRETYPE_FIXED64, '<Q')
@@ -342,8 +384,10 @@ def StringDecoder(field_number, is_repeated, is_packed, key, new_default):
         if new_pos > end:
           raise _DecodeError('Truncated string.')
         value.append(local_unicode(buffer[pos:new_pos], 'utf-8'))
+
         pos = new_pos + tag_len
         if buffer[new_pos:pos] != tag_bytes or new_pos == end:
+
           return new_pos
     return DecodeRepeatedField
   else:
@@ -377,8 +421,10 @@ def BytesDecoder(field_number, is_repeated, is_packed, key, new_default):
         if new_pos > end:
           raise _DecodeError('Truncated string.')
         value.append(buffer[pos:new_pos])
+
         pos = new_pos + tag_len
         if buffer[new_pos:pos] != tag_bytes or new_pos == end:
+
           return new_pos
     return DecodeRepeatedField
   else:
@@ -412,12 +458,16 @@ def GroupDecoder(field_number, is_repeated, is_packed, key, new_default):
         value = field_dict.get(key)
         if value is None:
           value = field_dict.setdefault(key, new_default(message))
+
         pos = value.add()._InternalParse(buffer, pos, end)
+
         new_pos = pos+end_tag_len
         if buffer[pos:new_pos] != end_tag_bytes or new_pos > end:
           raise _DecodeError('Missing group end tag.')
+
         pos = new_pos + tag_len
         if buffer[new_pos:pos] != tag_bytes or new_pos == end:
+
           return new_pos
     return DecodeRepeatedField
   else:
@@ -425,7 +475,9 @@ def GroupDecoder(field_number, is_repeated, is_packed, key, new_default):
       value = field_dict.get(key)
       if value is None:
         value = field_dict.setdefault(key, new_default(message))
+
       pos = value._InternalParse(buffer, pos, end)
+
       new_pos = pos+end_tag_len
       if buffer[pos:new_pos] != end_tag_bytes or new_pos > end:
         raise _DecodeError('Missing group end tag.')
@@ -451,14 +503,20 @@ def MessageDecoder(field_number, is_repeated, is_packed, key, new_default):
         value = field_dict.get(key)
         if value is None:
           value = field_dict.setdefault(key, new_default(message))
+
         (size, pos) = local_DecodeVarint(buffer, pos)
         new_pos = pos + size
         if new_pos > end:
           raise _DecodeError('Truncated message.')
+
         if value.add()._InternalParse(buffer, pos, new_pos) != new_pos:
+
+
           raise _DecodeError('Unexpected end-group tag.')
+
         pos = new_pos + tag_len
         if buffer[new_pos:pos] != tag_bytes or new_pos == end:
+
           return new_pos
     return DecodeRepeatedField
   else:
@@ -466,14 +524,19 @@ def MessageDecoder(field_number, is_repeated, is_packed, key, new_default):
       value = field_dict.get(key)
       if value is None:
         value = field_dict.setdefault(key, new_default(message))
+
       (size, pos) = local_DecodeVarint(buffer, pos)
       new_pos = pos + size
       if new_pos > end:
         raise _DecodeError('Truncated message.')
+
       if value._InternalParse(buffer, pos, new_pos) != new_pos:
+
+
         raise _DecodeError('Unexpected end-group tag.')
       return new_pos
     return DecodeField
+
 
 
 
@@ -506,6 +569,8 @@ def MessageSetItemDecoder(extensions_by_number):
     message_start = -1
     message_end = -1
 
+
+
     while 1:
       (tag_bytes, pos) = local_ReadTag(buffer, pos)
       if tag_bytes == type_id_tag_bytes:
@@ -535,11 +600,16 @@ def MessageSetItemDecoder(extensions_by_number):
         value = field_dict.setdefault(
             extension, extension.message_type._concrete_class())
       if value._InternalParse(buffer, message_start,message_end) != message_end:
+
+
         raise _DecodeError('Unexpected end-group tag.')
 
     return pos
 
   return DecodeItem
+
+
+
 
 
 def _SkipVarint(buffer, pos, end):
@@ -623,6 +693,7 @@ def _FieldSkipper():
         The new position (after the tag value), or -1 if the tag is an end-group
         tag (in which case the calling loop should break).
     """
+
 
     wire_type = local_ord(tag_bytes[0]) & wiretype_mask
     return WIRETYPE_TO_SKIPPER[wire_type](buffer, pos, end)

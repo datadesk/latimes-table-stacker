@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
+
 """Runs a development application server for an application.
 
 %(script)s [options] <application root>
@@ -25,15 +28,24 @@ Options:
   --help, -h                 View this helpful message.
   --debug, -d                Use debug logging. (Default false)
   --clear_datastore, -c      Clear the Datastore on startup. (Default false)
+  --clear_prospective_search Clear the Prospective Search subscription index
+                             (Default false).
   --address=ADDRESS, -a ADDRESS
                              Address to which this server should bind. (Default
                              %(address)s).
   --port=PORT, -p PORT       Port for the server to run on. (Default %(port)s)
-  --blobstore_path=PATH      Path to use for storing Blobstore file stub data.
-  --datastore_path=PATH      Path to use for storing Datastore file stub data.
+  --blobstore_path=DIR       Path to directory to use for storing Blobstore
+                             file stub data.
+  --datastore_path=DS_FILE   Path to file to use for storing Datastore file
+                             stub data.
                              (Default %(datastore_path)s)
+  --skip_sdk_update_check    Skip checking for SDK updates. If false, fall back
+                             to opt_in setting specified in .appcfg_nag
+                             (Default false)
   --use_sqlite               Use the new, SQLite based datastore stub.
                              (Default false)
+  --high_replication         Use the high replication datastore consistency
+                             model. (Default false).
   --history_path=PATH        Path to use for storing Datastore history.
                              (Default %(history_path)s)
   --require_indexes          Disallows queries that require composite indexes
@@ -48,6 +60,17 @@ Options:
                              (Default '%(smtp_user)s').
   --smtp_password=PASSWORD   Password for SMTP server.
                              (Default '%(smtp_password)s')
+  --rdbms_sqlite_path=PATH   Path to the sqlite3 file for the RDBMS API.
+  --mysql_host=HOSTNAME      MySQL database host that the rdbms API will use.
+                             (Default '%(mysql_host)s')
+  --mysql_port=PORT          MySQL port to connect to.
+                             (Default %(mysql_port)s)
+  --mysql_user=USER          MySQL user to connect as.
+                             (Default %(mysql_user)s)
+  --mysql_password=PASSWORD  MySQL password to use.
+                             (Default '%(mysql_password)s')
+  --mysql_socket=PATH        MySQL Unix socket file path.
+                             (Default '%(mysql_socket)s')
   --enable_sendmail          Enable sendmail when SMTP not configured.
                              (Default false)
   --show_mail_body           Log the body of emails in mail stub.
@@ -67,7 +90,38 @@ Options:
   --task_retry_seconds       How long to wait in seconds before retrying a
                              task after it fails during execution.
                              (Default '%(task_retry_seconds)s')
+  --backends                 Run the dev_appserver with backends support
+                             (multiprocess mode).
+  --multiprocess_min_port    When running in multiprocess mode, specifies the
+                             lowest port value to use when choosing ports. If
+                             set to 0, select random ports.
+                             (Default 9000)
 """
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -79,8 +133,11 @@ import logging
 import os
 import signal
 import sys
-import traceback
 import tempfile
+import traceback
+
+
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -91,10 +148,14 @@ from google.appengine.dist import py_zipimport
 from google.appengine.tools import appcfg
 from google.appengine.tools import appengine_rpc
 from google.appengine.tools import dev_appserver
+from google.appengine.tools import dev_appserver_multiprocess as multiprocess
+
+
 
 
 
 DEFAULT_ADMIN_CONSOLE_SERVER = 'appengine.google.com'
+
 
 ARG_ADDRESS = 'address'
 ARG_ADMIN_CONSOLE_SERVER = 'admin_console_server'
@@ -103,9 +164,11 @@ ARG_AUTH_DOMAIN = 'auth_domain'
 ARG_CLEAR_DATASTORE = 'clear_datastore'
 ARG_BLOBSTORE_PATH = 'blobstore_path'
 ARG_DATASTORE_PATH = 'datastore_path'
-ARG_MATCHER_PATH = 'matcher_path'
-ARG_CLEAR_MATCHER = 'clear_matcher'
+ARG_PROSPECTIVE_SEARCH_PATH = 'prospective_search_path'
+ARG_CLEAR_PROSPECTIVE_SEARCH = 'clear_prospective_search'
+ARG_SKIP_SDK_UPDATE_CHECK = 'skip_sdk_update_check'
 ARG_USE_SQLITE = 'use_sqlite'
+ARG_HIGH_REPLICATION = 'high_replication'
 ARG_DEBUG_IMPORTS = 'debug_imports'
 ARG_ENABLE_SENDMAIL = 'enable_sendmail'
 ARG_SHOW_MAIL_BODY = 'show_mail_body'
@@ -119,15 +182,27 @@ ARG_SMTP_HOST = 'smtp_host'
 ARG_SMTP_PASSWORD = 'smtp_password'
 ARG_SMTP_PORT = 'smtp_port'
 ARG_SMTP_USER = 'smtp_user'
+ARG_RDBMS_SQLITE_PATH = 'rdbms_sqlite_path'
 ARG_MYSQL_HOST = 'mysql_host'
 ARG_MYSQL_PORT = 'mysql_port'
 ARG_MYSQL_USER = 'mysql_user'
 ARG_MYSQL_PASSWORD = 'mysql_password'
+ARG_MYSQL_SOCKET = 'mysql_socket'
 ARG_STATIC_CACHING = 'static_caching'
 ARG_TEMPLATE_DIR = 'template_dir'
 ARG_DISABLE_TASK_RUNNING = 'disable_task_running'
 ARG_TASK_RETRY_SECONDS = 'task_retry_seconds'
+
+
 ARG_TRUSTED = 'trusted'
+ARG_BACKENDS = 'backends'
+ARG_MULTIPROCESS = multiprocess.ARG_MULTIPROCESS
+ARG_MULTIPROCESS_MIN_PORT = multiprocess.ARG_MULTIPROCESS_MIN_PORT
+ARG_MULTIPROCESS_API_SERVER = multiprocess.ARG_MULTIPROCESS_API_SERVER
+ARG_MULTIPROCESS_API_PORT = multiprocess.ARG_MULTIPROCESS_API_PORT
+ARG_MULTIPROCESS_APP_INSTANCE_ID = multiprocess.ARG_MULTIPROCESS_APP_INSTANCE_ID
+ARG_MULTIPROCESS_BACKEND_ID = multiprocess.ARG_MULTIPROCESS_BACKEND_ID
+ARG_MULTIPROCESS_BACKEND_INSTANCE_ID = multiprocess.ARG_MULTIPROCESS_BACKEND_INSTANCE_ID
 
 SDK_PATH = os.path.dirname(
              os.path.dirname(
@@ -137,6 +212,9 @@ SDK_PATH = os.path.dirname(
              )
            )
 
+
+PRODUCTION_VERSION = (2, 5)
+
 DEFAULT_ARGS = {
   ARG_PORT: 8080,
   ARG_LOG_LEVEL: logging.INFO,
@@ -144,25 +222,29 @@ DEFAULT_ARGS = {
                                    'dev_appserver.blobstore'),
   ARG_DATASTORE_PATH: os.path.join(tempfile.gettempdir(),
                                    'dev_appserver.datastore'),
-  ARG_MATCHER_PATH: os.path.join(tempfile.gettempdir(),
-                                 'dev_appserver.matcher'),
+  ARG_PROSPECTIVE_SEARCH_PATH: os.path.join(tempfile.gettempdir(),
+                                 'dev_appserver.prospective_search'),
+  ARG_SKIP_SDK_UPDATE_CHECK: False,
   ARG_USE_SQLITE: False,
+  ARG_HIGH_REPLICATION: False,
   ARG_HISTORY_PATH: os.path.join(tempfile.gettempdir(),
                                  'dev_appserver.datastore.history'),
   ARG_LOGIN_URL: '/_ah/login',
   ARG_CLEAR_DATASTORE: False,
-  ARG_CLEAR_MATCHER: False,
+  ARG_CLEAR_PROSPECTIVE_SEARCH: False,
   ARG_REQUIRE_INDEXES: False,
   ARG_TEMPLATE_DIR: os.path.join(SDK_PATH, 'templates'),
   ARG_SMTP_HOST: '',
   ARG_SMTP_PORT: 25,
   ARG_SMTP_USER: '',
   ARG_SMTP_PASSWORD: '',
-
-
-
-
-
+  ARG_RDBMS_SQLITE_PATH: os.path.join(tempfile.gettempdir(),
+                                      'dev_appserver.rdbms'),
+  ARG_MYSQL_HOST: 'localhost',
+  ARG_MYSQL_PORT: 3306,
+  ARG_MYSQL_USER: '',
+  ARG_MYSQL_PASSWORD: '',
+  ARG_MYSQL_SOCKET: '',
   ARG_ENABLE_SENDMAIL: False,
   ARG_SHOW_MAIL_BODY: False,
   ARG_AUTH_DOMAIN: 'gmail.com',
@@ -216,9 +298,12 @@ def ParseArguments(argv):
         'allow_skipped_files',
         'auth_domain=',
         'clear_datastore',
+        'clear_prospective_search',
         'blobstore_path=',
         'datastore_path=',
+        'skip_sdk_update_check',
         'use_sqlite',
+        'high_replication',
         'debug',
         'debug_imports',
         'enable_sendmail',
@@ -226,10 +311,12 @@ def ParseArguments(argv):
         'show_mail_body',
         'help',
         'history_path=',
+        'rdbms_sqlite_path=',
         'mysql_host=',
         'mysql_port=',
         'mysql_user=',
         'mysql_password=',
+        'mysql_socket=',
         'port=',
         'require_indexes',
         'smtp_host=',
@@ -240,6 +327,14 @@ def ParseArguments(argv):
         'task_retry_seconds=',
         'template_dir=',
         'trusted',
+        'backends',
+        'multiprocess',
+        'multiprocess_min_port=',
+        'multiprocess_api_server',
+        'multiprocess_api_port=',
+        'multiprocess_app_instance_id=',
+        'multiprocess_backend_id=',
+        'multiprocess_backend_instance_id=',
       ])
   except getopt.GetoptError, e:
     print >>sys.stderr, 'Error: %s' % e
@@ -270,11 +365,17 @@ def ParseArguments(argv):
     if option == '--datastore_path':
       option_dict[ARG_DATASTORE_PATH] = os.path.abspath(value)
 
-    if option == '--matcher_path':
-      option_dict[ARG_MATCHER_PATH] = os.path.abspath(value)
+    if option == '--prospective_search_path':
+      option_dict[ARG_PROSPECTIVE_SEARCH_PATH] = os.path.abspath(value)
+
+    if option == '--skip_sdk_update_check':
+      option_dict[ARG_SKIP_SDK_UPDATE_CHECK] = True
 
     if option == '--use_sqlite':
       option_dict[ARG_USE_SQLITE] = True
+
+    if option == '--high_replication':
+      option_dict[ARG_HIGH_REPLICATION] = True
 
     if option == '--history_path':
       option_dict[ARG_HISTORY_PATH] = os.path.abspath(value)
@@ -282,11 +383,14 @@ def ParseArguments(argv):
     if option in ('-c', '--clear_datastore'):
       option_dict[ARG_CLEAR_DATASTORE] = True
 
-    if option == '--clear_matcher':
-      option_dict[ARG_CLEAR_MATCHER] = True
+    if option == '--clear_prospective_search':
+      option_dict[ARG_CLEAR_PROSPECTIVE_SEARCH] = True
 
     if option == '--require_indexes':
       option_dict[ARG_REQUIRE_INDEXES] = True
+
+    if option == '--rdbms_sqlite_path':
+      option_dict[ARG_RDBMS_SQLITE_PATH] = value
 
     if option == '--mysql_host':
       option_dict[ARG_MYSQL_HOST] = value
@@ -299,6 +403,9 @@ def ParseArguments(argv):
 
     if option == '--mysql_password':
       option_dict[ARG_MYSQL_PASSWORD] = value
+
+    if option == '--mysql_socket':
+      option_dict[ARG_MYSQL_SOCKET] = value
 
     if option == '--smtp_host':
       option_dict[ARG_SMTP_HOST] = value
@@ -354,6 +461,23 @@ def ParseArguments(argv):
     if option == '--trusted':
       option_dict[ARG_TRUSTED] = True
 
+    if option == '--backends':
+      option_dict[ARG_BACKENDS] = value
+    if option == '--multiprocess':
+      option_dict[ARG_MULTIPROCESS] = value
+    if option == '--multiprocess_min_port':
+      option_dict[ARG_MULTIPROCESS_MIN_PORT] = value
+    if option == '--multiprocess_api_server':
+      option_dict[ARG_MULTIPROCESS_API_SERVER] = value
+    if option == '--multiprocess_api_port':
+      option_dict[ARG_MULTIPROCESS_API_PORT] = value
+    if option == '--multiprocess_app_instance_id':
+      option_dict[ARG_MULTIPROCESS_APP_INSTANCE_ID] = value
+    if option == '--multiprocess_backend_id':
+      option_dict[ARG_MULTIPROCESS_BACKEND_ID] = value
+    if option == '--multiprocess_backend_instance_id':
+      option_dict[ARG_MULTIPROCESS_BACKEND_INSTANCE_ID] = value
+
   return args, option_dict
 
 
@@ -396,6 +520,7 @@ def MakeRpcServer(option_dict):
       appcfg.GetUserAgent(),
       appcfg.GetSourceName(),
       host_override=option_dict[ARG_ADMIN_CONSOLE_HOST])
+
   server.authenticated = True
   return server
 
@@ -416,6 +541,27 @@ def main(argv):
     print >>sys.stderr, 'Invalid arguments'
     PrintUsageExit(1)
 
+  version_tuple = tuple(sys.version_info[:2])
+
+  if ARG_MULTIPROCESS not in option_dict:
+    if version_tuple < PRODUCTION_VERSION:
+      sys.stderr.write('Warning: You are using a Python runtime (%d.%d) that '
+                       'is older than the production runtime environment '
+                       '(%d.%d). Your application may be dependent on Python '
+                       'behaviors that have changed and may not work correctly '
+                       'when deployed to production.\n' % (
+                           version_tuple[0], version_tuple[1],
+                           PRODUCTION_VERSION[0], PRODUCTION_VERSION[1]))
+
+    if version_tuple > PRODUCTION_VERSION:
+      sys.stderr.write('Warning: You are using a Python runtime (%d.%d) that '
+                       'is more recent than the production runtime environment '
+                       '(%d.%d). Your application may use features that are not '
+                       'available in the production environment and may not work '
+                       'correctly when deployed to production.\n' % (
+                           version_tuple[0], version_tuple[1],
+                           PRODUCTION_VERSION[0], PRODUCTION_VERSION[1]))
+
   root_path = args[0]
 
   if '_DEFAULT_ENV_AUTH_DOMAIN' in option_dict:
@@ -426,41 +572,52 @@ def main(argv):
     dev_appserver.HardenedModulesHook.ENABLE_LOGGING = enable_logging
 
   log_level = option_dict[ARG_LOG_LEVEL]
-  port = option_dict[ARG_PORT]
-  blobstore_path = option_dict[ARG_BLOBSTORE_PATH]
-  datastore_path = option_dict[ARG_DATASTORE_PATH]
-  matcher_path = option_dict[ARG_MATCHER_PATH]
-  login_url = option_dict[ARG_LOGIN_URL]
-  template_dir = option_dict[ARG_TEMPLATE_DIR]
-  serve_address = option_dict[ARG_ADDRESS]
-  require_indexes = option_dict[ARG_REQUIRE_INDEXES]
-  allow_skipped_files = option_dict[ARG_ALLOW_SKIPPED_FILES]
-  static_caching = option_dict[ARG_STATIC_CACHING]
+
+
 
   option_dict['root_path'] = os.path.realpath(root_path)
 
+
   logging.getLogger().setLevel(log_level)
 
-  config = None
+  appinfo = None
   try:
-    config, matcher = dev_appserver.LoadAppConfig(root_path, {})
+    appinfo, matcher = dev_appserver.LoadAppConfig(root_path, {})
   except yaml_errors.EventListenerError, e:
-    logging.error('Fatal error when loading application configuration:\n' +
-                  str(e))
+    logging.error('Fatal error when loading application configuration:\n%s', e)
     return 1
   except dev_appserver.InvalidAppConfigError, e:
     logging.error('Application configuration file invalid:\n%s', e)
     return 1
 
-  if option_dict[ARG_ADMIN_CONSOLE_SERVER] != '':
+  multiprocess.Init(argv, option_dict, root_path, appinfo)
+  dev_process = multiprocess.GlobalProcess()
+  port = option_dict[ARG_PORT]
+  login_url = option_dict[ARG_LOGIN_URL]
+  template_dir = option_dict[ARG_TEMPLATE_DIR]
+  address = option_dict[ARG_ADDRESS]
+  require_indexes = option_dict[ARG_REQUIRE_INDEXES]
+  allow_skipped_files = option_dict[ARG_ALLOW_SKIPPED_FILES]
+  static_caching = option_dict[ARG_STATIC_CACHING]
+  skip_sdk_update_check = option_dict[ARG_SKIP_SDK_UPDATE_CHECK]
+
+  if (option_dict[ARG_ADMIN_CONSOLE_SERVER] != '' and
+      not dev_process.IsSubprocess()):
+
     server = MakeRpcServer(option_dict)
-    update_check = appcfg.UpdateCheck(server, config)
-    update_check.CheckSupportedVersion()
-    if update_check.AllowedToCheckForUpdates():
-      update_check.CheckForUpdates()
+    if skip_sdk_update_check:
+      logging.info('Skipping update check.')
+    else:
+      update_check = appcfg.UpdateCheck(server, appinfo)
+      update_check.CheckSupportedVersion()
+      if update_check.AllowedToCheckForUpdates():
+        update_check.CheckForUpdates()
+
+  if dev_process.IsSubprocess():
+    logging.getLogger().setLevel(logging.WARNING)
 
   try:
-    dev_appserver.SetupStubs(config.application, **option_dict)
+    dev_appserver.SetupStubs(appinfo.application, **option_dict)
   except:
     exc_type, exc_value, exc_traceback = sys.exc_info()
     logging.error(str(exc_type) + ': ' + str(exc_value))
@@ -474,29 +631,42 @@ def main(argv):
       port,
       template_dir,
       sdk_dir=SDK_PATH,
-      serve_address=serve_address,
+      serve_address=address,
       require_indexes=require_indexes,
       allow_skipped_files=allow_skipped_files,
       static_caching=static_caching)
 
   signal.signal(signal.SIGTERM, SigTermHandler)
 
-  logging.info('Running application %s on port %d: http://%s:%d',
-               config.application, port, serve_address, port)
+  dev_process.PrintStartMessage(appinfo.application, address, port)
+
+  if dev_process.IsInstance():
+    logging.getLogger().setLevel(logging.INFO)
+
   try:
     try:
       http_server.serve_forever()
     except KeyboardInterrupt:
-      logging.info('Server interrupted by user, terminating')
+      if not dev_process.IsSubprocess():
+        logging.info('Server interrupted by user, terminating')
     except:
       exc_info = sys.exc_info()
       info_string = '\n'.join(traceback.format_exception(*exc_info))
       logging.error('Error encountered:\n%s\nNow terminating.', info_string)
       return 1
+    finally:
+      http_server.server_close()
   finally:
-    http_server.server_close()
+    done = False
+    while not done:
+      try:
+        multiprocess.Shutdown()
+        done = True
+      except KeyboardInterrupt:
+        pass
 
   return 0
+
 
 
 if __name__ == '__main__':

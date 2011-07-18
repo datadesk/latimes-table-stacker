@@ -15,11 +15,18 @@
 # limitations under the License.
 #
 
+
+
+
 """Datastore backed Blobstore API stub.
 
 Class:
   BlobstoreServiceStub: BlobstoreService stub backed by datastore.
 """
+
+
+
+
 
 
 
@@ -259,20 +266,24 @@ class BlobstoreServiceStub(apiproxy_stub.APIProxyStub):
           MAX_BLOB_FRAGMENT_SIZE.
         BLOB_NOT_FOUND: If invalid blob-key is provided or is not found.
     """
+
     start_index = request.start_index()
     if start_index < 0:
       raise apiproxy_errors.ApplicationError(
           blobstore_service_pb.BlobstoreServiceError.DATA_INDEX_OUT_OF_RANGE)
+
 
     end_index = request.end_index()
     if end_index < start_index:
       raise apiproxy_errors.ApplicationError(
           blobstore_service_pb.BlobstoreServiceError.DATA_INDEX_OUT_OF_RANGE)
 
+
     fetch_size = end_index - start_index + 1
     if fetch_size > blobstore.MAX_BLOB_FETCH_SIZE:
       raise apiproxy_errors.ApplicationError(
           blobstore_service_pb.BlobstoreServiceError.BLOB_FETCH_SIZE_TOO_LARGE)
+
 
     blob_key = request.blob_key()
     blob_info_key = datastore.Key.from_path(blobstore.BLOB_INFO_KIND,
@@ -284,6 +295,17 @@ class BlobstoreServiceStub(apiproxy_stub.APIProxyStub):
       raise apiproxy_errors.ApplicationError(
           blobstore_service_pb.BlobstoreServiceError.BLOB_NOT_FOUND)
 
+
     blob_file = self.__storage.OpenBlob(blob_key)
     blob_file.seek(start_index)
     response.set_data(blob_file.read(fetch_size))
+
+  def _Dynamic_DecodeBlobKey(self, request, response):
+    """Decode a given blob key: data is simply base64-decoded.
+
+    Args:
+      request: A fully-initialized DecodeBlobKeyRequest instance
+      response: A DecodeBlobKeyResponse instance.
+    """
+    for blob_key in request.blob_key_list():
+      response.add_decoded(blob_key.decode('base64'))

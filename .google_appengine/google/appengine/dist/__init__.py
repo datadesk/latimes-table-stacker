@@ -15,7 +15,15 @@
 # limitations under the License.
 #
 
+
+
+
 """Specify the modules for which a stub exists."""
+
+
+
+
+
 
 __all__ = [
 
@@ -28,9 +36,11 @@ __all__ = [
     'subprocess',
     'tempfile',
 
+    'fix_paths',
     'use_library',
     ]
 
 from google.appengine.dist import _library
 
+fix_paths = _library.fix_paths
 use_library = _library.use_library

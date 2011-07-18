@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+
+
 from google.net.proto import ProtocolBuffer
 import array
 import dummy_thread as thread
@@ -27,6 +29,7 @@ import google.appengine.api.api_base_pb
 from google.appengine.api.channel.channel_service_pb import *
 import google.appengine.api.channel.channel_service_pb
 class XmppServiceError(ProtocolBuffer.ProtocolMessage):
+
 
   UNSPECIFIED_ERROR =    1
   INVALID_JID  =    2
@@ -68,7 +71,11 @@ class XmppServiceError(ProtocolBuffer.ProtocolMessage):
 
   def ByteSize(self):
     n = 0
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    return n
 
   def Clear(self):
     pass
@@ -76,9 +83,14 @@ class XmppServiceError(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     pass
 
+  def OutputPartial(self, out):
+    pass
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -99,6 +111,7 @@ class XmppServiceError(ProtocolBuffer.ProtocolMessage):
   _TYPES = _BuildTagLookupTable({
     0: ProtocolBuffer.Encoder.NUMERIC,
   }, 0, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -165,6 +178,14 @@ class PresenceRequest(ProtocolBuffer.ProtocolMessage):
     if (self.has_from_jid_): n += 1 + self.lengthString(len(self.from_jid_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_jid_):
+      n += 1
+      n += self.lengthString(len(self.jid_))
+    if (self.has_from_jid_): n += 1 + self.lengthString(len(self.from_jid_))
+    return n
+
   def Clear(self):
     self.clear_jid()
     self.clear_from_jid()
@@ -172,6 +193,14 @@ class PresenceRequest(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(10)
     out.putPrefixedString(self.jid_)
+    if (self.has_from_jid_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.from_jid_)
+
+  def OutputPartial(self, out):
+    if (self.has_jid_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.jid_)
     if (self.has_from_jid_):
       out.putVarInt32(18)
       out.putPrefixedString(self.from_jid_)
@@ -185,6 +214,8 @@ class PresenceRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 18:
         self.set_from_jid(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -214,9 +245,11 @@ class PresenceRequest(ProtocolBuffer.ProtocolMessage):
     2: ProtocolBuffer.Encoder.STRING,
   }, 2, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class PresenceResponse(ProtocolBuffer.ProtocolMessage):
+
 
   NORMAL       =    0
   AWAY         =    1
@@ -296,6 +329,13 @@ class PresenceResponse(ProtocolBuffer.ProtocolMessage):
     if (self.has_presence_): n += 1 + self.lengthVarInt64(self.presence_)
     return n + 2
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_is_available_):
+      n += 2
+    if (self.has_presence_): n += 1 + self.lengthVarInt64(self.presence_)
+    return n
+
   def Clear(self):
     self.clear_is_available()
     self.clear_presence()
@@ -303,6 +343,14 @@ class PresenceResponse(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(8)
     out.putBoolean(self.is_available_)
+    if (self.has_presence_):
+      out.putVarInt32(16)
+      out.putVarInt32(self.presence_)
+
+  def OutputPartial(self, out):
+    if (self.has_is_available_):
+      out.putVarInt32(8)
+      out.putBoolean(self.is_available_)
     if (self.has_presence_):
       out.putVarInt32(16)
       out.putVarInt32(self.presence_)
@@ -316,6 +364,8 @@ class PresenceResponse(ProtocolBuffer.ProtocolMessage):
       if tt == 16:
         self.set_presence(d.getVarInt32())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -344,6 +394,7 @@ class PresenceResponse(ProtocolBuffer.ProtocolMessage):
     1: ProtocolBuffer.Encoder.NUMERIC,
     2: ProtocolBuffer.Encoder.NUMERIC,
   }, 2, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -470,6 +521,18 @@ class XmppMessageRequest(ProtocolBuffer.ProtocolMessage):
     if (self.has_from_jid_): n += 1 + self.lengthString(len(self.from_jid_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    n += 1 * len(self.jid_)
+    for i in xrange(len(self.jid_)): n += self.lengthString(len(self.jid_[i]))
+    if (self.has_body_):
+      n += 1
+      n += self.lengthString(len(self.body_))
+    if (self.has_raw_xml_): n += 2
+    if (self.has_type_): n += 1 + self.lengthString(len(self.type_))
+    if (self.has_from_jid_): n += 1 + self.lengthString(len(self.from_jid_))
+    return n
+
   def Clear(self):
     self.clear_jid()
     self.clear_body()
@@ -483,6 +546,23 @@ class XmppMessageRequest(ProtocolBuffer.ProtocolMessage):
       out.putPrefixedString(self.jid_[i])
     out.putVarInt32(18)
     out.putPrefixedString(self.body_)
+    if (self.has_raw_xml_):
+      out.putVarInt32(24)
+      out.putBoolean(self.raw_xml_)
+    if (self.has_type_):
+      out.putVarInt32(34)
+      out.putPrefixedString(self.type_)
+    if (self.has_from_jid_):
+      out.putVarInt32(42)
+      out.putPrefixedString(self.from_jid_)
+
+  def OutputPartial(self, out):
+    for i in xrange(len(self.jid_)):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.jid_[i])
+    if (self.has_body_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.body_)
     if (self.has_raw_xml_):
       out.putVarInt32(24)
       out.putBoolean(self.raw_xml_)
@@ -511,6 +591,8 @@ class XmppMessageRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 42:
         self.set_from_jid(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -557,9 +639,11 @@ class XmppMessageRequest(ProtocolBuffer.ProtocolMessage):
     5: ProtocolBuffer.Encoder.STRING,
   }, 5, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class XmppMessageResponse(ProtocolBuffer.ProtocolMessage):
+
 
   NO_ERROR     =    0
   INVALID_JID  =    1
@@ -614,12 +698,23 @@ class XmppMessageResponse(ProtocolBuffer.ProtocolMessage):
     n = 0
     n += 1 * len(self.status_)
     for i in xrange(len(self.status_)): n += self.lengthVarInt64(self.status_[i])
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    n += 1 * len(self.status_)
+    for i in xrange(len(self.status_)): n += self.lengthVarInt64(self.status_[i])
+    return n
 
   def Clear(self):
     self.clear_status()
 
   def OutputUnchecked(self, out):
+    for i in xrange(len(self.status_)):
+      out.putVarInt32(8)
+      out.putVarInt32(self.status_[i])
+
+  def OutputPartial(self, out):
     for i in xrange(len(self.status_)):
       out.putVarInt32(8)
       out.putVarInt32(self.status_[i])
@@ -630,6 +725,8 @@ class XmppMessageResponse(ProtocolBuffer.ProtocolMessage):
       if tt == 8:
         self.add_status(d.getVarInt32())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -659,6 +756,7 @@ class XmppMessageResponse(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.NUMERIC,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -782,6 +880,17 @@ class XmppSendPresenceRequest(ProtocolBuffer.ProtocolMessage):
     if (self.has_from_jid_): n += 1 + self.lengthString(len(self.from_jid_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_jid_):
+      n += 1
+      n += self.lengthString(len(self.jid_))
+    if (self.has_type_): n += 1 + self.lengthString(len(self.type_))
+    if (self.has_show_): n += 1 + self.lengthString(len(self.show_))
+    if (self.has_status_): n += 1 + self.lengthString(len(self.status_))
+    if (self.has_from_jid_): n += 1 + self.lengthString(len(self.from_jid_))
+    return n
+
   def Clear(self):
     self.clear_jid()
     self.clear_type()
@@ -792,6 +901,23 @@ class XmppSendPresenceRequest(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(10)
     out.putPrefixedString(self.jid_)
+    if (self.has_type_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.type_)
+    if (self.has_show_):
+      out.putVarInt32(26)
+      out.putPrefixedString(self.show_)
+    if (self.has_status_):
+      out.putVarInt32(34)
+      out.putPrefixedString(self.status_)
+    if (self.has_from_jid_):
+      out.putVarInt32(42)
+      out.putPrefixedString(self.from_jid_)
+
+  def OutputPartial(self, out):
+    if (self.has_jid_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.jid_)
     if (self.has_type_):
       out.putVarInt32(18)
       out.putPrefixedString(self.type_)
@@ -823,6 +949,8 @@ class XmppSendPresenceRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 42:
         self.set_from_jid(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -864,6 +992,7 @@ class XmppSendPresenceRequest(ProtocolBuffer.ProtocolMessage):
     5: ProtocolBuffer.Encoder.STRING,
   }, 5, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class XmppSendPresenceResponse(ProtocolBuffer.ProtocolMessage):
@@ -886,7 +1015,11 @@ class XmppSendPresenceResponse(ProtocolBuffer.ProtocolMessage):
 
   def ByteSize(self):
     n = 0
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    return n
 
   def Clear(self):
     pass
@@ -894,9 +1027,14 @@ class XmppSendPresenceResponse(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     pass
 
+  def OutputPartial(self, out):
+    pass
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -917,6 +1055,7 @@ class XmppSendPresenceResponse(ProtocolBuffer.ProtocolMessage):
   _TYPES = _BuildTagLookupTable({
     0: ProtocolBuffer.Encoder.NUMERIC,
   }, 0, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -983,6 +1122,14 @@ class XmppInviteRequest(ProtocolBuffer.ProtocolMessage):
     if (self.has_from_jid_): n += 1 + self.lengthString(len(self.from_jid_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_jid_):
+      n += 1
+      n += self.lengthString(len(self.jid_))
+    if (self.has_from_jid_): n += 1 + self.lengthString(len(self.from_jid_))
+    return n
+
   def Clear(self):
     self.clear_jid()
     self.clear_from_jid()
@@ -990,6 +1137,14 @@ class XmppInviteRequest(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(10)
     out.putPrefixedString(self.jid_)
+    if (self.has_from_jid_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.from_jid_)
+
+  def OutputPartial(self, out):
+    if (self.has_jid_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.jid_)
     if (self.has_from_jid_):
       out.putVarInt32(18)
       out.putPrefixedString(self.from_jid_)
@@ -1003,6 +1158,8 @@ class XmppInviteRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 18:
         self.set_from_jid(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1032,6 +1189,7 @@ class XmppInviteRequest(ProtocolBuffer.ProtocolMessage):
     2: ProtocolBuffer.Encoder.STRING,
   }, 2, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class XmppInviteResponse(ProtocolBuffer.ProtocolMessage):
@@ -1054,7 +1212,11 @@ class XmppInviteResponse(ProtocolBuffer.ProtocolMessage):
 
   def ByteSize(self):
     n = 0
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    return n
 
   def Clear(self):
     pass
@@ -1062,9 +1224,14 @@ class XmppInviteResponse(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     pass
 
+  def OutputPartial(self, out):
+    pass
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1085,6 +1252,7 @@ class XmppInviteResponse(ProtocolBuffer.ProtocolMessage):
   _TYPES = _BuildTagLookupTable({
     0: ProtocolBuffer.Encoder.NUMERIC,
   }, 0, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""

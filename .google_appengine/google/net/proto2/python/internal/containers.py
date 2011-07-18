@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Contains container classes to represent different protocol buffer types.
 
 This file defines container classes which represent categories of protocol
@@ -31,6 +34,7 @@ are:
 class BaseContainer(object):
 
   """Base container class."""
+
 
   __slots__ = ['_message_listener', '_values']
 
@@ -54,6 +58,7 @@ class BaseContainer(object):
 
   def __ne__(self, other):
     """Checks if another instance isn't equal to this one."""
+
     return not self == other
 
   def __hash__(self):
@@ -69,6 +74,7 @@ class BaseContainer(object):
 class RepeatedScalarFieldContainer(BaseContainer):
 
   """Simple, type-checked, list-like container for holding repeated scalars."""
+
 
   __slots__ = ['_type_checker']
 
@@ -155,14 +161,17 @@ class RepeatedScalarFieldContainer(BaseContainer):
     """Compares the current instance with another one."""
     if self is other:
       return True
+
     if isinstance(other, self.__class__):
       return other._values == self._values
+
     return other == self._values
 
 
 class RepeatedCompositeFieldContainer(BaseContainer):
 
   """Simple, list-like container for holding repeated composite fields."""
+
 
   __slots__ = ['_message_descriptor']
 

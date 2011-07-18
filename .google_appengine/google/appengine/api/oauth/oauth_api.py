@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """OAuth API.
 
 A service that enables App Engine apps to validate OAuth requests.
@@ -27,6 +30,13 @@ Classes defined here:
   InvalidOAuthTokenError: OAuthService exception
   OAuthServiceFailureError: OAuthService exception
 """
+
+
+
+
+
+
+
 
 
 
@@ -73,7 +83,7 @@ class OAuthServiceFailureError(Error):
   """Raised if there was a problem communicating with the OAuth service."""
 
 
-def get_current_user():
+def get_current_user(_scope=None):
   """Returns the User on whose behalf the request was made.
 
   Returns:
@@ -83,7 +93,8 @@ def get_current_user():
     OAuthRequestError: The request was not a valid OAuth request.
     OAuthServiceFailureError: An unknown error occurred.
   """
-  _maybe_call_get_oauth_user()
+
+  _maybe_call_get_oauth_user(_scope)
   return _get_user_from_environ()
 
 
@@ -99,6 +110,7 @@ def is_current_user_admin():
   """
   _maybe_call_get_oauth_user()
   return os.environ.get('OAUTH_IS_ADMIN', '0') == '1'
+
 
 
 def get_oauth_consumer_key():
@@ -128,14 +140,18 @@ def get_oauth_consumer_key():
   return resp.oauth_consumer_key()
 
 
-def _maybe_call_get_oauth_user():
+def _maybe_call_get_oauth_user(_scope=None):
   """Makes an GetOAuthUser RPC and stores the results in os.environ.
 
   This method will only make the RPC if 'OAUTH_ERROR_CODE' has not already
   been set.
   """
+
   if 'OAUTH_ERROR_CODE' not in os.environ:
     req = user_service_pb.GetOAuthUserRequest()
+    if _scope:
+      req.set_scope(_scope)
+
     resp = user_service_pb.GetOAuthUserResponse()
     try:
       apiproxy_stub_map.MakeSyncCall('user', 'GetOAuthUser', req, resp)

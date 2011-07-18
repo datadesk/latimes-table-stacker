@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """A NotImplemented Images API stub for when the PIL library is not found."""
 
 

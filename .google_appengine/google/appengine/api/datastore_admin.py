@@ -15,8 +15,16 @@
 # limitations under the License.
 #
 
+
+
+
+
 """The Python datastore admin API for managing indices and schemas.
 """
+
+
+
+
 
 
 
@@ -48,6 +56,12 @@ def GetSchema(_app=None, namespace=None, properties=True, start_kind=None,
   Returns:
     list of entity_pb.EntityProto, with kind and property names and types
   """
+
+
+
+
+
+
   req = datastore_pb.GetSchemaRequest()
   req.set_app(datastore_types.ResolveAppId(_app))
   namespace = datastore_types.ResolveNamespace(namespace)
@@ -70,6 +84,7 @@ def GetIndices(_app=None):
   Returns:
     list of entity_pb.CompositeIndex
   """
+
   req = api_base_pb.StringProto()
   req.set_value(datastore_types.ResolveAppId(_app))
   resp = datastore_pb.CompositeIndices()

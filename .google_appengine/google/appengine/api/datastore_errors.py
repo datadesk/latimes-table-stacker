@@ -15,7 +15,17 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Errors used in the Python datastore API."""
+
+
+
+
+
+
 
 
 
@@ -97,6 +107,10 @@ class NeedIndexError(Error):
   """No matching index was found for a query that requires an index. Check
   the Indexes page in the Admin Console and your index.yaml file.
   """
+
+class ReferencePropertyResolveError(Error):
+  """An error occurred while trying to resolve a ReferenceProperty."""
+
 
 class Timeout(Error):
   """The datastore operation timed out, or the data was temporarily

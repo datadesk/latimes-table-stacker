@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
+
 """Imports CSV data over HTTP.
 
 Usage:
@@ -51,6 +54,8 @@ from google.appengine.ext.bulkload import constants
 
 
 
+
+
 class Error(Exception):
   """Base-class for exceptions in this module."""
 
@@ -61,6 +66,7 @@ class PostError(Error):
 
 class BadServerStatusError(PostError):
   """The server has returned an error while importing data."""
+
 
 
 def ContentGenerator(csv_file,
@@ -84,6 +90,7 @@ def ContentGenerator(csv_file,
   try:
     csv.field_size_limit(800000)
   except AttributeError:
+
     pass
 
   reader = create_csv_reader(csv_file, skipinitialspace=True)
@@ -210,6 +217,7 @@ def ImportCSV(filename,
   return True
 
 
+
 def PrintUsageExit(code):
   """Prints usage information and exits with a status code.
 
@@ -280,6 +288,7 @@ def main(argv):
     level=logging.INFO,
     format='%(levelname)-8s %(asctime)s %(filename)s] %(message)s')
 
+
   args = ParseArguments(argv)
   if [arg for arg in args if arg is None]:
     print >>sys.stderr, 'Invalid arguments'
@@ -291,6 +300,7 @@ def main(argv):
     return 0
   logging.error('Import failed')
   return 1
+
 
 
 if __name__ == '__main__':

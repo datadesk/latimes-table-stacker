@@ -15,18 +15,31 @@
 # limitations under the License.
 #
 
+
+
+
+
 """This module contains the MessageSet class, which is a special kind of
 protocol message which can contain other protocol messages without knowing
 their types.  See the class's doc string for more information."""
 
 
+
+
+
+
+
+
 from google.net.proto import ProtocolBuffer
 import logging
+
+
 
 try:
   from google3.net.proto import _net_proto___parse__python
 except ImportError:
   _net_proto___parse__python = None
+
 
 TAG_BEGIN_ITEM_GROUP = 11
 TAG_END_ITEM_GROUP   = 12
@@ -49,7 +62,9 @@ class Item:
       return 1
 
     try:
-      self.message = message_class(self.message)
+      message_obj = message_class()
+      message_obj.MergePartialFromString(self.message)
+      self.message = message_obj
       self.message_class = message_class
       return 1
     except ProtocolBuffer.ProtocolBufferDecodeError:
@@ -63,8 +78,11 @@ class Item:
       if other.Parse(self.message_class):
         self.message.MergeFrom(other.message)
 
+
+
     elif other.message_class is not None:
       if not self.Parse(other.message_class):
+
         self.message = other.message_class()
         self.message_class = other.message_class
       self.message.MergeFrom(other.message)
@@ -109,11 +127,27 @@ class Item:
     else:
       message_length = self.message.ByteSize()
 
+
+    return pb.lengthString(message_length) + pb.lengthVarInt64(type_id) + 2
+
+  def ByteSizePartial(self, pb, type_id):
+
+    message_length = 0
+    if self.message_class is None:
+      message_length = len(self.message)
+    else:
+      message_length = self.message.ByteSizePartial()
+
+
     return pb.lengthString(message_length) + pb.lengthVarInt64(type_id) + 2
 
   def OutputUnchecked(self, out, type_id):
 
     out.putVarInt32(TAG_TYPE_ID)
+
+
+
+
     out.putVarUint64(type_id)
     out.putVarInt32(TAG_MESSAGE)
     if self.message_class is None:
@@ -121,6 +155,21 @@ class Item:
     else:
       out.putVarInt32(self.message.ByteSize())
       self.message.OutputUnchecked(out)
+
+  def OutputPartial(self, out, type_id):
+
+    out.putVarInt32(TAG_TYPE_ID)
+
+
+
+
+    out.putVarUint64(type_id)
+    out.putVarInt32(TAG_MESSAGE)
+    if self.message_class is None:
+      out.putPrefixedString(self.message)
+    else:
+      out.putVarInt32(self.message.ByteSizePartial())
+      self.message.OutputPartial(out)
 
   def Decode(decoder):
 
@@ -131,11 +180,17 @@ class Item:
       if tag == TAG_END_ITEM_GROUP:
         break
       if tag == TAG_TYPE_ID:
+
+
+
+
         type_id = decoder.getVarUint64()
         continue
       if tag == TAG_MESSAGE:
         message = decoder.getPrefixedString()
         continue
+
+
       if tag == 0: raise ProtocolBuffer.ProtocolBufferDecodeError
       decoder.skipData(tag)
 
@@ -150,6 +205,8 @@ class MessageSet(ProtocolBuffer.ProtocolMessage):
   def __init__(self, contents=None):
     self.items = dict()
     if contents is not None: self.MergeFromString(contents)
+
+
 
 
   def get(self, message_class):
@@ -194,6 +251,8 @@ class MessageSet(ProtocolBuffer.ProtocolMessage):
       del self.items[message_class.MESSAGE_TYPE_ID]
 
 
+
+
   def __getitem__(self, message_class):
     if message_class.MESSAGE_TYPE_ID not in self.items:
       raise KeyError(message_class)
@@ -214,6 +273,8 @@ class MessageSet(ProtocolBuffer.ProtocolMessage):
 
   def __len__(self):
     return len(self.items)
+
+
 
 
   def MergeFrom(self, other):
@@ -258,6 +319,12 @@ class MessageSet(ProtocolBuffer.ProtocolMessage):
       n += item.ByteSize(self, type_id)
     return n
 
+  def ByteSizePartial(self):
+    n = 2 * len(self.items)
+    for (type_id, item) in self.items.items():
+      n += item.ByteSizePartial(self, type_id)
+    return n
+
   def Clear(self):
     self.items = dict()
 
@@ -265,6 +332,12 @@ class MessageSet(ProtocolBuffer.ProtocolMessage):
     for (type_id, item) in self.items.items():
       out.putVarInt32(TAG_BEGIN_ITEM_GROUP)
       item.OutputUnchecked(out, type_id)
+      out.putVarInt32(TAG_END_ITEM_GROUP)
+
+  def OutputPartial(self, out):
+    for (type_id, item) in self.items.items():
+      out.putVarInt32(TAG_BEGIN_ITEM_GROUP)
+      item.OutputPartial(out, type_id)
       out.putVarInt32(TAG_END_ITEM_GROUP)
 
   def TryMerge(self, decoder):
@@ -277,8 +350,11 @@ class MessageSet(ProtocolBuffer.ProtocolMessage):
         else:
           self.items[type_id] = Item(message)
         continue
+
+
       if (tag == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       decoder.skipData(tag)
+
 
   def _CToASCII(self, output_format):
     if _net_proto___parse__python is None:
@@ -299,6 +375,12 @@ class MessageSet(ProtocolBuffer.ProtocolMessage):
     else:
       _net_proto___parse__python.ParseASCIIIgnoreUnknown(
           self, "MessageSetInternal", s)
+
+
+
+
+
+
 
   def __str__(self, prefix="", printElemNumber=0):
     text = ""

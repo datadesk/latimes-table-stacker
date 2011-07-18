@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Client-side transfer throttling for use with remote_api_stub.
 
 This module is used to configure rate limiting for programs accessing
@@ -71,6 +74,7 @@ from google.appengine.ext.remote_api import remote_api_stub
 from google.appengine.tools import appengine_rpc
 
 logger = logging.getLogger('google.appengine.ext.remote_api.throttle')
+
 
 MINIMUM_THROTTLE_SLEEP_DURATION = 0.001
 
@@ -207,6 +211,7 @@ class Throttle(object):
           'Unregistered thread accessing throttled datastore stub: id = %s\n'
           'name = %s' % (id(thread), thread.getName()))
 
+
     if self.last_rotate[throttle_name] + self.ROTATE_PERIOD < self.get_time():
       self._RotateCounts(throttle_name)
 
@@ -233,18 +238,38 @@ class Throttle(object):
 
     thread = threading.currentThread()
 
+
     while True:
+
+
       duration = self.get_time() - self.last_rotate[throttle_name]
+
+
+
 
       total = 0
       for count in self.prior_block[throttle_name].values():
         total += count
 
+
+
       if total:
         duration += self.ROTATE_PERIOD
 
+
+
       for count in self.transferred[throttle_name].values():
         total += count
+
+
+
+
+
+
+
+
+
+
 
       sleep_time = self._SleepTime(total, self.throttles[throttle_name],
                                    duration)
@@ -257,6 +282,8 @@ class Throttle(object):
                    thread.getName(), throttle_name,
                    sleep_time * 1000, duration * 1000, total)
       self.thread_sleep(sleep_time)
+
+
       if thread.exit_flag:
         break
       self._RotateCounts(throttle_name)
@@ -291,11 +318,28 @@ class Throttle(object):
     self.VerifyThrottleName(throttle_name)
     self.rotate_mutex[throttle_name].acquire()
     try:
+
+
       next_rotate_time = self.last_rotate[throttle_name] + self.ROTATE_PERIOD
       if next_rotate_time >= self.get_time():
         return
 
       for name, count in self.transferred[throttle_name].items():
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         self.prior_block[throttle_name][name] = count
@@ -318,11 +362,13 @@ class Throttle(object):
       A tuple of the total count and running time for the given throttle name.
     """
     total = 0
+
     for count in self.totals[throttle_name].values():
       total += count
     for count in self.transferred[throttle_name].values():
       total += count
     return total, self.get_time() - self.start_time
+
 
 
 BANDWIDTH_UP = 'http-bandwidth-up'
@@ -337,6 +383,7 @@ ENTITIES_MODIFIED = 'entities-modified'
 INDEX_MODIFICATIONS = 'index-modifications'
 
 
+
 DEFAULT_LIMITS = {
     BANDWIDTH_UP: 100000,
     BANDWIDTH_DOWN: 100000,
@@ -349,6 +396,7 @@ DEFAULT_LIMITS = {
     ENTITIES_MODIFIED: 400,
     INDEX_MODIFICATIONS: 1600,
 }
+
 
 NO_LIMITS = {
     BANDWIDTH_UP: None,
@@ -435,8 +483,10 @@ class ThrottleHandler(urllib2.BaseHandler):
     Returns:
       The request passed in.
     """
+
     self.throttle.Sleep(BANDWIDTH_UP)
     self.throttle.Sleep(BANDWIDTH_DOWN)
+
     self.AddRequest(BANDWIDTH_UP, req)
     return req
 
@@ -452,8 +502,10 @@ class ThrottleHandler(urllib2.BaseHandler):
     Returns:
       The request passed in.
     """
+
     self.throttle.Sleep(HTTPS_BANDWIDTH_UP)
     self.throttle.Sleep(HTTPS_BANDWIDTH_DOWN)
+
     self.AddRequest(HTTPS_BANDWIDTH_UP, req)
     return req
 
@@ -470,7 +522,9 @@ class ThrottleHandler(urllib2.BaseHandler):
     Returns:
       The response passed in.
     """
+
     self.AddResponse(BANDWIDTH_DOWN, res)
+
     self.throttle.AddTransfer(REQUESTS, 1)
     return res
 
@@ -487,7 +541,9 @@ class ThrottleHandler(urllib2.BaseHandler):
     Returns:
       The response passed in.
     """
+
     self.AddResponse(HTTPS_BANDWIDTH_DOWN, res)
+
     self.throttle.AddTransfer(HTTPS_REQUESTS, 1)
     return res
 
@@ -525,11 +581,13 @@ class ThrottledHttpRpcServer(appengine_rpc.HttpRpcServer):
     return opener
 
 
-def ThrottledHttpRpcServerFactory(throttle):
+def ThrottledHttpRpcServerFactory(throttle, throttle_class=None):
   """Create a factory to produce ThrottledHttpRpcServer for a given throttle.
 
   Args:
     throttle: A Throttle instance to use for the ThrottledHttpRpcServer.
+    throttle_class: A class to use instead of the default
+      ThrottledHttpRpcServer.
 
   Returns:
     A factory to produce a ThrottledHttpRpcServer.
@@ -545,9 +603,14 @@ def ThrottledHttpRpcServerFactory(throttle):
     Returns:
       A ThrottledHttpRpcServer instance.
     """
+
     kwargs['account_type'] = 'HOSTED_OR_GOOGLE'
+
     kwargs['save_cookies'] = True
-    rpc_server = ThrottledHttpRpcServer(throttle, *args, **kwargs)
+    if throttle_class:
+      rpc_server = throttle_class(throttle, *args, **kwargs)
+    else:
+      rpc_server = ThrottledHttpRpcServer(throttle, *args, **kwargs)
     return rpc_server
   return MakeRpcServer
 
@@ -586,6 +649,7 @@ class DatastoreThrottler(Throttler):
     self.__throttle.AddTransfer(BANDWIDTH_UP, cost_proto.entity_write_bytes())
 
 
+
   _Prehook_Put = SleepHandler(ENTITIES_MODIFIED,
                               INDEX_MODIFICATIONS,
                               BANDWIDTH_UP)
@@ -594,30 +658,37 @@ class DatastoreThrottler(Throttler):
     self.AddCost(response.cost())
 
 
+
   _Prehook_Get = SleepHandler(ENTITIES_FETCHED)
 
   def _Posthook_Get(self, request, response):
     self.__throttle.AddTransfer(ENTITIES_FETCHED, response.entity_size())
 
 
+
   _Prehook_RunQuery = SleepHandler(ENTITIES_FETCHED)
 
   def _Posthook_RunQuery(self, request, response):
+
     if not response.keys_only():
       self.__throttle.AddTransfer(ENTITIES_FETCHED, response.result_size())
+
 
 
   _Prehook_Next = SleepHandler(ENTITIES_FETCHED)
 
   def _Posthook_Next(self, request, response):
+
     if not response.keys_only():
       self.__throttle.AddTransfer(ENTITIES_FETCHED, response.result_size())
+
 
 
   _Prehook_Delete = SleepHandler(ENTITIES_MODIFIED, INDEX_MODIFICATIONS)
 
   def _Posthook_Delete(self, request, response):
     self.AddCost(response.cost())
+
 
 
   _Prehook_Commit = SleepHandler()

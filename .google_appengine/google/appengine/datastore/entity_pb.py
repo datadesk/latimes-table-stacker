@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+
+
 from google.net.proto import ProtocolBuffer
 import array
 import dummy_thread as thread
@@ -104,6 +106,15 @@ class PropertyValue_ReferenceValuePathElement(ProtocolBuffer.ProtocolMessage):
     if (self.has_name_): n += 2 + self.lengthString(len(self.name_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_type_):
+      n += 1
+      n += self.lengthString(len(self.type_))
+    if (self.has_id_): n += 2 + self.lengthVarInt64(self.id_)
+    if (self.has_name_): n += 2 + self.lengthString(len(self.name_))
+    return n
+
   def Clear(self):
     self.clear_type()
     self.clear_id()
@@ -112,6 +123,17 @@ class PropertyValue_ReferenceValuePathElement(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(122)
     out.putPrefixedString(self.type_)
+    if (self.has_id_):
+      out.putVarInt32(128)
+      out.putVarInt64(self.id_)
+    if (self.has_name_):
+      out.putVarInt32(138)
+      out.putPrefixedString(self.name_)
+
+  def OutputPartial(self, out):
+    if (self.has_type_):
+      out.putVarInt32(122)
+      out.putPrefixedString(self.type_)
     if (self.has_id_):
       out.putVarInt32(128)
       out.putVarInt64(self.id_)
@@ -132,6 +154,8 @@ class PropertyValue_ReferenceValuePathElement(ProtocolBuffer.ProtocolMessage):
       if tt == 138:
         self.set_name(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -208,6 +232,14 @@ class PropertyValue_PointValue(ProtocolBuffer.ProtocolMessage):
     n = 0
     return n + 18
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_x_):
+      n += 9
+    if (self.has_y_):
+      n += 9
+    return n
+
   def Clear(self):
     self.clear_x()
     self.clear_y()
@@ -217,6 +249,14 @@ class PropertyValue_PointValue(ProtocolBuffer.ProtocolMessage):
     out.putDouble(self.x_)
     out.putVarInt32(57)
     out.putDouble(self.y_)
+
+  def OutputPartial(self, out):
+    if (self.has_x_):
+      out.putVarInt32(49)
+      out.putDouble(self.x_)
+    if (self.has_y_):
+      out.putVarInt32(57)
+      out.putDouble(self.y_)
 
   def TryMerge(self, d):
     while 1:
@@ -228,6 +268,8 @@ class PropertyValue_PointValue(ProtocolBuffer.ProtocolMessage):
       if tt == 57:
         self.set_y(d.getDouble())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -404,6 +446,23 @@ class PropertyValue_UserValue(ProtocolBuffer.ProtocolMessage):
     if (self.has_federated_provider_): n += 2 + self.lengthString(len(self.federated_provider_))
     return n + 4
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_email_):
+      n += 1
+      n += self.lengthString(len(self.email_))
+    if (self.has_auth_domain_):
+      n += 1
+      n += self.lengthString(len(self.auth_domain_))
+    if (self.has_nickname_): n += 1 + self.lengthString(len(self.nickname_))
+    if (self.has_gaiaid_):
+      n += 2
+      n += self.lengthVarInt64(self.gaiaid_)
+    if (self.has_obfuscated_gaiaid_): n += 2 + self.lengthString(len(self.obfuscated_gaiaid_))
+    if (self.has_federated_identity_): n += 2 + self.lengthString(len(self.federated_identity_))
+    if (self.has_federated_provider_): n += 2 + self.lengthString(len(self.federated_provider_))
+    return n
+
   def Clear(self):
     self.clear_email()
     self.clear_auth_domain()
@@ -423,6 +482,29 @@ class PropertyValue_UserValue(ProtocolBuffer.ProtocolMessage):
       out.putPrefixedString(self.nickname_)
     out.putVarInt32(144)
     out.putVarInt64(self.gaiaid_)
+    if (self.has_obfuscated_gaiaid_):
+      out.putVarInt32(154)
+      out.putPrefixedString(self.obfuscated_gaiaid_)
+    if (self.has_federated_identity_):
+      out.putVarInt32(170)
+      out.putPrefixedString(self.federated_identity_)
+    if (self.has_federated_provider_):
+      out.putVarInt32(178)
+      out.putPrefixedString(self.federated_provider_)
+
+  def OutputPartial(self, out):
+    if (self.has_email_):
+      out.putVarInt32(74)
+      out.putPrefixedString(self.email_)
+    if (self.has_auth_domain_):
+      out.putVarInt32(82)
+      out.putPrefixedString(self.auth_domain_)
+    if (self.has_nickname_):
+      out.putVarInt32(90)
+      out.putPrefixedString(self.nickname_)
+    if (self.has_gaiaid_):
+      out.putVarInt32(144)
+      out.putVarInt64(self.gaiaid_)
     if (self.has_obfuscated_gaiaid_):
       out.putVarInt32(154)
       out.putPrefixedString(self.obfuscated_gaiaid_)
@@ -458,6 +540,8 @@ class PropertyValue_UserValue(ProtocolBuffer.ProtocolMessage):
       if tt == 178:
         self.set_federated_provider(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -561,6 +645,16 @@ class PropertyValue_ReferenceValue(ProtocolBuffer.ProtocolMessage):
     for i in xrange(len(self.pathelement_)): n += self.pathelement_[i].ByteSize()
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_app_):
+      n += 1
+      n += self.lengthString(len(self.app_))
+    if (self.has_name_space_): n += 2 + self.lengthString(len(self.name_space_))
+    n += 2 * len(self.pathelement_)
+    for i in xrange(len(self.pathelement_)): n += self.pathelement_[i].ByteSizePartial()
+    return n
+
   def Clear(self):
     self.clear_app()
     self.clear_name_space()
@@ -572,6 +666,18 @@ class PropertyValue_ReferenceValue(ProtocolBuffer.ProtocolMessage):
     for i in xrange(len(self.pathelement_)):
       out.putVarInt32(115)
       self.pathelement_[i].OutputUnchecked(out)
+      out.putVarInt32(116)
+    if (self.has_name_space_):
+      out.putVarInt32(162)
+      out.putPrefixedString(self.name_space_)
+
+  def OutputPartial(self, out):
+    if (self.has_app_):
+      out.putVarInt32(106)
+      out.putPrefixedString(self.app_)
+    for i in xrange(len(self.pathelement_)):
+      out.putVarInt32(115)
+      self.pathelement_[i].OutputPartial(out)
       out.putVarInt32(116)
     if (self.has_name_space_):
       out.putVarInt32(162)
@@ -590,6 +696,8 @@ class PropertyValue_ReferenceValue(ProtocolBuffer.ProtocolMessage):
       if tt == 162:
         self.set_name_space(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -692,6 +800,7 @@ class PropertyValue(ProtocolBuffer.ProtocolMessage):
   def mutable_pointvalue(self): self.has_pointvalue_ = 1; return self.pointvalue()
 
   def clear_pointvalue(self):
+
     if self.has_pointvalue_:
       self.has_pointvalue_ = 0;
       if self.pointvalue_ is not None: self.pointvalue_.Clear()
@@ -710,6 +819,7 @@ class PropertyValue(ProtocolBuffer.ProtocolMessage):
   def mutable_uservalue(self): self.has_uservalue_ = 1; return self.uservalue()
 
   def clear_uservalue(self):
+
     if self.has_uservalue_:
       self.has_uservalue_ = 0;
       if self.uservalue_ is not None: self.uservalue_.Clear()
@@ -728,6 +838,7 @@ class PropertyValue(ProtocolBuffer.ProtocolMessage):
   def mutable_referencevalue(self): self.has_referencevalue_ = 1; return self.referencevalue()
 
   def clear_referencevalue(self):
+
     if self.has_referencevalue_:
       self.has_referencevalue_ = 0;
       if self.referencevalue_ is not None: self.referencevalue_.Clear()
@@ -779,7 +890,18 @@ class PropertyValue(ProtocolBuffer.ProtocolMessage):
     if (self.has_pointvalue_): n += 2 + self.pointvalue_.ByteSize()
     if (self.has_uservalue_): n += 2 + self.uservalue_.ByteSize()
     if (self.has_referencevalue_): n += 2 + self.referencevalue_.ByteSize()
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_int64value_): n += 1 + self.lengthVarInt64(self.int64value_)
+    if (self.has_booleanvalue_): n += 2
+    if (self.has_stringvalue_): n += 1 + self.lengthString(len(self.stringvalue_))
+    if (self.has_doublevalue_): n += 9
+    if (self.has_pointvalue_): n += 2 + self.pointvalue_.ByteSizePartial()
+    if (self.has_uservalue_): n += 2 + self.uservalue_.ByteSizePartial()
+    if (self.has_referencevalue_): n += 2 + self.referencevalue_.ByteSizePartial()
+    return n
 
   def Clear(self):
     self.clear_int64value()
@@ -816,6 +938,32 @@ class PropertyValue(ProtocolBuffer.ProtocolMessage):
       self.referencevalue_.OutputUnchecked(out)
       out.putVarInt32(100)
 
+  def OutputPartial(self, out):
+    if (self.has_int64value_):
+      out.putVarInt32(8)
+      out.putVarInt64(self.int64value_)
+    if (self.has_booleanvalue_):
+      out.putVarInt32(16)
+      out.putBoolean(self.booleanvalue_)
+    if (self.has_stringvalue_):
+      out.putVarInt32(26)
+      out.putPrefixedString(self.stringvalue_)
+    if (self.has_doublevalue_):
+      out.putVarInt32(33)
+      out.putDouble(self.doublevalue_)
+    if (self.has_pointvalue_):
+      out.putVarInt32(43)
+      self.pointvalue_.OutputPartial(out)
+      out.putVarInt32(44)
+    if (self.has_uservalue_):
+      out.putVarInt32(67)
+      self.uservalue_.OutputPartial(out)
+      out.putVarInt32(68)
+    if (self.has_referencevalue_):
+      out.putVarInt32(99)
+      self.referencevalue_.OutputPartial(out)
+      out.putVarInt32(100)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
@@ -840,6 +988,8 @@ class PropertyValue(ProtocolBuffer.ProtocolMessage):
       if tt == 99:
         self.mutable_referencevalue().TryMerge(d)
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -943,9 +1093,11 @@ class PropertyValue(ProtocolBuffer.ProtocolMessage):
     22: ProtocolBuffer.Encoder.STRING,
   }, 22, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class Property(ProtocolBuffer.ProtocolMessage):
+
 
   BLOB         =   14
   TEXT         =   15
@@ -1110,6 +1262,20 @@ class Property(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(self.value_.ByteSize())
     return n + 4
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_meaning_): n += 1 + self.lengthVarInt64(self.meaning_)
+    if (self.has_meaning_uri_): n += 1 + self.lengthString(len(self.meaning_uri_))
+    if (self.has_name_):
+      n += 1
+      n += self.lengthString(len(self.name_))
+    if (self.has_value_):
+      n += 1
+      n += self.lengthString(self.value_.ByteSizePartial())
+    if (self.has_multiple_):
+      n += 2
+    return n
+
   def Clear(self):
     self.clear_meaning()
     self.clear_meaning_uri()
@@ -1132,6 +1298,24 @@ class Property(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(self.value_.ByteSize())
     self.value_.OutputUnchecked(out)
 
+  def OutputPartial(self, out):
+    if (self.has_meaning_):
+      out.putVarInt32(8)
+      out.putVarInt32(self.meaning_)
+    if (self.has_meaning_uri_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.meaning_uri_)
+    if (self.has_name_):
+      out.putVarInt32(26)
+      out.putPrefixedString(self.name_)
+    if (self.has_multiple_):
+      out.putVarInt32(32)
+      out.putBoolean(self.multiple_)
+    if (self.has_value_):
+      out.putVarInt32(42)
+      out.putVarInt32(self.value_.ByteSizePartial())
+      self.value_.OutputPartial(out)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
@@ -1153,6 +1337,8 @@ class Property(ProtocolBuffer.ProtocolMessage):
         d.skip(length)
         self.mutable_value().TryMerge(tmp)
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1196,6 +1382,7 @@ class Property(ProtocolBuffer.ProtocolMessage):
     4: ProtocolBuffer.Encoder.NUMERIC,
     5: ProtocolBuffer.Encoder.STRING,
   }, 5, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -1281,6 +1468,15 @@ class Path_Element(ProtocolBuffer.ProtocolMessage):
     if (self.has_name_): n += 1 + self.lengthString(len(self.name_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_type_):
+      n += 1
+      n += self.lengthString(len(self.type_))
+    if (self.has_id_): n += 1 + self.lengthVarInt64(self.id_)
+    if (self.has_name_): n += 1 + self.lengthString(len(self.name_))
+    return n
+
   def Clear(self):
     self.clear_type()
     self.clear_id()
@@ -1289,6 +1485,17 @@ class Path_Element(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(18)
     out.putPrefixedString(self.type_)
+    if (self.has_id_):
+      out.putVarInt32(24)
+      out.putVarInt64(self.id_)
+    if (self.has_name_):
+      out.putVarInt32(34)
+      out.putPrefixedString(self.name_)
+
+  def OutputPartial(self, out):
+    if (self.has_type_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.type_)
     if (self.has_id_):
       out.putVarInt32(24)
       out.putVarInt64(self.id_)
@@ -1309,6 +1516,8 @@ class Path_Element(ProtocolBuffer.ProtocolMessage):
       if tt == 34:
         self.set_name(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1364,7 +1573,13 @@ class Path(ProtocolBuffer.ProtocolMessage):
     n = 0
     n += 2 * len(self.element_)
     for i in xrange(len(self.element_)): n += self.element_[i].ByteSize()
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    n += 2 * len(self.element_)
+    for i in xrange(len(self.element_)): n += self.element_[i].ByteSizePartial()
+    return n
 
   def Clear(self):
     self.clear_element()
@@ -1375,12 +1590,20 @@ class Path(ProtocolBuffer.ProtocolMessage):
       self.element_[i].OutputUnchecked(out)
       out.putVarInt32(12)
 
+  def OutputPartial(self, out):
+    for i in xrange(len(self.element_)):
+      out.putVarInt32(11)
+      self.element_[i].OutputPartial(out)
+      out.putVarInt32(12)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 11:
         self.add_element().TryMerge(d)
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1421,6 +1644,7 @@ class Path(ProtocolBuffer.ProtocolMessage):
     3: ProtocolBuffer.Encoder.NUMERIC,
     4: ProtocolBuffer.Encoder.STRING,
   }, 4, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -1506,6 +1730,17 @@ class Reference(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(self.path_.ByteSize())
     return n + 2
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_app_):
+      n += 1
+      n += self.lengthString(len(self.app_))
+    if (self.has_name_space_): n += 2 + self.lengthString(len(self.name_space_))
+    if (self.has_path_):
+      n += 1
+      n += self.lengthString(self.path_.ByteSizePartial())
+    return n
+
   def Clear(self):
     self.clear_app()
     self.clear_name_space()
@@ -1517,6 +1752,18 @@ class Reference(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(114)
     out.putVarInt32(self.path_.ByteSize())
     self.path_.OutputUnchecked(out)
+    if (self.has_name_space_):
+      out.putVarInt32(162)
+      out.putPrefixedString(self.name_space_)
+
+  def OutputPartial(self, out):
+    if (self.has_app_):
+      out.putVarInt32(106)
+      out.putPrefixedString(self.app_)
+    if (self.has_path_):
+      out.putVarInt32(114)
+      out.putVarInt32(self.path_.ByteSizePartial())
+      self.path_.OutputPartial(out)
     if (self.has_name_space_):
       out.putVarInt32(162)
       out.putPrefixedString(self.name_space_)
@@ -1536,6 +1783,8 @@ class Reference(ProtocolBuffer.ProtocolMessage):
       if tt == 162:
         self.set_name_space(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1571,6 +1820,7 @@ class Reference(ProtocolBuffer.ProtocolMessage):
     14: ProtocolBuffer.Encoder.STRING,
     20: ProtocolBuffer.Encoder.STRING,
   }, 20, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -1740,6 +1990,23 @@ class User(ProtocolBuffer.ProtocolMessage):
     if (self.has_federated_provider_): n += 1 + self.lengthString(len(self.federated_provider_))
     return n + 3
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_email_):
+      n += 1
+      n += self.lengthString(len(self.email_))
+    if (self.has_auth_domain_):
+      n += 1
+      n += self.lengthString(len(self.auth_domain_))
+    if (self.has_nickname_): n += 1 + self.lengthString(len(self.nickname_))
+    if (self.has_gaiaid_):
+      n += 1
+      n += self.lengthVarInt64(self.gaiaid_)
+    if (self.has_obfuscated_gaiaid_): n += 1 + self.lengthString(len(self.obfuscated_gaiaid_))
+    if (self.has_federated_identity_): n += 1 + self.lengthString(len(self.federated_identity_))
+    if (self.has_federated_provider_): n += 1 + self.lengthString(len(self.federated_provider_))
+    return n
+
   def Clear(self):
     self.clear_email()
     self.clear_auth_domain()
@@ -1759,6 +2026,29 @@ class User(ProtocolBuffer.ProtocolMessage):
       out.putPrefixedString(self.nickname_)
     out.putVarInt32(32)
     out.putVarInt64(self.gaiaid_)
+    if (self.has_obfuscated_gaiaid_):
+      out.putVarInt32(42)
+      out.putPrefixedString(self.obfuscated_gaiaid_)
+    if (self.has_federated_identity_):
+      out.putVarInt32(50)
+      out.putPrefixedString(self.federated_identity_)
+    if (self.has_federated_provider_):
+      out.putVarInt32(58)
+      out.putPrefixedString(self.federated_provider_)
+
+  def OutputPartial(self, out):
+    if (self.has_email_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.email_)
+    if (self.has_auth_domain_):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.auth_domain_)
+    if (self.has_nickname_):
+      out.putVarInt32(26)
+      out.putPrefixedString(self.nickname_)
+    if (self.has_gaiaid_):
+      out.putVarInt32(32)
+      out.putVarInt64(self.gaiaid_)
     if (self.has_obfuscated_gaiaid_):
       out.putVarInt32(42)
       out.putPrefixedString(self.obfuscated_gaiaid_)
@@ -1793,6 +2083,8 @@ class User(ProtocolBuffer.ProtocolMessage):
       if tt == 58:
         self.set_federated_provider(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -1842,9 +2134,11 @@ class User(ProtocolBuffer.ProtocolMessage):
     7: ProtocolBuffer.Encoder.STRING,
   }, 7, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class EntityProto(ProtocolBuffer.ProtocolMessage):
+
 
   GD_CONTACT   =    1
   GD_EVENT     =    2
@@ -1904,6 +2198,7 @@ class EntityProto(ProtocolBuffer.ProtocolMessage):
   def mutable_owner(self): self.has_owner_ = 1; return self.owner()
 
   def clear_owner(self):
+
     if self.has_owner_:
       self.has_owner_ = 0;
       if self.owner_ is not None: self.owner_.Clear()
@@ -2031,6 +2326,23 @@ class EntityProto(ProtocolBuffer.ProtocolMessage):
     for i in xrange(len(self.raw_property_)): n += self.lengthString(self.raw_property_[i].ByteSize())
     return n + 3
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_key_):
+      n += 1
+      n += self.lengthString(self.key_.ByteSizePartial())
+    if (self.has_entity_group_):
+      n += 2
+      n += self.lengthString(self.entity_group_.ByteSizePartial())
+    if (self.has_owner_): n += 2 + self.lengthString(self.owner_.ByteSizePartial())
+    if (self.has_kind_): n += 1 + self.lengthVarInt64(self.kind_)
+    if (self.has_kind_uri_): n += 1 + self.lengthString(len(self.kind_uri_))
+    n += 1 * len(self.property_)
+    for i in xrange(len(self.property_)): n += self.lengthString(self.property_[i].ByteSizePartial())
+    n += 1 * len(self.raw_property_)
+    for i in xrange(len(self.raw_property_)): n += self.lengthString(self.raw_property_[i].ByteSizePartial())
+    return n
+
   def Clear(self):
     self.clear_key()
     self.clear_entity_group()
@@ -2065,6 +2377,34 @@ class EntityProto(ProtocolBuffer.ProtocolMessage):
       out.putVarInt32(138)
       out.putVarInt32(self.owner_.ByteSize())
       self.owner_.OutputUnchecked(out)
+
+  def OutputPartial(self, out):
+    if (self.has_kind_):
+      out.putVarInt32(32)
+      out.putVarInt32(self.kind_)
+    if (self.has_kind_uri_):
+      out.putVarInt32(42)
+      out.putPrefixedString(self.kind_uri_)
+    if (self.has_key_):
+      out.putVarInt32(106)
+      out.putVarInt32(self.key_.ByteSizePartial())
+      self.key_.OutputPartial(out)
+    for i in xrange(len(self.property_)):
+      out.putVarInt32(114)
+      out.putVarInt32(self.property_[i].ByteSizePartial())
+      self.property_[i].OutputPartial(out)
+    for i in xrange(len(self.raw_property_)):
+      out.putVarInt32(122)
+      out.putVarInt32(self.raw_property_[i].ByteSizePartial())
+      self.raw_property_[i].OutputPartial(out)
+    if (self.has_entity_group_):
+      out.putVarInt32(130)
+      out.putVarInt32(self.entity_group_.ByteSizePartial())
+      self.entity_group_.OutputPartial(out)
+    if (self.has_owner_):
+      out.putVarInt32(138)
+      out.putVarInt32(self.owner_.ByteSizePartial())
+      self.owner_.OutputPartial(out)
 
   def TryMerge(self, d):
     while d.avail() > 0:
@@ -2105,6 +2445,8 @@ class EntityProto(ProtocolBuffer.ProtocolMessage):
         d.skip(length)
         self.mutable_owner().TryMerge(tmp)
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -2177,6 +2519,7 @@ class EntityProto(ProtocolBuffer.ProtocolMessage):
     17: ProtocolBuffer.Encoder.STRING,
   }, 17, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class CompositeProperty(ProtocolBuffer.ProtocolMessage):
@@ -2245,6 +2588,15 @@ class CompositeProperty(ProtocolBuffer.ProtocolMessage):
     for i in xrange(len(self.value_)): n += self.lengthString(len(self.value_[i]))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_index_id_):
+      n += 1
+      n += self.lengthVarInt64(self.index_id_)
+    n += 1 * len(self.value_)
+    for i in xrange(len(self.value_)): n += self.lengthString(len(self.value_[i]))
+    return n
+
   def Clear(self):
     self.clear_index_id()
     self.clear_value()
@@ -2252,6 +2604,14 @@ class CompositeProperty(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(8)
     out.putVarInt64(self.index_id_)
+    for i in xrange(len(self.value_)):
+      out.putVarInt32(18)
+      out.putPrefixedString(self.value_[i])
+
+  def OutputPartial(self, out):
+    if (self.has_index_id_):
+      out.putVarInt32(8)
+      out.putVarInt64(self.index_id_)
     for i in xrange(len(self.value_)):
       out.putVarInt32(18)
       out.putPrefixedString(self.value_[i])
@@ -2265,6 +2625,8 @@ class CompositeProperty(ProtocolBuffer.ProtocolMessage):
       if tt == 18:
         self.add_value(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -2299,9 +2661,11 @@ class CompositeProperty(ProtocolBuffer.ProtocolMessage):
     2: ProtocolBuffer.Encoder.STRING,
   }, 2, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class Index_Property(ProtocolBuffer.ProtocolMessage):
+
 
   ASCENDING    =    1
   DESCENDING   =    2
@@ -2376,6 +2740,14 @@ class Index_Property(ProtocolBuffer.ProtocolMessage):
     if (self.has_direction_): n += 1 + self.lengthVarInt64(self.direction_)
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_name_):
+      n += 1
+      n += self.lengthString(len(self.name_))
+    if (self.has_direction_): n += 1 + self.lengthVarInt64(self.direction_)
+    return n
+
   def Clear(self):
     self.clear_name()
     self.clear_direction()
@@ -2383,6 +2755,14 @@ class Index_Property(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     out.putVarInt32(26)
     out.putPrefixedString(self.name_)
+    if (self.has_direction_):
+      out.putVarInt32(32)
+      out.putVarInt32(self.direction_)
+
+  def OutputPartial(self, out):
+    if (self.has_name_):
+      out.putVarInt32(26)
+      out.putPrefixedString(self.name_)
     if (self.has_direction_):
       out.putVarInt32(32)
       out.putVarInt32(self.direction_)
@@ -2397,6 +2777,8 @@ class Index_Property(ProtocolBuffer.ProtocolMessage):
       if tt == 32:
         self.set_direction(d.getVarInt32())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -2498,6 +2880,17 @@ class Index(ProtocolBuffer.ProtocolMessage):
     for i in xrange(len(self.property_)): n += self.property_[i].ByteSize()
     return n + 3
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_entity_type_):
+      n += 1
+      n += self.lengthString(len(self.entity_type_))
+    if (self.has_ancestor_):
+      n += 2
+    n += 2 * len(self.property_)
+    for i in xrange(len(self.property_)): n += self.property_[i].ByteSizePartial()
+    return n
+
   def Clear(self):
     self.clear_entity_type()
     self.clear_ancestor()
@@ -2513,6 +2906,18 @@ class Index(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(40)
     out.putBoolean(self.ancestor_)
 
+  def OutputPartial(self, out):
+    if (self.has_entity_type_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.entity_type_)
+    for i in xrange(len(self.property_)):
+      out.putVarInt32(19)
+      self.property_[i].OutputPartial(out)
+      out.putVarInt32(20)
+    if (self.has_ancestor_):
+      out.putVarInt32(40)
+      out.putBoolean(self.ancestor_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
@@ -2525,6 +2930,8 @@ class Index(ProtocolBuffer.ProtocolMessage):
       if tt == 40:
         self.set_ancestor(d.getBoolean())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -2571,9 +2978,11 @@ class Index(ProtocolBuffer.ProtocolMessage):
     5: ProtocolBuffer.Encoder.NUMERIC,
   }, 5, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class CompositeIndex(ProtocolBuffer.ProtocolMessage):
+
 
   WRITE_ONLY   =    1
   READ_WRITE   =    2
@@ -2698,6 +3107,22 @@ class CompositeIndex(ProtocolBuffer.ProtocolMessage):
     n += self.lengthVarInt64(self.state_)
     return n + 4
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_app_id_):
+      n += 1
+      n += self.lengthString(len(self.app_id_))
+    if (self.has_id_):
+      n += 1
+      n += self.lengthVarInt64(self.id_)
+    if (self.has_definition_):
+      n += 1
+      n += self.lengthString(self.definition_.ByteSizePartial())
+    if (self.has_state_):
+      n += 1
+      n += self.lengthVarInt64(self.state_)
+    return n
+
   def Clear(self):
     self.clear_app_id()
     self.clear_id()
@@ -2714,6 +3139,21 @@ class CompositeIndex(ProtocolBuffer.ProtocolMessage):
     self.definition_.OutputUnchecked(out)
     out.putVarInt32(32)
     out.putVarInt32(self.state_)
+
+  def OutputPartial(self, out):
+    if (self.has_app_id_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.app_id_)
+    if (self.has_id_):
+      out.putVarInt32(16)
+      out.putVarInt64(self.id_)
+    if (self.has_definition_):
+      out.putVarInt32(26)
+      out.putVarInt32(self.definition_.ByteSizePartial())
+      self.definition_.OutputPartial(out)
+    if (self.has_state_):
+      out.putVarInt32(32)
+      out.putVarInt32(self.state_)
 
   def TryMerge(self, d):
     while d.avail() > 0:
@@ -2733,6 +3173,8 @@ class CompositeIndex(ProtocolBuffer.ProtocolMessage):
       if tt == 32:
         self.set_state(d.getVarInt32())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -2772,6 +3214,7 @@ class CompositeIndex(ProtocolBuffer.ProtocolMessage):
     3: ProtocolBuffer.Encoder.STRING,
     4: ProtocolBuffer.Encoder.NUMERIC,
   }, 4, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""

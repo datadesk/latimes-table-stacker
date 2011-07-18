@@ -15,12 +15,24 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Bulkloader Config Parser and runner.
 
 A library to read bulkloader yaml configs. Returns a BulkloaderEntry object
 which describes the bulkloader.yaml in object form, including some additional
 parsing of things like Python lambdas.
 """
+
+
+
+
+
+
+
+
 
 
 
@@ -34,6 +46,8 @@ from google.appengine.api import yaml_listener
 from google.appengine.api import yaml_object
 
 from google.appengine.ext.bulkload import bulkloader_errors
+
+
 
 
 _global_temp_globals = None
@@ -75,6 +89,10 @@ class EvaluatedCallable(validation.Validator):
         raise bulkloader_errors.InvalidCodeInConfiguration(
             'Code for %s did not return a callable.  Code: "%s".' %
             (key, value))
+
+
+
+
 
       self.supports_bulkload_state = False
       try:
@@ -122,6 +140,9 @@ class EvaluatedCallable(validation.Validator):
 OPTIONAL_EVALUATED_CALLABLE = validation.Optional(EvaluatedCallable())
 
 
+
+
+
 class ConnectorSubOptions(validation.Validated):
   """Connector options."""
 
@@ -129,6 +150,7 @@ class ConnectorSubOptions(validation.Validated):
       'delimiter': validation.Optional(validation.TYPE_STR),
       'dialect': validation.Optional(validation.TYPE_STR),
   }
+
 
 
 class ConnectorOptions(validation.Validated):
@@ -156,6 +178,7 @@ class ConnectorOptions(validation.Validated):
     super(ConnectorOptions, self).CheckInitialized()
 
     if self.column_list:
+
       self.column_list = [str(column) for column in self.column_list]
 
 
@@ -170,6 +193,7 @@ class ExportEntry(validation.Validated):
 
 class PropertyEntry(validation.Validated):
   """Describes the transform for a single property."""
+
 
   ATTRIBUTES = {
       'property': validation.Type(str),
@@ -227,14 +251,21 @@ class TransformerEntry(validation.Validated):
       raise bulkloader_errors.InvalidConfiguration(
           'Both kind and model specified for transformer.')
 
+
     if self.model:
+
+
+
       self.kind = self.model.method.kind()
     else:
       if self.use_model_on_export:
         raise bulkloader_errors.InvalidConfiguration(
             'No model class specified but use_model_on_export is true.')
     if not self.name:
+
       self.name = self.kind
+
+
 
     if not self.connector:
       raise bulkloader_errors.InvalidConfiguration('No connector specified.')
@@ -250,6 +281,9 @@ class TransformerEntry(validation.Validated):
 
 class PythonPreambleEntry(validation.Validated):
   """Python modules to import at initialization time, typically models."""
+
+
+
 
   ATTRIBUTES = {'import': validation.TYPE_STR,
                 'as': validation.Optional(validation.TYPE_STR),
@@ -267,6 +301,8 @@ class PythonPreambleEntry(validation.Validated):
       module_name = python_import.split('.')[-1]
 
     __import__(python_import, _global_temp_globals)
+
+
     _global_temp_globals[topname] = sys.modules[topname]
     _global_temp_globals[module_name] = sys.modules[python_import]
 
@@ -297,6 +333,8 @@ def load_config(stream, config_globals):
   builder = yaml_object.ObjectBuilder(BulkloaderEntry)
   handler = yaml_builder.BuilderHandler(builder)
   listener = yaml_listener.EventListener(handler)
+
+
   global _global_temp_globals
   _global_temp_globals = config_globals
   try:

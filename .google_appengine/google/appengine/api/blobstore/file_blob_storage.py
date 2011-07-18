@@ -15,11 +15,18 @@
 # limitations under the License.
 #
 
+
+
+
 """Implementation of Blobstore stub storage based on file system.
 
 Contains implementation of blobstore_stub.BlobStorage that writes
 blobs directly to a filesystem.
 """
+
+
+
+
 
 
 
@@ -34,6 +41,7 @@ from google.appengine.api.blobstore import blobstore_stub
 
 
 __all__ = ['FileBlobStorage']
+
 
 
 import __builtin__
@@ -118,6 +126,8 @@ class FileBlobStorage(blobstore_stub.BlobStorage):
     output = _local_open(blob_file, 'wb')
 
     try:
+
+
       while True:
         block = blob_stream.read(1 << 20)
         if not block:

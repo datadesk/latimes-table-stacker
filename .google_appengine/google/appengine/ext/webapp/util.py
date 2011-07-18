@@ -15,7 +15,14 @@
 # limitations under the License.
 #
 
+
+
+
 """Convience functions for the Webapp framework."""
+
+
+
+
 
 
 
@@ -32,7 +39,6 @@ import sys
 import wsgiref.util
 
 from google.appengine.api import users
-from google.appengine.api import lib_config
 from google.appengine.ext import webapp
 
 
@@ -61,11 +67,6 @@ def login_required(handler_method):
     else:
       handler_method(self, *args)
   return check_login
-
-
-_config_handle = lib_config.register(
-    'webapp',
-    {'add_wsgi_middleware': lambda app: app})
 
 
 def run_wsgi_app(application):
@@ -99,7 +100,7 @@ def run_wsgi_app(application):
 
 def add_wsgi_middleware(application):
   """Wrap WSGI middleware around a WSGI application object."""
-  return _config_handle.add_wsgi_middleware(application)
+  return webapp._config_handle.add_wsgi_middleware(application)
 
 
 def run_bare_wsgi_app(application):
@@ -121,6 +122,7 @@ def run_bare_wsgi_app(application):
 def _start_response(status, headers, exc_info=None):
   """A start_response() callable as specified by PEP 333"""
   if exc_info is not None:
+
     raise exc_info[0], exc_info[1], exc_info[2]
   print "Status: %s" % status
   for name, val in headers:

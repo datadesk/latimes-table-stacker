@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """DEPRECATED:  Declares the RPC service interfaces.
 
 This module declares the abstract interfaces underlying proto2 RPC
@@ -114,6 +117,7 @@ class RpcController(object):
   """
 
 
+
   def Reset(self):
     """Resets the RpcController to its initial state.
 
@@ -146,6 +150,7 @@ class RpcController(object):
     will indicate that the call failed at that time.
     """
     raise NotImplementedError
+
 
 
   def SetFailed(self, reason):

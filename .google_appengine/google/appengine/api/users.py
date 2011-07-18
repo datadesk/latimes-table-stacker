@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Python datastore class User to be used as a datastore data type.
 
 Classes defined here:
@@ -25,6 +29,11 @@ Classes defined here:
   RedirectTooLongError: UserService exception
   NotAllowedError: UserService exception
 """
+
+
+
+
+
 
 
 
@@ -71,12 +80,16 @@ class User(object):
   """
 
 
+
+
+
   __user_id = None
   __federated_identity = None
   __federated_provider = None
 
   def __init__(self, email=None, _auth_domain=None,
-               _user_id=None, federated_identity=None, federated_provider=None):
+               _user_id=None, federated_identity=None, federated_provider=None,
+               _strict_mode=True):
     """Constructor.
 
     Args:
@@ -90,6 +103,13 @@ class User(object):
       UserNotFoundError: Raised if the user is not logged in and both email
           and federated identity are empty.
     """
+
+
+
+
+
+
+
     if _auth_domain is None:
       _auth_domain = os.environ.get('AUTH_DOMAIN')
     assert _auth_domain
@@ -102,7 +122,16 @@ class User(object):
       federated_provider = os.environ.get('FEDERATED_PROVIDER',
                                           federated_provider)
 
-    if not email and not federated_identity:
+
+
+
+
+    if email is None:
+      email = ''
+
+    if not email and not federated_identity and _strict_mode:
+
+
       raise UserNotFoundError
 
     self.__email = email
@@ -110,6 +139,7 @@ class User(object):
     self.__federated_provider = federated_provider
     self.__auth_domain = _auth_domain
     self.__user_id = _user_id or None
+
 
   def nickname(self):
     """Return this user's nickname.
@@ -225,6 +255,7 @@ def create_login_url(dest_url=None, _auth_domain=None,
       raise e
   return resp.login_url()
 
+
 CreateLoginURL = create_login_url
 
 
@@ -256,6 +287,7 @@ def create_logout_url(dest_url, _auth_domain=None):
       raise e
   return resp.logout_url()
 
+
 CreateLogoutURL = create_logout_url
 
 
@@ -264,6 +296,7 @@ def get_current_user():
     return User()
   except UserNotFoundError:
     return None
+
 
 GetCurrentUser = get_current_user
 
@@ -277,5 +310,6 @@ def is_current_user_admin():
   only exists for the user making this request right now.
   """
   return (os.environ.get('USER_IS_ADMIN', '0')) == '1'
+
 
 IsCurrentUserAdmin = is_current_user_admin

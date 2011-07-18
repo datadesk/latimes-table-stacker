@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """An extremely simple WSGI web application framework.
 
 This module exports three primary classes: Request, Response, and
@@ -61,6 +64,7 @@ is stored in memory before it is written.
 import cgi
 import StringIO
 import logging
+import os
 import re
 import sys
 import traceback
@@ -70,13 +74,23 @@ import wsgiref.handlers
 import wsgiref.headers
 import wsgiref.util
 
+from google.appengine.api import lib_config
+
+
+
 wsgiref.handlers.BaseHandler.os_environ = {}
+
 
 RE_FIND_GROUPS = re.compile('\(.*?\)')
 _CHARSET_RE = re.compile(r';\s*charset=([^;\s]*)', re.I)
 
 class Error(Exception):
   """Base of all exceptions in the webapp module."""
+  pass
+
+
+class CannotReversePattern(Error):
+  """Thrown when a url_pattern cannot be reversed."""
   pass
 
 
@@ -99,6 +113,10 @@ class Request(webob.Request):
   You can access parsed query and POST values with the get() method; do not
   parse the query string yourself.
   """
+
+
+
+
 
   request_body_tempfile_limit = 0
 
@@ -137,18 +155,22 @@ class Request(webob.Request):
     Returns:
       If allow_multiple is False (which it is by default), we return the first
       value with the given name given in the request. If it is True, we always
-      return an list.
+      return a list.
     """
     param_value = self.get_all(argument_name)
     if allow_multiple:
-      return param_value
+      logging.warning('allow_multiple is a deprecated param, please use the '
+                      'Request.get_all() method instead.')
+    if len(param_value) > 0:
+      if allow_multiple:
+        return param_value
+      return param_value[0]
     else:
-      if len(param_value) > 0:
-        return param_value[0]
-      else:
-        return default_value
+      if allow_multiple and not default_value:
+        return []
+      return default_value
 
-  def get_all(self, argument_name):
+  def get_all(self, argument_name, default_value=None):
     """Returns a list of query or POST arguments with the given name.
 
     We parse the query string and POST payload lazily, so this will be a
@@ -156,6 +178,9 @@ class Request(webob.Request):
 
     Args:
       argument_name: the name of the query or POST argument
+      default_value: the value to return if the given argument is not present,
+        None may not be used as a default, if it is then an empty list will be
+        returned instead.
 
     Returns:
       A (possibly empty) list of values.
@@ -163,7 +188,13 @@ class Request(webob.Request):
     if self.charset:
       argument_name = argument_name.encode(self.charset)
 
+    if default_value is None:
+      default_value = []
+
     param_value = self.params.getall(argument_name)
+
+    if param_value is None or len(param_value) == 0:
+      return default_value
 
     for i in xrange(len(param_value)):
       if isinstance(param_value[i], cgi.FieldStorage):
@@ -190,14 +221,18 @@ class Request(webob.Request):
     Returns:
       An int within the given range for the argument
     """
+    value = self.get(name, default)
+    if value is None:
+      return value
     try:
-      value = int(self.get(name, default))
+      value = int(value)
     except ValueError:
       value = default
-    if max_value != None:
-      value = min(value, max_value)
-    if min_value != None:
-      value = max(value, min_value)
+    if value is not None:
+      if max_value is not None:
+        value = min(value, max_value)
+      if min_value is not None:
+        value = max(value, min_value)
     return value
 
 
@@ -210,12 +245,25 @@ class Response(object):
   """
   def __init__(self):
     """Constructs a response with the default settings."""
+
+
     self.out = StringIO.StringIO()
     self.__wsgi_headers = []
     self.headers = wsgiref.headers.Headers(self.__wsgi_headers)
     self.headers['Content-Type'] = 'text/html; charset=utf-8'
     self.headers['Cache-Control'] = 'no-cache'
+
     self.set_status(200)
+
+  @property
+  def status(self):
+    """Returns current request status code."""
+    return self.__status[0]
+
+  @property
+  def status_message(self):
+    """Returns current request status message."""
+    return self.__status[1]
 
   def set_status(self, code, message=None):
     """Sets the HTTP status code of this response.
@@ -247,9 +295,15 @@ class Response(object):
     """
     body = self.out.getvalue()
     if isinstance(body, unicode):
+
+
       body = body.encode('utf-8')
     elif self.headers.get('Content-Type', '').endswith('; charset=utf-8'):
+
+
       try:
+
+
         body.decode('utf-8')
       except UnicodeError, e:
         logging.warning('Response written is not UTF-8: %s', e)
@@ -258,6 +312,20 @@ class Response(object):
         not self.headers.get('Expires')):
       self.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
     self.headers['Content-Length'] = str(len(body))
+
+
+    new_headers = []
+    for header, value in self.__wsgi_headers:
+      if not isinstance(value, basestring):
+        value = unicode(value)
+      if ('\n' in header or '\r' in header or
+          '\n' in value or '\r' in value):
+        logging.warning('Replacing newline in header: %s', repr((header,value)))
+        value = value.replace('\n','').replace('\r','')
+        header = header.replace('\n','').replace('\r','')
+      new_headers.append((header, value))
+    self.__wsgi_headers = new_headers
+
     write = start_response('%d %s' % self.__status, self.__wsgi_headers)
     write(body)
     self.out.close()
@@ -399,16 +467,51 @@ class RequestHandler(object):
       self.response.out.write('<pre>%s</pre>' % (cgi.escape(lines, quote=True)))
 
   @classmethod
+  def new_factory(cls, *args, **kwargs):
+    """Create new request handler factory.
+
+    Use factory method to create reusable request handlers that just
+    require a few configuration parameters to construct.  Also useful
+    for injecting shared state between multiple request handler
+    instances without relying on global variables.  For example, to
+    create a set of post handlers that will do simple text transformations
+    you can write:
+
+      class ChangeTextHandler(webapp.RequestHandler):
+
+        def __init__(self, transform):
+          self.transform = transform
+
+        def post(self):
+          response_text = self.transform(
+              self.request.request.body_file.getvalue())
+          self.response.out.write(response_text)
+
+      application = webapp.WSGIApplication(
+          [('/to_lower', ChangeTextHandler.new_factory(str.lower)),
+           ('/to_upper', ChangeTextHandler.new_factory(str.upper)),
+          ],
+          debug=True)
+
+    Text POSTed to /to_lower will be lower cased.
+    Text POSTed to /to_upper will be upper cased.
+    """
+    def new_instance():
+      return cls(*args, **kwargs)
+    new_instance.__name__ = cls.__name__ + 'Factory'
+    return new_instance
+
+  @classmethod
   def get_url(cls, *args, **kargs):
     """Returns the url for the given handler.
 
     The default implementation uses the patterns passed to the active
-    WSGIApplication and the django urlresolvers module to create a url.
-    However, it is different from urlresolvers.reverse() in the following ways:
+    WSGIApplication to create a url. However, it is different from Django's
+    urlresolvers.reverse() in the following ways:
       - It does not try to resolve handlers via module loading
       - It does not support named arguments
       - It performs some post-prosessing on the url to remove some regex
-        operators that urlresolvers.reverse_helper() seems to miss.
+        operators.
       - It will try to fill in the left-most missing arguments with the args
         used in the active request.
 
@@ -429,6 +532,7 @@ class RequestHandler(object):
         number of args that were passed in.
     """
 
+
     app = WSGIApplication.active_instance
     pattern_map = app._pattern_map
 
@@ -436,31 +540,104 @@ class RequestHandler(object):
     if implicit_args == True:
       implicit_args = app.current_request_args
 
-    min_params = len(args)
 
-    urlresolvers = None
+
+    min_params = len(args)
 
     for pattern_tuple in pattern_map.get(cls, ()):
       num_params_in_pattern = pattern_tuple[1]
       if num_params_in_pattern < min_params:
         continue
 
-      if urlresolvers is None:
-        from django.core import urlresolvers
-
       try:
+
         num_implicit_args = max(0, num_params_in_pattern - len(args))
         merged_args = implicit_args[:num_implicit_args] + args
-        url = urlresolvers.reverse_helper(pattern_tuple[0], *merged_args)
+
+        url = _reverse_url_pattern(pattern_tuple[0], *merged_args)
+
+
+
         url = url.replace('\\', '')
         url = url.replace('?', '')
         return url
-      except urlresolvers.NoReverseMatch:
+      except CannotReversePattern:
         continue
 
     logging.warning('get_url failed for Handler name: %r, Args: %r',
                     cls.__name__, args)
     raise NoUrlFoundError
+
+
+def _reverse_url_pattern(url_pattern, *args):
+  """Turns a regex that matches a url back into a url by replacing
+  the url pattern's groups with the given args. Removes '^' and '$'
+  from the result.
+
+  Args:
+    url_pattern: A pattern used to match a URL.
+    args: list of values corresponding to groups in url_pattern.
+
+  Returns:
+    A string with url_pattern's groups filled in values from args.
+
+  Raises:
+     CannotReversePattern if either there aren't enough args to fill
+     url_pattern's groups, or if any arg isn't matched by the regular
+     expression fragment in the corresponding group.
+  """
+
+  group_index = [0]
+
+  def expand_group(match):
+    group = match.group(1)
+    try:
+
+      value = str(args[group_index[0]])
+      group_index[0] += 1
+    except IndexError:
+      raise CannotReversePattern('Not enough arguments in url tag')
+
+    if not re.match(group + '$', value):
+      raise CannotReversePattern("Value %r doesn't match (%r)" % (value, group))
+    return value
+
+  result = re.sub(r'\(([^)]+)\)', expand_group, url_pattern.pattern)
+  result = result.replace('^', '')
+  result = result.replace('$', '')
+  return result
+
+
+class RedirectHandler(RequestHandler):
+  """Simple redirection handler.
+
+  Easily configure URLs to redirect to alternate targets.  For example,
+  to configure a web application so that the root URL is always redirected
+  to the /home path, do:
+
+    application = webapp.WSGIApplication(
+        [('/', webapp.RedirectHandler.new_factory('/home', permanent=True)),
+         ('/home', HomeHandler),
+        ],
+        debug=True)
+
+  Handler also useful for setting up obsolete URLs to redirect to new paths.
+  """
+
+  def __init__(self, path, permanent=False):
+    """Constructor.
+
+    Do not use directly.  Configure using new_factory method.
+
+    Args:
+      path: Path to redirect to.
+      permanent: if true, we use a 301 redirect instead of a 302 redirect.
+    """
+    self.path = path
+    self.permanent = permanent
+
+  def get(self):
+    self.redirect(self.path, permanent=self.permanent)
 
 
 class WSGIApplication(object):
@@ -486,6 +663,8 @@ class WSGIApplication(object):
     """
     self._init_url_mappings(url_mapping)
     self.__debug = debug
+
+
     WSGIApplication.active_instance = self
     self.current_request_args = ()
 
@@ -494,7 +673,9 @@ class WSGIApplication(object):
     request = self.REQUEST_CLASS(environ)
     response = self.RESPONSE_CLASS()
 
+
     WSGIApplication.active_instance = self
+
 
     handler = None
     groups = ()
@@ -502,11 +683,15 @@ class WSGIApplication(object):
       match = regexp.match(request.path)
       if match:
         handler = handler_class()
+
+
         handler.initialize(request, response)
         groups = match.groups()
         break
 
+
     self.current_request_args = groups
+
 
     if handler:
       try:
@@ -532,6 +717,7 @@ class WSGIApplication(object):
     else:
       response.set_status(404)
 
+
     response.wsgi_write(start_response)
     return ['']
 
@@ -543,9 +729,16 @@ class WSGIApplication(object):
       handler_tuples: list of (URI, RequestHandler) pairs.
     """
 
+
+
+
+
     handler_map = {}
+
     pattern_map = {}
+
     url_mapping = []
+
 
     for regexp, handler in handler_tuples:
 
@@ -555,6 +748,7 @@ class WSGIApplication(object):
         pass
       else:
         handler_map[handler_name] = handler
+
 
       if not regexp.startswith('^'):
         regexp = '^' + regexp
@@ -566,6 +760,7 @@ class WSGIApplication(object):
 
       compiled = re.compile(regexp)
       url_mapping.append((compiled, handler))
+
 
       num_groups = len(RE_FIND_GROUPS.findall(regexp))
       handler_patterns = pattern_map.setdefault(handler, [])
@@ -594,3 +789,111 @@ class WSGIApplication(object):
     except:
       logging.error('Handler does not map to any urls: %s', handler_name)
       raise
+
+
+def _django_setup():
+  """Imports and configures Django.
+
+  This can be overridden by defining a function named
+  webapp_django_setup() in the app's appengine_config.py file (see
+  lib_config docs).  Such a function should import and configure
+  Django.
+
+  You can also just configure the Django version to be used by setting
+  webapp_django_version in that file.
+
+  Finally, calling use_library('django', <version>) in that file
+  should also work:
+
+    # Example taken from from
+    # http://code.google.com/appengine/docs/python/tools/libraries.html#Django
+
+    import os
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+    from google.appengine.dist import use_library
+    use_library('django', '1.2')
+
+  If your application also imports Django directly it should ensure
+  that the same code is executed before your app imports Django
+  (directly or indirectly).  Perhaps the simplest way to ensure that
+  is to include the following in your main.py (and in each alternate
+  main script):
+
+    from google.appengine.ext.webapp import template
+    import django
+
+  This will ensure that whatever Django setup code you have included
+  in appengine_config.py is executed, as a side effect of importing
+  the webapp.template module.
+  """
+  django_version = _config_handle.django_version
+
+  if django_version is not None:
+
+
+    from google.appengine.dist import use_library
+    use_library('django', str(django_version))
+  else:
+
+
+
+    from google.appengine.dist import _library
+    version, explicit = _library.installed.get('django', ('0.96', False))
+    if not explicit:
+      logging.warn('You are using the default Django version (%s). '
+                   'The default Django version will change in an '
+                   'App Engine release in the near future. '
+                   'Please call use_library() to explicitly select a '
+                   'Django version. '
+                   'For more information see %s',
+                   version,
+                   'http://code.google.com/appengine/docs/python/tools/'
+                   'libraries.html#Django')
+    try:
+
+      from django import v0_96
+    except ImportError:
+
+      pass
+
+
+  import django
+
+
+  import django.conf
+  try:
+
+
+    getattr(django.conf.settings, 'FAKE_ATTR', None)
+  except (ImportError, EnvironmentError), e:
+
+
+
+    if os.getenv(django.conf.ENVIRONMENT_VARIABLE):
+
+
+      logging.warning(e)
+
+    try:
+      django.conf.settings.configure(
+        DEBUG=False,
+        TEMPLATE_DEBUG=False,
+        TEMPLATE_LOADERS=(
+          'django.template.loaders.filesystem.load_template_source',
+        ),
+      )
+    except (EnvironmentError, RuntimeError):
+
+
+
+      pass
+
+
+
+_config_handle = lib_config.register(
+    'webapp',
+    {'django_setup': _django_setup,
+     'django_version': None,
+     'add_wsgi_middleware': lambda app: app,
+     })

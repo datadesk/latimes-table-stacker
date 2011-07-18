@@ -15,12 +15,22 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Bulkloader Config Parser and runner.
 
 A library to read bulkloader yaml configs.
 The code to interface between the bulkloader tool and the various connectors
 and conversions.
 """
+
+
+
+
+
+
 
 
 
@@ -80,6 +90,8 @@ def default_export_transform(value):
   Returns:
     unicode(value), or u'' if value is None
   """
+
+
   if value is None:
     return u''
   else:
@@ -110,6 +122,7 @@ class DictConvertor(object):
     """
     self._transformer_spec = transformer_spec
 
+
     self._create_key = None
     for prop in self._transformer_spec.property_map:
       if prop.property == '__key__':
@@ -126,6 +139,7 @@ class DictConvertor(object):
       Entity or model instance, or collection of entity or model instances,
       to be uploaded.
     """
+
     bulkload_state_copy = copy.copy(bulkload_state)
     bulkload_state_copy.current_dictionary = input_dict
     instance = self.__create_instance(input_dict, bulkload_state_copy)
@@ -134,6 +148,7 @@ class DictConvertor(object):
     if self._transformer_spec.post_import_function:
       post_map_instance = self._transformer_spec.post_import_function(
           input_dict, instance, bulkload_state_copy)
+
       return post_map_instance
     return instance
 
@@ -162,6 +177,9 @@ class DictConvertor(object):
     if self._transformer_spec.post_export_function:
       post_export_result = self._transformer_spec.post_export_function(
           instance, export_dict, bulkload_state)
+
+
+
       return post_export_result
     return export_dict
 
@@ -179,6 +197,7 @@ class DictConvertor(object):
     if transform.import_template:
       value = transform.import_template % input_dict
     else:
+
       value = input_dict.get(transform.external_name)
 
     if transform.import_transform:
@@ -227,9 +246,12 @@ class DictConvertor(object):
 
     for transform in self._transformer_spec.property_map:
       if transform.property == '__key__':
+
         continue
 
       value = self.__dict_to_prop(transform, input_dict, bulkload_state)
+
+
       if self._transformer_spec.model:
         setattr(instance, transform.property, value)
       else:
@@ -280,7 +302,9 @@ class DictConvertor(object):
       elif self._transformer_spec.use_model_on_export:
         value = getattr(instance, transform.property, transform.default_value)
       else:
+
         value = instance.get(transform.property, transform.default_value)
+
 
       if transform.export:
         for prop in transform.export:
@@ -289,6 +313,7 @@ class DictConvertor(object):
       elif transform.external_name:
         self.__prop_to_dict(value, transform.property, transform, export_dict,
                             bulkload_state)
+
 
 
 class GenericImporter(object):
@@ -469,6 +494,8 @@ class GenericExporter(object):
     """
     for entity in entity_iterator:
       output_dict = self.entity_to_dict(entity, self.bulkload_state)
+
+
       if output_dict:
         self.export_recorder.write_dict(output_dict)
 
@@ -494,6 +521,7 @@ def create_transformer_classes(transformer_spec, config_globals, increment_id):
     for the GenericImporter/GenericExporter class using a DictConvertor object
     configured as per the transformer_spec.
   """
+
   if transformer_spec.connector in CONNECTOR_FACTORIES:
     connector_factory = CONNECTOR_FACTORIES[transformer_spec.connector]
   elif config_globals and '.' in transformer_spec.connector:
@@ -516,9 +544,14 @@ def create_transformer_classes(transformer_spec, config_globals, increment_id):
   try:
     connector_object = connector_factory(options, transformer_spec.name)
   except TypeError:
+
+
     raise bulkloader_errors.InvalidConfiguration(
         'Invalid connector specified for name=%s. Could not initialize %s.' %
         (transformer_spec.name, transformer_spec.connector))
+
+
+
 
 
   dict_to_model_object = DictConvertor(transformer_spec)
@@ -538,6 +571,7 @@ def create_transformer_classes(transformer_spec, config_globals, increment_id):
     """Class to pass to the bulkloader, wraps the specificed configuration."""
 
     def __init__(self):
+
       super(self.__class__, self).__init__(
           connector_object,
           dict_to_model_object.entity_to_dict,
@@ -590,6 +624,7 @@ def load_config(filename, update_path=True, increment_id=None):
   """
 
   if update_path:
+
     sys.path.append(os.path.abspath(os.path.dirname(os.path.abspath(filename))))
   stream = file(filename, 'r')
   try:

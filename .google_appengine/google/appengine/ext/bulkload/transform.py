@@ -15,11 +15,21 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Bulkloader Transform Helper functions.
 
 A collection of helper functions for bulkloading data, typically referenced
 from a bulkloader.yaml file.
 """
+
+
+
+
+
+
 
 
 
@@ -34,6 +44,7 @@ import tempfile
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
 from google.appengine.ext.bulkload import bulkloader_errors
+
 
 
 CURRENT_PROPERTY = None
@@ -59,6 +70,8 @@ def none_if_empty(fn):
   """
 
   def wrapper(value):
+
+
     if value == '' or value is None or value == []:
       return None
     return fn(value)
@@ -80,6 +93,7 @@ def empty_if_none(fn):
   """
 
   def wrapper(value):
+
     if value is None:
       return ''
     return fn(value)
@@ -143,6 +157,7 @@ def create_deep_key(*path_info):
     Transform method which parses the info from the current neutral dictionary
     into a Key with parents as described by path_info.
   """
+
   validated_path_info = []
   for level_info in path_info:
     if len(level_info) == 3:
@@ -312,6 +327,7 @@ def blob_to_file(filename_hint_propertyname=None,
   Returns:
     A function which writes the input blob to a file.
   """
+
   directory = []
 
   def transform_function(value, bulkload_state):
@@ -352,6 +368,9 @@ def import_date_time(format, _strptime=None):
   Returns:
     Single argument method which parses a string into a datetime using format.
   """
+
+
+
   if not _strptime:
     _strptime = datetime.datetime.strptime
 

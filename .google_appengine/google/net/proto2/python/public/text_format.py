@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Contains routines for printing protocol messages in text format."""
 
 
@@ -27,6 +30,8 @@ from google.net.proto2.python.public import descriptor
 
 __all__ = [ 'MessageToString', 'PrintMessage', 'PrintField',
             'PrintFieldValue', 'Merge' ]
+
+
 
 
 _INFINITY = 1e10000
@@ -72,11 +77,14 @@ def PrintField(field, value, out, indent=0, as_utf8=False, as_one_line=False):
       out.write(field.full_name)
     out.write(']')
   elif field.type == descriptor.FieldDescriptor.TYPE_GROUP:
+
     out.write(field.message_type.name)
   else:
     out.write(field.name)
 
   if field.cpp_type != descriptor.FieldDescriptor.CPPTYPE_MESSAGE:
+
+
     out.write(': ')
 
   PrintFieldValue(field, value, out, indent, as_utf8, as_one_line)
@@ -167,6 +175,9 @@ def _MergeField(tokenizer, message):
     name = tokenizer.ConsumeIdentifier()
     field = message_descriptor.fields_by_name.get(name, None)
 
+
+
+
     if not field:
       field = message_descriptor.fields_by_name.get(name.lower(), None)
       if field and field.type != descriptor.FieldDescriptor.TYPE_GROUP:
@@ -200,7 +211,7 @@ def _MergeField(tokenizer, message):
         sub_message = message.Extensions[field]
       else:
         sub_message = getattr(message, field.name)
-        sub_message.SetInParent()
+      sub_message.SetInParent()
 
     while not tokenizer.TryConsume(end_token):
       if tokenizer.AtEnd():
@@ -249,6 +260,8 @@ def _MergeScalarField(tokenizer, message, field):
   elif field.type == descriptor.FieldDescriptor.TYPE_BYTES:
     value = tokenizer.ConsumeByteString()
   elif field.type == descriptor.FieldDescriptor.TYPE_ENUM:
+
+
     enum_descriptor = field.enum_type
     if tokenizer.LookingAtInteger():
       number = tokenizer.ConsumeInt32()
@@ -480,6 +493,9 @@ class _Tokenizer(object):
       self.NextToken()
       return _NAN
 
+
+    text = text.rstrip('f')
+
     try:
       result = float(text)
     except ValueError, e:
@@ -579,7 +595,9 @@ class _Tokenizer(object):
     elif text.startswith('0', pos):
       base = 8
 
+
     result = int(text, base)
+
 
     checker = self._INTEGER_CHECKERS[2 * int(is_long) + int(is_signed)]
     checker.CheckValue(result)
@@ -631,6 +649,11 @@ class _Tokenizer(object):
       self.token = self._current_line[self._column]
 
 
+
+
+
+
+
 def _CEscape(text, as_utf8):
   def escape(c):
     o = ord(c)
@@ -641,6 +664,7 @@ def _CEscape(text, as_utf8):
 
     if o == 34: return r'\"'
     if o == 92: return r"\\"
+
 
     if not as_utf8 and (o >= 127 or o < 32): return "\\%03o" % o
     return c
@@ -653,5 +677,7 @@ _CUNESCAPE_HEX = re.compile('\\\\x([0-9a-fA-F]{2}|[0-9a-fA-F])')
 def _CUnescape(text):
   def ReplaceHex(m):
     return chr(int(m.group(0)[2:], 16))
+
+
   result = _CUNESCAPE_HEX.sub(ReplaceHex, text)
   return result.decode('string_escape')

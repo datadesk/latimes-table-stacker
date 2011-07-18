@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+
+
+
+
 """The Python datastore protocol buffer definition.
 
 Proto2 compiler expects generated file names to follow specific pattern,

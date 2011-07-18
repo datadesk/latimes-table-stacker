@@ -16,6 +16,8 @@
 #
 
 
+
+
 import struct
 import array
 import string
@@ -31,6 +33,9 @@ __all__ = ['ProtocolMessage', 'Encoder', 'Decoder',
 URL_RE = re.compile('^(https?)://([^/]+)(/.*)$')
 
 class ProtocolMessage:
+
+
+
 
 
   def __init__(self, contents=None):
@@ -50,26 +55,47 @@ class ProtocolMessage:
       self.Output(e)
       return e.buffer().tostring()
 
+  def SerializeToString(self):
+    return self.Encode()
+
+  def SerializePartialToString(self):
+    try:
+      return self._CEncodePartial()
+    except (AbstractMethod, AttributeError):
+      e = Encoder()
+      self.OutputPartial(e)
+      return e.buffer().tostring()
+
   def _CEncode(self):
+    raise AbstractMethod
+
+  def _CEncodePartial(self):
     raise AbstractMethod
 
   def ParseFromString(self, s):
     self.Clear()
     self.MergeFromString(s)
-    return
+
+  def ParsePartialFromString(self, s):
+    self.Clear()
+    self.MergePartialFromString(s)
 
   def MergeFromString(self, s):
+    self.MergePartialFromString(s)
+    dbg = []
+    if not self.IsInitialized(dbg):
+      raise ProtocolBufferDecodeError, '\n\t'.join(dbg)
+
+  def MergePartialFromString(self, s):
     try:
       self._CMergeFromString(s)
-      dbg = []
-      if not self.IsInitialized(dbg):
-        raise ProtocolBufferDecodeError, '\n\t'.join(dbg)
     except AbstractMethod:
+
+
       a = array.array('B')
       a.fromstring(s)
       d = Decoder(a, 0, len(a))
-      self.Merge(d)
-      return
+      self.TryMerge(d)
 
   def _CMergeFromString(self, s):
     raise AbstractMethod
@@ -129,6 +155,8 @@ class ProtocolMessage:
   def ToShortASCII(self):
     return self._CToASCII(ProtocolMessage._SYMBOLIC_SHORT_ASCII)
 
+
+
   _NUMERIC_ASCII = 0
   _SYMBOLIC_SHORT_ASCII = 1
   _SYMBOLIC_FULL_ASCII = 2
@@ -146,14 +174,27 @@ class ProtocolMessage:
     raise AbstractMethod
 
   def __eq__(self, other):
+
+
+
+
+
     if other.__class__ is self.__class__:
       return self.Equals(other)
     return NotImplemented
 
   def __ne__(self, other):
+
+
+
+
+
     if other.__class__ is self.__class__:
       return not self.Equals(other)
     return NotImplemented
+
+
+
 
 
   def Output(self, e):
@@ -164,6 +205,9 @@ class ProtocolMessage:
     return
 
   def OutputUnchecked(self, e):
+    raise AbstractMethod
+
+  def OutputPartial(self, e):
     raise AbstractMethod
 
   def Parse(self, d):
@@ -188,6 +232,9 @@ class ProtocolMessage:
 
   def MergeFrom(self, pb):
     raise AbstractMethod
+
+
+
 
 
   def lengthVarInt32(self, n):
@@ -218,6 +265,9 @@ class ProtocolMessage:
       return self.DebugFormatFixed64(value)
     return "%d" % value
   def DebugFormatString(self, value):
+
+
+
     def escape(c):
       o = ord(c)
       if o == 10: return r"\n"
@@ -243,7 +293,10 @@ class ProtocolMessage:
     else:
       return "false"
 
+
+
 class Encoder:
+
 
   NUMERIC     = 0
   DOUBLE      = 1
@@ -292,6 +345,13 @@ class Encoder:
     return
 
   def putVarInt32(self, v):
+
+
+
+
+
+
+
 
     buf_append = self.buf.append
     if v & 127 == v:
@@ -342,6 +402,10 @@ class Encoder:
     return
 
 
+
+
+
+
   def putFloat(self, v):
     a = array.array('B')
     a.fromstring(struct.pack("<f", v))
@@ -362,6 +426,9 @@ class Encoder:
     return
 
   def putPrefixedString(self, v):
+
+
+
     v = str(v)
     self.putVarInt32(len(v))
     self.buf.fromstring(v)
@@ -417,6 +484,7 @@ class Decoder:
     else:
       raise ProtocolBufferDecodeError, "corrupted"
 
+
   def get8(self):
     if self.idx >= self.limit: raise ProtocolBufferDecodeError, "truncated"
     c = self.buf[self.idx]
@@ -454,6 +522,9 @@ class Decoder:
             | (e << 16) | (d << 8) | c)
 
   def getVarInt32(self):
+
+
+
     b = self.get8()
     if not (b & 128):
       return b

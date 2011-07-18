@@ -16,6 +16,12 @@
 #
 
 
+
+
+
+
+
+
 """Contains an abstract base class for protocol messages."""
 
 
@@ -45,6 +51,7 @@ class Message(object):
   """
 
 
+
   __slots__ = []
 
   DESCRIPTOR = None
@@ -58,6 +65,7 @@ class Message(object):
     raise NotImplementedError
 
   def __ne__(self, other_msg):
+
     return not self == other_msg
 
   def __hash__(self):
@@ -119,6 +127,11 @@ class Message(object):
     raise NotImplementedError
 
 
+
+
+
+
+
   def MergeFromString(self, serialized):
     """Merges serialized protocol buffer data into this message.
 
@@ -177,6 +190,22 @@ class Message(object):
     """
     raise NotImplementedError
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   def ListFields(self):
     """Returns a list of (FieldDescriptor, value) tuples for all
     fields in the message which are not empty.  A singular field is non-empty
@@ -186,6 +215,9 @@ class Message(object):
     raise NotImplementedError
 
   def HasField(self, field_name):
+    """Checks if a certain field is set for the message. Note if the
+    field_name is not defined in the message descriptor, ValueError will be
+    raised."""
     raise NotImplementedError
 
   def ClearField(self, field_name):
@@ -223,3 +255,12 @@ class Message(object):
     via a previous _SetListener() call.
     """
     raise NotImplementedError
+
+  def __getstate__(self):
+    """Support the pickle protocol."""
+    return dict(serialized=self.SerializePartialToString())
+
+  def __setstate__(self, state):
+    """Support the pickle protocol."""
+    self.__init__()
+    self.ParseFromString(state['serialized'])

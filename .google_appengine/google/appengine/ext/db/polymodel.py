@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Support for polymorphic models and queries.
 
 The Model class on its own is only able to support functional polymorphism.
@@ -33,7 +36,9 @@ polymorphic queries.
 
 from google.appengine.ext import db
 
+
 _class_map = {}
+
 
 _CLASS_KEY_PROPERTY = 'class'
 
@@ -110,7 +115,11 @@ class PolymorphicClass(db.PropertiedClass):
     discriminator (the 'class' property of the entity) when loading from the
     datastore.
     """
+
+
+
     if name == 'PolyModel':
+
       super(PolymorphicClass, cls).__init__(name, bases, dct, map_kind=False)
       return
 
@@ -119,13 +128,22 @@ class PolymorphicClass(db.PropertiedClass):
         raise db.ConfigurationError(('%s cannot derive from PolyModel as '
             '__class_hierarchy__ is already defined.') % cls.__name__)
       cls.__class_hierarchy__ = [cls]
+
+
       cls.__root_class__ = cls
+
       super(PolymorphicClass, cls).__init__(name, bases, dct)
     else:
+
       super(PolymorphicClass, cls).__init__(name, bases, dct, map_kind=False)
+
 
       cls.__class_hierarchy__ = [c for c in reversed(cls.mro())
           if issubclass(c, PolyModel) and c != PolyModel]
+
+
+
+
 
       if cls.__class_hierarchy__[0] != cls.__root_class__:
         raise db.ConfigurationError(
@@ -210,10 +228,27 @@ class PolyModel(db.Model):
 
   __metaclass__ = PolymorphicClass
 
+
+
   _class = _ClassKeyProperty(name=_CLASS_KEY_PROPERTY)
 
-  def __new__(cls, *args, **kwds):
-    """Prevents direct instantiation of PolyModel."""
+  def __new__(*args, **kwds):
+    """Prevents direct instantiation of PolyModel.
+
+    Allow subclasses to call __new__() with arguments.
+
+    Do NOT list 'cls' as the first argument, or in the case when
+    the 'kwds' dictionary contains the key 'cls', the function
+    will complain about multiple argument values for 'cls'.
+
+    Raises:
+      TypeError if there are no positional arguments.
+    """
+    if args:
+      cls = args[0]
+    else:
+      raise TypeError('object.__new__(): not enough arguments')
+
     if cls is PolyModel:
       raise NotImplementedError()
     return super(PolyModel, cls).__new__(cls, *args, **kwds)
@@ -346,7 +381,17 @@ class PolyModel(db.Model):
     else:
       from google.appengine.ext import gql
 
+
       query = db.GqlQuery('SELECT * FROM %s %s' % (cls.kind(), query_string))
+
+
+
+
+
+
+
+
+
 
       query_filter = [('nop',
                        [gql.Literal(cls.class_name())])]

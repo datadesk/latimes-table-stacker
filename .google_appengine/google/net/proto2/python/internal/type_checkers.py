@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Provides type checking routines.
 
 This module defines type checking utilities in the forms of dictionaries:
@@ -57,6 +60,10 @@ def GetTypeChecker(cpp_type, field_type):
 
 
 
+
+
+
+
 class TypeChecker(object):
 
   """Type checker used to catch type errors as early as possible
@@ -71,6 +78,8 @@ class TypeChecker(object):
       message = ('%.1024r has type %s, but expected one of: %s' %
                  (proposed_value, type(proposed_value), self._acceptable_types))
       raise TypeError(message)
+
+
 
 
 class IntValueChecker(object):
@@ -96,6 +105,8 @@ class UnicodeValueChecker(object):
                  (proposed_value, type(proposed_value), (str, unicode)))
       raise TypeError(message)
 
+
+
     if isinstance(proposed_value, str):
       try:
         unicode(proposed_value, 'ascii')
@@ -107,6 +118,8 @@ class UnicodeValueChecker(object):
 
 
 class Int32ValueChecker(IntValueChecker):
+
+
   _MIN = -2147483648
   _MAX = 2147483647
 
@@ -126,6 +139,7 @@ class Uint64ValueChecker(IntValueChecker):
   _MAX = (1 << 64) - 1
 
 
+
 _VALUE_CHECKERS = {
     _FieldDescriptor.CPPTYPE_INT32: Int32ValueChecker(),
     _FieldDescriptor.CPPTYPE_INT64: Int64ValueChecker(),
@@ -139,6 +153,10 @@ _VALUE_CHECKERS = {
     _FieldDescriptor.CPPTYPE_ENUM: Int32ValueChecker(),
     _FieldDescriptor.CPPTYPE_STRING: TypeChecker(str),
     }
+
+
+
+
 
 
 TYPE_TO_BYTE_SIZE_FN = {
@@ -163,6 +181,7 @@ TYPE_TO_BYTE_SIZE_FN = {
     }
 
 
+
 TYPE_TO_ENCODER = {
     _FieldDescriptor.TYPE_DOUBLE: encoder.DoubleEncoder,
     _FieldDescriptor.TYPE_FLOAT: encoder.FloatEncoder,
@@ -183,6 +202,7 @@ TYPE_TO_ENCODER = {
     _FieldDescriptor.TYPE_SINT32: encoder.SInt32Encoder,
     _FieldDescriptor.TYPE_SINT64: encoder.SInt64Encoder,
     }
+
 
 
 TYPE_TO_SIZER = {
@@ -207,6 +227,7 @@ TYPE_TO_SIZER = {
     }
 
 
+
 TYPE_TO_DECODER = {
     _FieldDescriptor.TYPE_DOUBLE: decoder.DoubleDecoder,
     _FieldDescriptor.TYPE_FLOAT: decoder.FloatDecoder,
@@ -227,6 +248,7 @@ TYPE_TO_DECODER = {
     _FieldDescriptor.TYPE_SINT32: decoder.SInt32Decoder,
     _FieldDescriptor.TYPE_SINT64: decoder.SInt64Decoder,
     }
+
 
 FIELD_TYPE_TO_WIRE_TYPE = {
     _FieldDescriptor.TYPE_DOUBLE: wire_format.WIRETYPE_FIXED64,

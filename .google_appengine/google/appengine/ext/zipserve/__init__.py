@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Serve static files from a zipfile.
 
 This is a solution for apps that want to serve 1000s of small static
@@ -76,6 +79,8 @@ def make_zip_handler(zipfilename, max_age=None, public=None):
   Returns:
     A ZipHandler subclass.
   """
+
+
   class CustomZipHandler(ZipHandler):
     def get(self, name):
       self.ServeFromZipFile(self.ZIPFILENAME, name)
@@ -90,6 +95,7 @@ def make_zip_handler(zipfilename, max_age=None, public=None):
 
 class ZipHandler(webapp.RequestHandler):
   """Request handler serving static files from zipfiles."""
+
 
   zipfile_cache = {}
 
@@ -117,11 +123,14 @@ class ZipHandler(webapp.RequestHandler):
       zipfilename: The name of the zipfile.
       name: The name within the zipfile.
     """
+
     zipfile_object = self.zipfile_cache.get(zipfilename)
     if zipfile_object is None:
       try:
         zipfile_object = zipfile.ZipFile(zipfilename)
       except (IOError, RuntimeError, zipfile.BadZipfile), err:
+
+
         logging.error('Can\'t open zipfile %s: %s', zipfilename, err)
         zipfile_object = ''
       self.zipfile_cache[zipfilename] = zipfile_object
@@ -141,7 +150,9 @@ class ZipHandler(webapp.RequestHandler):
     self.SetCachingHeaders()
     self.response.out.write(data)
 
+
   MAX_AGE = 600
+
 
   PUBLIC = True
 

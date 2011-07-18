@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Memcache API.
 
 Provides memcached-alike API to application developers to store
@@ -24,11 +27,15 @@ required and higher performance is desired.
 
 
 
+
+
+
+
 import cStringIO
 import math
 import pickle
 import types
-import sha
+import hashlib
 
 from google.appengine.api import api_base_pb
 from google.appengine.api import apiproxy_stub_map
@@ -36,6 +43,7 @@ from google.appengine.api import capabilities
 from google.appengine.api import namespace_manager
 from google.appengine.api.memcache import memcache_service_pb
 from google.appengine.runtime import apiproxy_errors
+
 
 MemcacheSetResponse = memcache_service_pb.MemcacheSetResponse
 MemcacheSetRequest = memcache_service_pb.MemcacheSetRequest
@@ -58,12 +66,15 @@ MemcacheFlushRequest = memcache_service_pb.MemcacheFlushRequest
 MemcacheStatsRequest = memcache_service_pb.MemcacheStatsRequest
 MemcacheStatsResponse = memcache_service_pb.MemcacheStatsResponse
 
+
 DELETE_NETWORK_FAILURE = 0
 DELETE_ITEM_MISSING = 1
 DELETE_SUCCESSFUL = 2
 
+
 MAX_KEY_SIZE = 250
 MAX_VALUE_SIZE = 10 ** 6
+
 
 STAT_HITS = 'hits'
 STAT_MISSES = 'misses'
@@ -72,8 +83,14 @@ STAT_ITEMS = 'items'
 STAT_BYTES = 'bytes'
 STAT_OLDEST_ITEM_AGES = 'oldest_item_age'
 
+
+
 FLAG_TYPE_MASK = 7
 FLAG_COMPRESSED = 1 << 3
+
+
+
+
 
 TYPE_STR = 0
 TYPE_UNICODE = 1
@@ -81,6 +98,7 @@ TYPE_PICKLED = 2
 TYPE_INT = 3
 TYPE_LONG = 4
 TYPE_BOOL = 5
+
 
 CAPABILITY = capabilities.CapabilitySet('memcache')
 
@@ -132,12 +150,16 @@ def _key_string(key, key_prefix='', server_to_user_dict=None):
     raise TypeError('key_prefix must be a string instance, received %r' %
                     key_prefix)
 
+
+
+
+
   server_key = key_prefix + key
   if isinstance(server_key, unicode):
     server_key = server_key.encode('utf-8')
 
   if len(server_key) > MAX_KEY_SIZE:
-    server_key = sha.new(server_key).hexdigest()
+    server_key = hashlib.sha1(server_key).hexdigest()
 
   if server_to_user_dict is not None:
     if not isinstance(server_to_user_dict, dict):
@@ -182,6 +204,8 @@ def _validate_encode_value(value, do_pickle):
     stored_value = value.encode('utf-8')
     flags |= TYPE_UNICODE
   elif isinstance(value, bool):
+
+
     stored_value = str(int(value))
     flags |= TYPE_BOOL
   elif isinstance(value, int):
@@ -193,6 +217,9 @@ def _validate_encode_value(value, do_pickle):
   else:
     stored_value = do_pickle(value)
     flags |= TYPE_PICKLED
+
+
+
 
 
   if len(stored_value) > MAX_VALUE_SIZE:
@@ -224,6 +251,7 @@ def _decode_value(stored_value, flags, do_unpickle):
 
   type_number = flags & FLAG_TYPE_MASK
   value = stored_value
+
 
 
   if type_number == TYPE_STR:
@@ -268,7 +296,9 @@ class Client(object):
                unpickler=pickle.Unpickler,
                pload=None,
                pid=None,
-               make_sync_call=apiproxy_stub_map.MakeSyncCall):
+               make_sync_call=apiproxy_stub_map.MakeSyncCall,
+               _app_id=None,
+               _num_memcacheg_backends=None):
     """Create a new Client object.
 
     No parameters are required.
@@ -284,6 +314,15 @@ class Client(object):
       make_sync_call: Function to use to make an App Engine service call.
         Used for testing.
     """
+
+
+
+
+
+
+
+
+
     self._pickle_data = cStringIO.StringIO()
     self._pickler_instance = pickler(self._pickle_data,
                                      protocol=pickleProtocol)
@@ -309,6 +348,23 @@ class Client(object):
     self._do_unpickle = DoUnpickle
 
     self._make_sync_call = make_sync_call
+
+    self._app_id = _app_id
+    self._num_memcacheg_backends = _num_memcacheg_backends
+    if _app_id and not _num_memcacheg_backends:
+      raise ValueError('If you specify an _app_id, you must also '
+                       'provide _num_memcacheg_backends')
+
+  def _add_app_id(self, message):
+    """Populate the app_id and num_memcacheg_backends fields in a message.
+
+    Args:
+      message: A protocol buffer supporting the mutable_override() operation.
+    """
+    if self._app_id:
+      app_override = message.mutable_override()
+      app_override.set_app_id(self._app_id)
+      app_override.set_num_memcacheg_backends(self._num_memcacheg_backends)
 
   def set_servers(self, servers):
     """Sets the pool of memcache servers used by the client.
@@ -363,6 +419,7 @@ class Client(object):
       On error, returns None.
     """
     request = MemcacheStatsRequest()
+    self._add_app_id(request)
     response = MemcacheStatsResponse()
     try:
       self._make_sync_call('memcache', 'Stats', request, response)
@@ -396,6 +453,7 @@ class Client(object):
       True on success, False on RPC or server error.
     """
     request = MemcacheFlushRequest()
+    self._add_app_id(request)
     response = MemcacheFlushResponse()
     try:
       self._make_sync_call('memcache', 'FlushAll', request, response)
@@ -421,6 +479,7 @@ class Client(object):
       The value of the key, if found in memcache, else None.
     """
     request = MemcacheGetRequest()
+    self._add_app_id(request)
     request.add_key(_key_string(key))
     _add_name_space(request, namespace)
     response = MemcacheGetResponse()
@@ -458,6 +517,7 @@ class Client(object):
       the keys in the returned dictionary.
     """
     request = MemcacheGetRequest()
+    self._add_app_id(request)
     _add_name_space(request, namespace)
     response = MemcacheGetResponse()
     user_key = {}
@@ -474,6 +534,11 @@ class Client(object):
                             self._do_unpickle)
       return_value[user_key[returned_item.key()]] = value
     return return_value
+
+
+
+
+
 
   def delete(self, key, seconds=0, namespace=None):
     """Deletes a key from memcache.
@@ -503,6 +568,7 @@ class Client(object):
       raise ValueError('Delete timeout must be non-negative.')
 
     request = MemcacheDeleteRequest()
+    self._add_app_id(request)
     _add_name_space(request, namespace)
     response = MemcacheDeleteResponse()
 
@@ -547,6 +613,7 @@ class Client(object):
       raise ValueError('Delete timeout must not be negative.')
 
     request = MemcacheDeleteRequest()
+    self._add_app_id(request)
     _add_name_space(request, namespace)
     response = MemcacheDeleteResponse()
 
@@ -651,6 +718,7 @@ class Client(object):
       raise ValueError('Expiration must not be negative.')
 
     request = MemcacheSetRequest()
+    self._add_app_id(request)
     item = request.add_item()
     item.set_key(_key_string(key))
     stored_value, flags = _validate_encode_value(value, self._do_pickle)
@@ -667,6 +735,10 @@ class Client(object):
     if response.set_status_size() != 1:
       return False
     return response.set_status(0) == MemcacheSetResponse.STORED
+
+
+
+
 
   def _set_multi_with_policy(self, policy, mapping, time=0, key_prefix='',
                              namespace=None):
@@ -699,6 +771,7 @@ class Client(object):
       raise ValueError('Expiration must not be negative.')
 
     request = MemcacheSetRequest()
+    self._add_app_id(request)
     _add_name_space(request, namespace)
     user_key = {}
     server_keys = []
@@ -721,6 +794,7 @@ class Client(object):
       return user_key.values()
 
     assert response.set_status_size() == len(server_keys)
+
 
     unset_list = []
     for server_key, set_status in zip(server_keys, response.set_status_list()):
@@ -906,6 +980,7 @@ class Client(object):
     if delta < 0:
       raise ValueError('Delta must not be negative.')
 
+
     if not isinstance(key, basestring):
       try:
         iter(key)
@@ -916,9 +991,12 @@ class Client(object):
             namespace=namespace,
             initial_value=initial_value)
       except TypeError:
+
         pass
 
+
     request = MemcacheIncrementRequest()
+    self._add_app_id(request)
     _add_name_space(request, namespace)
     response = MemcacheIncrementResponse()
     request.set_key(_key_string(key))
@@ -966,6 +1044,7 @@ class Client(object):
         raise ValueError('initial_value must be >= 0')
 
     request = MemcacheBatchIncrementRequest()
+    self._add_app_id(request)
     response = MemcacheBatchIncrementResponse()
     _add_name_space(request, namespace)
 
@@ -1003,6 +1082,9 @@ class Client(object):
         result_dict[key] = None
 
     return result_dict
+
+
+
 
 
 _CLIENT = None

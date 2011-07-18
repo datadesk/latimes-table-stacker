@@ -15,9 +15,37 @@
 # limitations under the License.
 #
 
+
 import sys
 from antlr3 import *
 from antlr3.compat import set, frozenset
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -29,47 +57,53 @@ numOrdinals = len(allOrdinals)
 
 
 
+
 HIDDEN = BaseRecognizer.HIDDEN
+
 
 THIRD=13
 SEPTEMBER=36
+WEDNESDAY=22
+APRIL=31
+JULY=34
+DIGITS=8
+MAY=32
+OCTOBER=37
+DAY=19
+EOF=-1
+MARCH=30
+MONTH=27
+FRIDAY=24
+UNKNOWN_TOKEN=44
+TIME=5
+SYNCHRONIZED=9
+QUARTER=40
+COMMA=10
+DIGIT=7
 FOURTH=14
 SECOND=12
-WEDNESDAY=22
 NOVEMBER=38
 SATURDAY=25
-JULY=34
-APRIL=31
-DIGITS=8
-OCTOBER=37
-MAY=32
+TO=42
 EVERY=6
 FEBRUARY=29
 MONDAY=20
 SUNDAY=26
 JUNE=33
-DAY=19
-MARCH=30
 OF=4
-EOF=-1
 JANUARY=28
-MONTH=27
-FRIDAY=24
-FIFTH=15
 MINUTES=18
-TIME=5
-WS=41
-SYNCHRONIZED=9
-QUARTER=40
+FIFTH=15
+WS=43
 THURSDAY=23
-COMMA=10
 DECEMBER=39
 AUGUST=35
-DIGIT=7
+FROM=41
 TUESDAY=21
 HOURS=17
-FIRST=11
 FOURTH_OR_FIFTH=16
+FIRST=11
+
 
 tokenNames = [
     "<invalid>", "<EOR>", "<DOWN>", "<UP>",
@@ -78,7 +112,7 @@ tokenNames = [
     "DAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY",
     "SUNDAY", "MONTH", "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
     "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER", "QUARTER",
-    "WS"
+    "FROM", "TO", "WS", "UNKNOWN_TOKEN"
 ]
 
 
@@ -119,6 +153,8 @@ class GrocParser(Parser):
         self.interval_mins = 0
         self.period_string = ''
         self.synchronized = False
+        self.start_time_string = ''
+        self.end_time_string = ''
 
 
 
@@ -156,8 +192,11 @@ class GrocParser(Parser):
         DECEMBER: 12,
       }
 
+
     def ValueOf(self, token_type):
       return self.valuesDict.get(token_type, -1)
+
+
 
 
 
@@ -166,7 +205,10 @@ class GrocParser(Parser):
 
         try:
             try:
+
+
                 pass
+
                 alt1 = 2
                 LA1_0 = self.input.LA(1)
 
@@ -190,6 +232,7 @@ class GrocParser(Parser):
                     raise nvae
 
                 if alt1 == 1:
+
                     pass
                     self._state.following.append(self.FOLLOW_specifictime_in_timespec44)
                     self.specifictime()
@@ -198,6 +241,7 @@ class GrocParser(Parser):
 
 
                 elif alt1 == 2:
+
                     pass
                     self._state.following.append(self.FOLLOW_interval_in_timespec48)
                     self.interval()
@@ -206,6 +250,7 @@ class GrocParser(Parser):
 
 
 
+                self.match(self.input, EOF, self.FOLLOW_EOF_in_timespec52)
 
 
 
@@ -221,19 +266,31 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def specifictime(self, ):
 
         TIME1 = None
 
         try:
             try:
+
+
                 pass
+
+
                 pass
+
                 alt4 = 2
                 alt4 = self.dfa4.predict(self.input)
                 if alt4 == 1:
+
                     pass
+
+
                     pass
+
                     alt2 = 2
                     LA2_0 = self.input.LA(1)
 
@@ -247,13 +304,16 @@ class GrocParser(Parser):
                         raise nvae
 
                     if alt2 == 1:
+
                         pass
+
+
                         pass
-                        self._state.following.append(self.FOLLOW_ordinals_in_specifictime70)
+                        self._state.following.append(self.FOLLOW_ordinals_in_specifictime72)
                         self.ordinals()
 
                         self._state.following.pop()
-                        self._state.following.append(self.FOLLOW_weekdays_in_specifictime72)
+                        self._state.following.append(self.FOLLOW_weekdays_in_specifictime74)
                         self.weekdays()
 
                         self._state.following.pop()
@@ -263,15 +323,17 @@ class GrocParser(Parser):
 
 
                     elif alt2 == 2:
+
                         pass
-                        self._state.following.append(self.FOLLOW_monthdays_in_specifictime75)
+                        self._state.following.append(self.FOLLOW_monthdays_in_specifictime77)
                         self.monthdays()
 
                         self._state.following.pop()
 
 
 
-                    self.match(self.input, OF, self.FOLLOW_OF_in_specifictime78)
+                    self.match(self.input, OF, self.FOLLOW_OF_in_specifictime80)
+
                     alt3 = 2
                     LA3_0 = self.input.LA(1)
 
@@ -285,16 +347,18 @@ class GrocParser(Parser):
                         raise nvae
 
                     if alt3 == 1:
+
                         pass
-                        self._state.following.append(self.FOLLOW_monthspec_in_specifictime81)
+                        self._state.following.append(self.FOLLOW_monthspec_in_specifictime83)
                         self.monthspec()
 
                         self._state.following.pop()
 
 
                     elif alt3 == 2:
+
                         pass
-                        self._state.following.append(self.FOLLOW_quarterspec_in_specifictime83)
+                        self._state.following.append(self.FOLLOW_quarterspec_in_specifictime85)
                         self.quarterspec()
 
                         self._state.following.pop()
@@ -307,16 +371,20 @@ class GrocParser(Parser):
 
 
                 elif alt4 == 2:
+
                     pass
+
+
                     pass
-                    self._state.following.append(self.FOLLOW_ordinals_in_specifictime99)
+                    self._state.following.append(self.FOLLOW_ordinals_in_specifictime101)
                     self.ordinals()
 
                     self._state.following.pop()
-                    self._state.following.append(self.FOLLOW_weekdays_in_specifictime101)
+                    self._state.following.append(self.FOLLOW_weekdays_in_specifictime103)
                     self.weekdays()
 
                     self._state.following.pop()
+
                     self.month_set = set(range(1,13))
 
 
@@ -324,8 +392,11 @@ class GrocParser(Parser):
 
 
 
-                TIME1=self.match(self.input, TIME, self.FOLLOW_TIME_in_specifictime115)
+
+                TIME1=self.match(self.input, TIME, self.FOLLOW_TIME_in_specifictime117)
+
                 self.time_string = TIME1.text
+
 
 
 
@@ -341,6 +412,9 @@ class GrocParser(Parser):
             pass
 
         return
+
+
+
 
 
 
@@ -352,9 +426,13 @@ class GrocParser(Parser):
 
         try:
             try:
+
+
                 pass
+
+
                 pass
-                self.match(self.input, EVERY, self.FOLLOW_EVERY_in_interval134)
+                self.match(self.input, EVERY, self.FOLLOW_EVERY_in_interval136)
                 intervalnum = self.input.LT(1)
                 if (DIGIT <= self.input.LA(1) <= DIGITS):
                     self.input.consume()
@@ -366,27 +444,52 @@ class GrocParser(Parser):
 
 
 
+
                 self.interval_mins = int(intervalnum.text)
 
-                self._state.following.append(self.FOLLOW_period_in_interval160)
+
+                self._state.following.append(self.FOLLOW_period_in_interval162)
                 period2 = self.period()
 
                 self._state.following.pop()
+
 
                 if ((period2 is not None) and [self.input.toString(period2.start,period2.stop)] or [None])[0] == "hours":
                   self.period_string = "hours"
                 else:
                   self.period_string = "minutes"
 
-                alt5 = 2
+
+
+                alt5 = 3
                 LA5_0 = self.input.LA(1)
 
-                if (LA5_0 == SYNCHRONIZED) :
+                if (LA5_0 == FROM) :
                     alt5 = 1
+                elif (LA5_0 == SYNCHRONIZED) :
+                    alt5 = 2
                 if alt5 == 1:
+
                     pass
-                    self.match(self.input, SYNCHRONIZED, self.FOLLOW_SYNCHRONIZED_in_interval171)
+                    self._state.following.append(self.FOLLOW_time_range_in_interval174)
+                    self.time_range()
+
+                    self._state.following.pop()
+
+
+                elif alt5 == 2:
+
+                    pass
+
+
+                    pass
+                    self.match(self.input, SYNCHRONIZED, self.FOLLOW_SYNCHRONIZED_in_interval187)
+
                     self.synchronized = True
+
+
+
+
 
 
 
@@ -408,11 +511,17 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def ordinals(self, ):
 
         try:
             try:
+
+
                 pass
+
                 alt7 = 2
                 LA7_0 = self.input.LA(1)
 
@@ -426,18 +535,25 @@ class GrocParser(Parser):
                     raise nvae
 
                 if alt7 == 1:
+
                     pass
-                    self.match(self.input, EVERY, self.FOLLOW_EVERY_in_ordinals192)
+                    self.match(self.input, EVERY, self.FOLLOW_EVERY_in_ordinals216)
+
                     self.ordinal_set = self.ordinal_set.union(allOrdinals)
 
 
+
                 elif alt7 == 2:
+
                     pass
+
+
                     pass
-                    self._state.following.append(self.FOLLOW_ordinal_in_ordinals208)
+                    self._state.following.append(self.FOLLOW_ordinal_in_ordinals232)
                     self.ordinal()
 
                     self._state.following.pop()
+
                     while True:
                         alt6 = 2
                         LA6_0 = self.input.LA(1)
@@ -447,9 +563,10 @@ class GrocParser(Parser):
 
 
                         if alt6 == 1:
+
                             pass
-                            self.match(self.input, COMMA, self.FOLLOW_COMMA_in_ordinals211)
-                            self._state.following.append(self.FOLLOW_ordinal_in_ordinals213)
+                            self.match(self.input, COMMA, self.FOLLOW_COMMA_in_ordinals235)
+                            self._state.following.append(self.FOLLOW_ordinal_in_ordinals237)
                             self.ordinal()
 
                             self._state.following.pop()
@@ -480,12 +597,17 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def ordinal(self, ):
 
         ord = None
 
         try:
             try:
+
+
                 pass
                 ord = self.input.LT(1)
                 if (FIRST <= self.input.LA(1) <= FOURTH_OR_FIFTH):
@@ -498,7 +620,9 @@ class GrocParser(Parser):
 
 
 
+
                 self.ordinal_set.add(self.ValueOf(ord.type));
+
 
 
 
@@ -514,9 +638,12 @@ class GrocParser(Parser):
         return
 
 
+
     class period_return(ParserRuleReturnScope):
         def __init__(self):
             ParserRuleReturnScope.__init__(self)
+
+
 
 
 
@@ -529,6 +656,8 @@ class GrocParser(Parser):
 
         try:
             try:
+
+
                 pass
                 if (HOURS <= self.input.LA(1) <= MINUTES):
                     self.input.consume()
@@ -556,16 +685,24 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def monthdays(self, ):
 
         try:
             try:
+
+
                 pass
+
+
                 pass
-                self._state.following.append(self.FOLLOW_monthday_in_monthdays296)
+                self._state.following.append(self.FOLLOW_monthday_in_monthdays320)
                 self.monthday()
 
                 self._state.following.pop()
+
                 while True:
                     alt8 = 2
                     LA8_0 = self.input.LA(1)
@@ -575,9 +712,10 @@ class GrocParser(Parser):
 
 
                     if alt8 == 1:
+
                         pass
-                        self.match(self.input, COMMA, self.FOLLOW_COMMA_in_monthdays300)
-                        self._state.following.append(self.FOLLOW_monthday_in_monthdays302)
+                        self.match(self.input, COMMA, self.FOLLOW_COMMA_in_monthdays324)
+                        self._state.following.append(self.FOLLOW_monthday_in_monthdays326)
                         self.monthday()
 
                         self._state.following.pop()
@@ -605,12 +743,17 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def monthday(self, ):
 
         day = None
 
         try:
             try:
+
+
                 pass
                 day = self.input.LT(1)
                 if (DIGIT <= self.input.LA(1) <= DIGITS):
@@ -623,7 +766,9 @@ class GrocParser(Parser):
 
 
 
+
                 self.monthday_set.add(int(day.text));
+
 
 
 
@@ -639,11 +784,17 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def weekdays(self, ):
 
         try:
             try:
+
+
                 pass
+
                 alt10 = 2
                 LA10_0 = self.input.LA(1)
 
@@ -657,8 +808,10 @@ class GrocParser(Parser):
                     raise nvae
 
                 if alt10 == 1:
+
                     pass
-                    self.match(self.input, DAY, self.FOLLOW_DAY_in_weekdays347)
+                    self.match(self.input, DAY, self.FOLLOW_DAY_in_weekdays371)
+
 
                     self.weekday_set = set([self.ValueOf(SUNDAY), self.ValueOf(MONDAY),
                             self.ValueOf(TUESDAY), self.ValueOf(WEDNESDAY),
@@ -667,13 +820,18 @@ class GrocParser(Parser):
 
 
 
+
                 elif alt10 == 2:
+
                     pass
+
+
                     pass
-                    self._state.following.append(self.FOLLOW_weekday_in_weekdays355)
+                    self._state.following.append(self.FOLLOW_weekday_in_weekdays379)
                     self.weekday()
 
                     self._state.following.pop()
+
                     while True:
                         alt9 = 2
                         LA9_0 = self.input.LA(1)
@@ -683,9 +841,10 @@ class GrocParser(Parser):
 
 
                         if alt9 == 1:
+
                             pass
-                            self.match(self.input, COMMA, self.FOLLOW_COMMA_in_weekdays358)
-                            self._state.following.append(self.FOLLOW_weekday_in_weekdays360)
+                            self.match(self.input, COMMA, self.FOLLOW_COMMA_in_weekdays382)
+                            self._state.following.append(self.FOLLOW_weekday_in_weekdays384)
                             self.weekday()
 
                             self._state.following.pop()
@@ -716,12 +875,17 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def weekday(self, ):
 
         dayname = None
 
         try:
             try:
+
+
                 pass
                 dayname = self.input.LT(1)
                 if (MONDAY <= self.input.LA(1) <= SUNDAY):
@@ -734,7 +898,9 @@ class GrocParser(Parser):
 
 
 
+
                 self.weekday_set.add(self.ValueOf(dayname.type))
+
 
 
 
@@ -751,11 +917,17 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def monthspec(self, ):
 
         try:
             try:
+
+
                 pass
+
                 alt11 = 2
                 LA11_0 = self.input.LA(1)
 
@@ -769,8 +941,10 @@ class GrocParser(Parser):
                     raise nvae
 
                 if alt11 == 1:
+
                     pass
-                    self.match(self.input, MONTH, self.FOLLOW_MONTH_in_monthspec440)
+                    self.match(self.input, MONTH, self.FOLLOW_MONTH_in_monthspec464)
+
 
                     self.month_set = self.month_set.union(set([
                         self.ValueOf(JANUARY), self.ValueOf(FEBRUARY), self.ValueOf(MARCH),
@@ -781,9 +955,11 @@ class GrocParser(Parser):
 
 
 
+
                 elif alt11 == 2:
+
                     pass
-                    self._state.following.append(self.FOLLOW_months_in_monthspec450)
+                    self._state.following.append(self.FOLLOW_months_in_monthspec474)
                     self.months()
 
                     self._state.following.pop()
@@ -805,16 +981,24 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def months(self, ):
 
         try:
             try:
+
+
                 pass
+
+
                 pass
-                self._state.following.append(self.FOLLOW_month_in_months467)
+                self._state.following.append(self.FOLLOW_month_in_months491)
                 self.month()
 
                 self._state.following.pop()
+
                 while True:
                     alt12 = 2
                     LA12_0 = self.input.LA(1)
@@ -824,9 +1008,10 @@ class GrocParser(Parser):
 
 
                     if alt12 == 1:
+
                         pass
-                        self.match(self.input, COMMA, self.FOLLOW_COMMA_in_months470)
-                        self._state.following.append(self.FOLLOW_month_in_months472)
+                        self.match(self.input, COMMA, self.FOLLOW_COMMA_in_months494)
+                        self._state.following.append(self.FOLLOW_month_in_months496)
                         self.month()
 
                         self._state.following.pop()
@@ -854,12 +1039,17 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def month(self, ):
 
         monthname = None
 
         try:
             try:
+
+
                 pass
                 monthname = self.input.LT(1)
                 if (JANUARY <= self.input.LA(1) <= DECEMBER):
@@ -871,7 +1061,9 @@ class GrocParser(Parser):
                     raise mse
 
 
+
                 self.month_set.add(self.ValueOf(monthname.type));
+
 
 
 
@@ -887,11 +1079,17 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def quarterspec(self, ):
 
         try:
             try:
+
+
                 pass
+
                 alt13 = 2
                 LA13_0 = self.input.LA(1)
 
@@ -905,24 +1103,30 @@ class GrocParser(Parser):
                     raise nvae
 
                 if alt13 == 1:
+
                     pass
-                    self.match(self.input, QUARTER, self.FOLLOW_QUARTER_in_quarterspec564)
+                    self.match(self.input, QUARTER, self.FOLLOW_QUARTER_in_quarterspec588)
+
 
                     self.month_set = self.month_set.union(set([
                         self.ValueOf(JANUARY), self.ValueOf(APRIL), self.ValueOf(JULY),
                         self.ValueOf(OCTOBER)]))
 
 
+
                 elif alt13 == 2:
+
                     pass
+
+
                     pass
-                    self._state.following.append(self.FOLLOW_quarter_ordinals_in_quarterspec576)
+                    self._state.following.append(self.FOLLOW_quarter_ordinals_in_quarterspec600)
                     self.quarter_ordinals()
 
                     self._state.following.pop()
-                    self.match(self.input, MONTH, self.FOLLOW_MONTH_in_quarterspec578)
-                    self.match(self.input, OF, self.FOLLOW_OF_in_quarterspec580)
-                    self.match(self.input, QUARTER, self.FOLLOW_QUARTER_in_quarterspec582)
+                    self.match(self.input, MONTH, self.FOLLOW_MONTH_in_quarterspec602)
+                    self.match(self.input, OF, self.FOLLOW_OF_in_quarterspec604)
+                    self.match(self.input, QUARTER, self.FOLLOW_QUARTER_in_quarterspec606)
 
 
 
@@ -944,16 +1148,24 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def quarter_ordinals(self, ):
 
         try:
             try:
+
+
                 pass
+
+
                 pass
-                self._state.following.append(self.FOLLOW_month_of_quarter_ordinal_in_quarter_ordinals601)
+                self._state.following.append(self.FOLLOW_month_of_quarter_ordinal_in_quarter_ordinals625)
                 self.month_of_quarter_ordinal()
 
                 self._state.following.pop()
+
                 while True:
                     alt14 = 2
                     LA14_0 = self.input.LA(1)
@@ -963,9 +1175,10 @@ class GrocParser(Parser):
 
 
                     if alt14 == 1:
+
                         pass
-                        self.match(self.input, COMMA, self.FOLLOW_COMMA_in_quarter_ordinals604)
-                        self._state.following.append(self.FOLLOW_month_of_quarter_ordinal_in_quarter_ordinals606)
+                        self.match(self.input, COMMA, self.FOLLOW_COMMA_in_quarter_ordinals628)
+                        self._state.following.append(self.FOLLOW_month_of_quarter_ordinal_in_quarter_ordinals630)
                         self.month_of_quarter_ordinal()
 
                         self._state.following.pop()
@@ -993,12 +1206,17 @@ class GrocParser(Parser):
 
 
 
+
+
+
     def month_of_quarter_ordinal(self, ):
 
         offset = None
 
         try:
             try:
+
+
                 pass
                 offset = self.input.LT(1)
                 if (FIRST <= self.input.LA(1) <= THIRD):
@@ -1011,10 +1229,12 @@ class GrocParser(Parser):
 
 
 
+
                 jOffset = self.ValueOf(offset.type) - 1
                 self.month_set = self.month_set.union(set([
                     jOffset + self.ValueOf(JANUARY), jOffset + self.ValueOf(APRIL),
                     jOffset + self.ValueOf(JULY), jOffset + self.ValueOf(OCTOBER)]))
+
 
 
 
@@ -1027,6 +1247,65 @@ class GrocParser(Parser):
             pass
 
         return
+
+
+
+
+
+
+    def time_range(self, ):
+
+        start_time = None
+        end_time = None
+
+        try:
+            try:
+
+
+                pass
+
+
+                pass
+                self.match(self.input, FROM, self.FOLLOW_FROM_in_time_range678)
+
+
+                pass
+                start_time=self.match(self.input, TIME, self.FOLLOW_TIME_in_time_range685)
+
+                self.start_time_string = start_time.text
+
+
+
+
+                self.match(self.input, TO, self.FOLLOW_TO_in_time_range696)
+
+
+                pass
+                end_time=self.match(self.input, TIME, self.FOLLOW_TIME_in_time_range703)
+
+                self.end_time_string = end_time.text
+
+
+
+
+
+
+
+
+
+
+
+            except RecognitionException, re:
+                self.reportError(re)
+                self.recover(self.input, re)
+        finally:
+
+            pass
+
+        return
+
+
+
 
 
 
@@ -1073,54 +1352,61 @@ class GrocParser(Parser):
     ]
 
 
+
     DFA4 = DFA
 
 
-    FOLLOW_specifictime_in_timespec44 = frozenset([1])
-    FOLLOW_interval_in_timespec48 = frozenset([1])
-    FOLLOW_ordinals_in_specifictime70 = frozenset([19, 20, 21, 22, 23, 24, 25, 26])
-    FOLLOW_weekdays_in_specifictime72 = frozenset([4])
-    FOLLOW_monthdays_in_specifictime75 = frozenset([4])
-    FOLLOW_OF_in_specifictime78 = frozenset([11, 12, 13, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40])
-    FOLLOW_monthspec_in_specifictime81 = frozenset([5])
-    FOLLOW_quarterspec_in_specifictime83 = frozenset([5])
-    FOLLOW_ordinals_in_specifictime99 = frozenset([19, 20, 21, 22, 23, 24, 25, 26])
-    FOLLOW_weekdays_in_specifictime101 = frozenset([5])
-    FOLLOW_TIME_in_specifictime115 = frozenset([1])
-    FOLLOW_EVERY_in_interval134 = frozenset([7, 8])
-    FOLLOW_set_in_interval144 = frozenset([17, 18])
-    FOLLOW_period_in_interval160 = frozenset([1, 9])
-    FOLLOW_SYNCHRONIZED_in_interval171 = frozenset([1])
-    FOLLOW_EVERY_in_ordinals192 = frozenset([1])
-    FOLLOW_ordinal_in_ordinals208 = frozenset([1, 10])
-    FOLLOW_COMMA_in_ordinals211 = frozenset([11, 12, 13, 14, 15, 16])
-    FOLLOW_ordinal_in_ordinals213 = frozenset([1, 10])
-    FOLLOW_set_in_ordinal234 = frozenset([1])
-    FOLLOW_set_in_period273 = frozenset([1])
-    FOLLOW_monthday_in_monthdays296 = frozenset([1, 10])
-    FOLLOW_COMMA_in_monthdays300 = frozenset([7, 8])
-    FOLLOW_monthday_in_monthdays302 = frozenset([1, 10])
-    FOLLOW_set_in_monthday322 = frozenset([1])
-    FOLLOW_DAY_in_weekdays347 = frozenset([1])
-    FOLLOW_weekday_in_weekdays355 = frozenset([1, 10])
-    FOLLOW_COMMA_in_weekdays358 = frozenset([19, 20, 21, 22, 23, 24, 25, 26])
-    FOLLOW_weekday_in_weekdays360 = frozenset([1, 10])
-    FOLLOW_set_in_weekday381 = frozenset([1])
-    FOLLOW_MONTH_in_monthspec440 = frozenset([1])
-    FOLLOW_months_in_monthspec450 = frozenset([1])
-    FOLLOW_month_in_months467 = frozenset([1, 10])
-    FOLLOW_COMMA_in_months470 = frozenset([27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39])
-    FOLLOW_month_in_months472 = frozenset([1, 10])
-    FOLLOW_set_in_month491 = frozenset([1])
-    FOLLOW_QUARTER_in_quarterspec564 = frozenset([1])
-    FOLLOW_quarter_ordinals_in_quarterspec576 = frozenset([27])
-    FOLLOW_MONTH_in_quarterspec578 = frozenset([4])
-    FOLLOW_OF_in_quarterspec580 = frozenset([40])
-    FOLLOW_QUARTER_in_quarterspec582 = frozenset([1])
-    FOLLOW_month_of_quarter_ordinal_in_quarter_ordinals601 = frozenset([1, 10])
-    FOLLOW_COMMA_in_quarter_ordinals604 = frozenset([11, 12, 13, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40])
-    FOLLOW_month_of_quarter_ordinal_in_quarter_ordinals606 = frozenset([1, 10])
-    FOLLOW_set_in_month_of_quarter_ordinal625 = frozenset([1])
+    FOLLOW_specifictime_in_timespec44 = frozenset([])
+    FOLLOW_interval_in_timespec48 = frozenset([])
+    FOLLOW_EOF_in_timespec52 = frozenset([1])
+    FOLLOW_ordinals_in_specifictime72 = frozenset([19, 20, 21, 22, 23, 24, 25, 26])
+    FOLLOW_weekdays_in_specifictime74 = frozenset([4])
+    FOLLOW_monthdays_in_specifictime77 = frozenset([4])
+    FOLLOW_OF_in_specifictime80 = frozenset([11, 12, 13, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40])
+    FOLLOW_monthspec_in_specifictime83 = frozenset([5])
+    FOLLOW_quarterspec_in_specifictime85 = frozenset([5])
+    FOLLOW_ordinals_in_specifictime101 = frozenset([19, 20, 21, 22, 23, 24, 25, 26])
+    FOLLOW_weekdays_in_specifictime103 = frozenset([5])
+    FOLLOW_TIME_in_specifictime117 = frozenset([1])
+    FOLLOW_EVERY_in_interval136 = frozenset([7, 8])
+    FOLLOW_set_in_interval146 = frozenset([17, 18])
+    FOLLOW_period_in_interval162 = frozenset([1, 9, 41])
+    FOLLOW_time_range_in_interval174 = frozenset([1])
+    FOLLOW_SYNCHRONIZED_in_interval187 = frozenset([1])
+    FOLLOW_EVERY_in_ordinals216 = frozenset([1])
+    FOLLOW_ordinal_in_ordinals232 = frozenset([1, 10])
+    FOLLOW_COMMA_in_ordinals235 = frozenset([11, 12, 13, 14, 15, 16])
+    FOLLOW_ordinal_in_ordinals237 = frozenset([1, 10])
+    FOLLOW_set_in_ordinal258 = frozenset([1])
+    FOLLOW_set_in_period297 = frozenset([1])
+    FOLLOW_monthday_in_monthdays320 = frozenset([1, 10])
+    FOLLOW_COMMA_in_monthdays324 = frozenset([7, 8])
+    FOLLOW_monthday_in_monthdays326 = frozenset([1, 10])
+    FOLLOW_set_in_monthday346 = frozenset([1])
+    FOLLOW_DAY_in_weekdays371 = frozenset([1])
+    FOLLOW_weekday_in_weekdays379 = frozenset([1, 10])
+    FOLLOW_COMMA_in_weekdays382 = frozenset([19, 20, 21, 22, 23, 24, 25, 26])
+    FOLLOW_weekday_in_weekdays384 = frozenset([1, 10])
+    FOLLOW_set_in_weekday405 = frozenset([1])
+    FOLLOW_MONTH_in_monthspec464 = frozenset([1])
+    FOLLOW_months_in_monthspec474 = frozenset([1])
+    FOLLOW_month_in_months491 = frozenset([1, 10])
+    FOLLOW_COMMA_in_months494 = frozenset([27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39])
+    FOLLOW_month_in_months496 = frozenset([1, 10])
+    FOLLOW_set_in_month515 = frozenset([1])
+    FOLLOW_QUARTER_in_quarterspec588 = frozenset([1])
+    FOLLOW_quarter_ordinals_in_quarterspec600 = frozenset([27])
+    FOLLOW_MONTH_in_quarterspec602 = frozenset([4])
+    FOLLOW_OF_in_quarterspec604 = frozenset([40])
+    FOLLOW_QUARTER_in_quarterspec606 = frozenset([1])
+    FOLLOW_month_of_quarter_ordinal_in_quarter_ordinals625 = frozenset([1, 10])
+    FOLLOW_COMMA_in_quarter_ordinals628 = frozenset([11, 12, 13, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40])
+    FOLLOW_month_of_quarter_ordinal_in_quarter_ordinals630 = frozenset([1, 10])
+    FOLLOW_set_in_month_of_quarter_ordinal649 = frozenset([1])
+    FOLLOW_FROM_in_time_range678 = frozenset([5])
+    FOLLOW_TIME_in_time_range685 = frozenset([42])
+    FOLLOW_TO_in_time_range696 = frozenset([5])
+    FOLLOW_TIME_in_time_range703 = frozenset([1])
 
 
 

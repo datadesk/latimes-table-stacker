@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Asynchronous datastore API.
 
 This is designed to be the lowest-level API to be used by all Python
@@ -27,6 +30,11 @@ to be compatible) library to replace db.py is also under development.
 
 
 
+
+
+
+
+
 __all__ = ['AbstractAdapter',
            'BaseConfiguration',
            'BaseConnection',
@@ -36,24 +44,34 @@ __all__ = ['AbstractAdapter',
            'IdentityAdapter',
            'MultiRpc',
            'TransactionalConnection',
-           ]
+          ]
 
 
+
+
+import collections
 import logging
 import os
 
+
 from google.appengine.datastore import entity_pb
+
 
 from google.appengine.api import api_base_pb
 from google.appengine.api import apiproxy_rpc
 from google.appengine.api import apiproxy_stub_map
+
 from google.appengine.api import datastore_errors
 from google.appengine.api import datastore_types
 from google.appengine.datastore import datastore_pb
 from google.appengine.runtime import apiproxy_errors
 
 
+
+
+
 _MAX_ID_BATCH_SIZE = 1000 * 1000 * 1000
+
 
 
 def _positional(max_pos_args):
@@ -171,12 +189,35 @@ class ConfigOption(object):
     raise AttributeError('Configuration options are immutable (%s)' %
                          (self.validator.__name__,))
 
+  def __call__(self, *args):
+    """Gets the first non-None value for this option from the given args.
+
+    Args:
+      *arg: Any number of configuration objects or None values.
+
+    Returns:
+      The first value for this ConfigOption found in the given configuration
+    objects or None.
+
+    Raises:
+      datastore_errors.BadArgumentError if a given in object is not a
+    configuration object.
+    """
+    for config in args:
+      if isinstance(config, self._cls):
+        if self.validator.__name__ in config._values:
+          return config._values[self.validator.__name__]
+      elif config is not None and not isinstance(config, BaseConfiguration):
+        raise datastore_errors.BadArgumentError(
+            'invalid config argument (%r)' % (config,))
+    return None
+
 
 class _ConfigurationMetaClass(type):
   """The metaclass for all Configuration types.
 
   This class is needed to store a class specific list of all ConfigOptions in
-  cls._fields, and insert a __slots__ variable into the class dict before the
+  cls._options, and insert a __slots__ variable into the class dict before the
   class is created to impose immutability.
   """
 
@@ -184,13 +225,14 @@ class _ConfigurationMetaClass(type):
     classDict['__slots__'] = ['_values']
     cls = type.__new__(metaclass, classname, bases, classDict)
     if object not in bases:
-      cls._fields = cls._fields.copy()
-      for field, value in cls.__dict__.iteritems():
+      cls._options = cls._options.copy()
+      for option, value in cls.__dict__.iteritems():
         if isinstance(value, ConfigOption):
-          if cls._fields.has_key(field):
+          if cls._options.has_key(option):
             raise TypeError('%s cannot be overridden (%s)' %
-                            (field, cls.__name__))
-          cls._fields[field] = value
+                            (option, cls.__name__))
+          cls._options[option] = value
+          value._cls = cls
     return cls
 
 
@@ -216,7 +258,7 @@ class BaseConfiguration(object):
   """
 
   __metaclass__ = _ConfigurationMetaClass
-  _fields = {}
+  _options = {}
 
   def __new__(cls, config=None, **kwargs):
     """Immutable constructor.
@@ -238,7 +280,8 @@ class BaseConfiguration(object):
     if config is None:
       pass
     elif isinstance(config, BaseConfiguration):
-      if cls is config.__class__ and config._is_stronger(**kwargs):
+      if cls is config.__class__ and config.__is_stronger(**kwargs):
+
         return config
 
       for key, value in config._values.iteritems():
@@ -252,13 +295,28 @@ class BaseConfiguration(object):
     for key, value in kwargs.iteritems():
       if value is not None:
         try:
-          config_option = obj._fields[key]
+          config_option = obj._options[key]
         except KeyError, err:
           raise TypeError('Unknown configuration option (%s)' % err)
         obj._values[key] = config_option.validator(value)
     return obj
 
-  def _is_stronger(self, **kwargs):
+  def __eq__(self, other):
+    if self is other:
+      return True
+
+    if (not isinstance(other, self.__class__) and
+        not isinstance(self, other.__class__)):
+      return NotImplemented
+    return self._values == other._values
+
+  def __ne__(self, other):
+    equal = self.__eq__(other)
+    if equal is NotImplemented:
+      return equal
+    return not equal
+
+  def __is_stronger(self, **kwargs):
     """Internal helper to ask whether a configuration is stronger than another.
 
     A configuration is stronger when every value it contains is equal to or
@@ -301,7 +359,10 @@ class BaseConfiguration(object):
       self or the config argument unchanged, but never None.
     """
     if config is None or config is self:
+
       return self
+
+
 
     if isinstance(config, self.__class__):
       for key in self._values:
@@ -310,10 +371,14 @@ class BaseConfiguration(object):
       else:
         return config
 
-    if self._is_stronger(**config._values):
+    if self.__is_stronger(**config._values):
       return self
 
-    return type(self)(config=self, **config._values)
+
+    obj = type(self)()
+    obj._values = self._values.copy()
+    obj._values.update(config._values)
+    return obj
 
 
 class Configuration(BaseConfiguration):
@@ -329,6 +394,7 @@ class Configuration(BaseConfiguration):
   Options are set by passing keyword arguments to the constructor corresponding
   to the configuration options defined below.
   """
+
 
   STRONG_CONSISTENCY = 0
   """A read consistency that will return up to date results."""
@@ -356,6 +422,7 @@ class Configuration(BaseConfiguration):
                                  EVENTUAL_CONSISTENCY,
                                  APPLY_ALL_JOBS_CONSISTENCY,
                                  ))
+
 
 
   @ConfigOption
@@ -389,6 +456,8 @@ class Configuration(BaseConfiguration):
     function can be used with many UserRPC objects, it would be awkward
     if it was called without passing the specific RPC.)
     """
+
+
     return value
 
   @ConfigOption
@@ -403,6 +472,36 @@ class Configuration(BaseConfiguration):
     if value not in Configuration.ALL_READ_POLICIES:
       raise datastore_errors.BadArgumentError(
         'read_policy argument invalid (%r)' % (value,))
+    return value
+
+  @ConfigOption
+  def force_writes(value):
+    """If a write request should succeed even if the app is read-only.
+
+    This only applies to user controlled read-only periods.
+    """
+    if not isinstance(value, bool):
+      raise datastore_errors.BadArgumentError(
+        'force_writes argument invalid (%r)' % (value,))
+    return value
+
+  @ConfigOption
+  def max_entity_groups_per_rpc(value):
+    """The maximum number of entity groups that can be represented in one rpc.
+
+    For a non-transactional operation that involves more entity groups than the
+    maximum, the operation will be performed by executing multiple, asynchronous
+    rpcs to the datastore, each of which has no more entity groups represented
+    than the maximum.  So, if a put() operation has 8 entity groups and the
+    maximum is 3, we will send 3 rpcs, 2 with 3 entity groups and 1 with 2
+    entity groups.  This is a performance optimization - in many cases
+    multiple, small, concurrent rpcs will finish faster than a single large
+    rpc.  The optimal value for this property will be application-specific, so
+    experimentation is encouraged.
+    """
+    if not (isinstance(value, (int, long)) and value > 0):
+      raise datastore_errors.BadArgumentError(
+          'max_entity_groups_per_rpc should be a positive integer')
     return value
 
   @ConfigOption
@@ -545,11 +644,22 @@ class MultiRpc(object):
     NOTE: This first waits for all wrapped RPCs to finish, and then
     checks all their success.  This makes debugging easier.
     """
-    self.check_success()
+
+
+
+
+
+
+
+
+
+
     if len(self.__rpcs) == 1:
       results = self.__rpcs[0].get_result()
     else:
       results = []
+
+
       for rpc in self.__rpcs:
         result = rpc.get_result()
         if isinstance(result, list):
@@ -577,6 +687,9 @@ class MultiRpc(object):
     flat = []
     for rpc in rpcs:
       if isinstance(rpc, MultiRpc):
+
+
+
         flat.extend(rpc.__rpcs)
       else:
         if not isinstance(rpc, apiproxy_stub_map.UserRPC):
@@ -666,6 +779,7 @@ class BaseConnection(object):
 
   UNKNOWN_DATASTORE = 0
   MASTER_SLAVE_DATASTORE = 1
+
   HIGH_REPLICATION_DATASTORE = 2
 
   @_positional(1)
@@ -696,6 +810,7 @@ class BaseConnection(object):
     self.__pending_rpcs = set()
 
 
+
   @property
   def adapter(self):
     """The adapter used by this connection."""
@@ -705,6 +820,8 @@ class BaseConnection(object):
   def config(self):
     """The default configuration used by this connection."""
     return self.__config
+
+
 
 
   def _add_pending(self, rpc):
@@ -722,12 +839,16 @@ class BaseConnection(object):
     from the list of pending RPCs.
     """
     if isinstance(rpc, MultiRpc):
+
+
       for wrapped_rpc in rpc._MultiRpc__rpcs:
         self._remove_pending(wrapped_rpc)
     else:
       try:
         self.__pending_rpcs.remove(rpc)
       except KeyError:
+
+
         pass
 
   def is_pending(self, rpc):
@@ -760,6 +881,11 @@ class BaseConnection(object):
     This function is only guaranteed to return something other than
     UNKNOWN_DATASTORE when running in production and querying the current app.
     """
+
+
+
+
+
     current_app = datastore_types.ResolveAppId(None)
     if app not in (current_app, None):
       return BaseConnection.UNKNOWN_DATASTORE
@@ -773,17 +899,33 @@ class BaseConnection(object):
       try:
         rpc = apiproxy_stub_map.UserRPC.wait_any(self.__pending_rpcs)
       except Exception:
+
+
+
+
         logging.info('wait_for_all_pending_rpcs(): exception in wait_any()',
                      exc_info=True)
         continue
+      if rpc is None:
+        logging.debug('wait_any() returned None')
+        continue
       assert rpc.state == apiproxy_rpc.RPC.FINISHING
       if rpc in self.__pending_rpcs:
+
+
+
+
+
+
         try:
           self.check_rpc_success(rpc)
         except Exception:
+
           logging.info('wait_for_all_pending_rpcs(): '
                        'exception in check_rpc_success()',
                        exc_info=True)
+
+
 
 
   def _check_entity_group(self, key_pbs):
@@ -814,17 +956,12 @@ class BaseConnection(object):
         call to the server but does not wait.  To wait for the call to
         finish and get the result, call rpc.get_result().
     """
-    deadline = None
-    on_completion = None
-    if config is not None:
-      deadline = config.deadline
-      on_completion = config.on_completion
-    if deadline is None:
-      deadline = self.__config.deadline
-    if on_completion is None:
-      on_completion = self.__config.on_completion
+    deadline = Configuration.deadline(config, self.__config)
+    on_completion = Configuration.on_completion(config, self.__config)
     callback = None
     if on_completion is not None:
+
+
       def callback():
         return on_completion(rpc)
     rpc = apiproxy_stub_map.UserRPC('datastore_v3', deadline, callback)
@@ -844,16 +981,13 @@ class BaseConnection(object):
     if not (hasattr(request, 'set_failover_ms') and hasattr(request, 'strong')):
       raise datastore_errors.BadRequestError(
           'read_policy is only supported on read operations.')
+
     if isinstance(config, apiproxy_stub_map.UserRPC):
       read_policy = getattr(config, 'read_policy', None)
-    elif isinstance(config, Configuration):
-      read_policy = config.read_policy
-    elif config is None:
-      read_policy = None
     else:
-      raise datastore_errors.BadArgumentError(
-        '_set_request_read_policy invalid config argument (%r)' %
-        (config,))
+      read_policy = Configuration.read_policy(config)
+
+
     if read_policy is None:
       read_policy = self.__config.read_policy
 
@@ -861,6 +995,9 @@ class BaseConnection(object):
       request.set_strong(True)
     elif read_policy == Configuration.EVENTUAL_CONSISTENCY:
       request.set_strong(False)
+
+
+
       request.set_failover_ms(-1)
 
   def _set_request_transaction(self, request):
@@ -900,6 +1037,8 @@ class BaseConnection(object):
     Returns:
       The UserRPC object used for the call.
     """
+
+
     if isinstance(config, apiproxy_stub_map.UserRPC):
       rpc = config
     else:
@@ -923,12 +1062,19 @@ class BaseConnection(object):
       Nothing if the call succeeded; various datastore_errors.Error
       subclasses if ApplicationError was raised by rpc.check_success().
     """
-    rpc.wait()
-    self._remove_pending(rpc)
+    try:
+      rpc.wait()
+    finally:
+
+
+      self._remove_pending(rpc)
     try:
       rpc.check_success()
     except apiproxy_errors.ApplicationError, err:
       raise _ToDatastoreError(err)
+
+
+
 
 
   MAX_RPC_BYTES = 1024 * 1024
@@ -936,25 +1082,129 @@ class BaseConnection(object):
   MAX_PUT_ENTITIES = 500
   MAX_DELETE_KEYS = 500
 
-  def __generate_pb_lists(self, values, value_to_pb, base_size, max_count,
-                          config):
-    """Internal helper: repeatedly yield a list of protobufs to fit a batch."""
-    max_size = (isinstance(config, Configuration) and config.max_rpc_bytes or
-                self.__config.max_rpc_bytes or
+
+
+
+  def __extract_entity_group(self, value):
+    """Internal helper: extracts the entity group from a key or entity."""
+    if isinstance(value, entity_pb.EntityProto):
+      value = value.key()
+    return value.path().element(0)
+
+  def __group_indexed_pbs_by_entity_group(self, values, value_to_pb):
+    """Internal helper: group pbs by entity group.
+
+    Args:
+      values: The values to be grouped by entity group.
+      value_to_pb: A function that translates a value to a pb.
+
+    Returns:
+      A list where each element is a list of (pb, index) pairs.  Here index is
+      the location of the value from which pb was derived in the original list.
+    """
+    indexed_pbs_by_entity_group = collections.defaultdict(list)
+    for index, value in enumerate(values):
+      pb = value_to_pb(value)
+      eg = self.__extract_entity_group(pb)
+
+
+      uid = (eg.type(), eg.id() or eg.name() or ('new', id(eg)))
+      indexed_pbs_by_entity_group[uid].append((pb, index))
+    return indexed_pbs_by_entity_group.values()
+
+  def __create_result_index_pairs(self, indexes):
+    """Internal helper: build a function that ties an index with each result.
+
+    Args:
+      indexes: A list of integers.  A value x at location y in the list means
+        that the result at location y in the result list needs to be at location
+        x in the list of results returned to the user.
+    """
+
+    def create_result_index_pairs(results):
+      return zip(results, indexes)
+    return create_result_index_pairs
+
+  def __sort_result_index_pairs(self, extra_hook):
+    """Builds a function that sorts the indexed results.
+
+    Args:
+      extra_hook: A function that the returned function will apply to its result
+        before returning.
+
+    Returns:
+      A function that takes a list of results and reorders them to match the
+      order in which the input values associated with each results were
+      originally provided.
+    """
+
+    def sort_result_index_pairs(result_index_pairs):
+      results = [None] * len(result_index_pairs)
+      for result, index in result_index_pairs:
+        results[index] = result
+      if extra_hook is not None:
+        results = extra_hook(results)
+      return results
+    return sort_result_index_pairs
+
+  def __generate_pb_lists(self, indexed_pb_lists_by_eg, base_size, max_count,
+                          max_egs_per_rpc, config):
+    """Internal helper: repeatedly yield a list of 2 elements.
+
+    Args:
+      indexed_pb_lists_by_eg: A list of lists.  The inner lists consist of
+        objects that all belong to the same entity group.
+
+      base_size: An integer representing the base size of an rpc.  Used for
+        splitting operations across multiple RPCs due to size limitations.
+
+      max_count: An integer representing the maximum number of objects we can
+        send in an rpc.  Used for splitting operations across multiple RPCs.
+
+      max_egs_per_rpc: An integer representing the maximum number of entity
+        groups we can have represented in an rpc.  Can be None.
+
+      config: The config object to use.
+
+    Yields:
+      Repeatedly yields 2 element tuples.  The first element is a list of
+      protobufs to send in one batch.  The second element is a list containing
+      the original location of those protobufs (expressed as an index) in the
+      input.
+    """
+    max_size = (Configuration.max_rpc_bytes(config, self.__config) or
                 self.MAX_RPC_BYTES)
     pbs = []
+    pb_indexes = []
     size = base_size
-    for value in values:
-      pb = value_to_pb(value)
-      incr_size = pb.lengthString(pb.ByteSize()) + 1
-      if (not isinstance(config, apiproxy_stub_map.UserRPC) and
-          (len(pbs) >= max_count or (pbs and size + incr_size > max_size))):
-        yield pbs
+    num_entity_groups = 0
+    for indexed_pbs in indexed_pb_lists_by_eg:
+      num_entity_groups += 1
+      if max_egs_per_rpc is not None and num_entity_groups > max_egs_per_rpc:
+        yield (pbs, pb_indexes)
         pbs = []
+        pb_indexes = []
         size = base_size
-      pbs.append(pb)
-      size += incr_size
-    yield pbs
+        num_entity_groups = 1
+      for indexed_pb in indexed_pbs:
+        (pb, index) = indexed_pb
+
+        incr_size = pb.lengthString(pb.ByteSize()) + 1
+
+
+
+
+        if (not isinstance(config, apiproxy_stub_map.UserRPC) and
+            (len(pbs) >= max_count or (pbs and size + incr_size > max_size))):
+          yield (pbs, pb_indexes)
+          pbs = []
+          pb_indexes = []
+          size = base_size
+          num_entity_groups = 1
+        pbs.append(pb)
+        pb_indexes.append(index)
+        size += incr_size
+    yield (pbs, pb_indexes)
 
   def _get_base_size(self, base_req):
     """Internal helper: return request size in bytes."""
@@ -986,32 +1236,60 @@ class BaseConnection(object):
     Returns:
       A MultiRpc object.
     """
-    base_req = datastore_pb.GetRequest()
-    self._set_request_read_policy(base_req, config)
-    base_size = self._get_base_size(base_req)
-    rpcs = []
-    max_count = (isinstance(config, Configuration) and config.max_get_keys or
-                 self.__config.max_get_keys or
-                 self.MAX_GET_KEYS)
-    pbsgen = self.__generate_pb_lists(keys, self.__adapter.key_to_pb,
-                                      base_size, max_count, config)
-    user_data = None
-    if isinstance(config, apiproxy_stub_map.UserRPC):
-      user_data = extra_hook
-    for pbs in pbsgen:
-      req = datastore_pb.GetRequest()
-      req.CopyFrom(base_req)
+
+    def make_get_call(req, pbs, user_data=None):
       req.key_list().extend(pbs)
       self._check_entity_group(req.key_list())
       self._set_request_transaction(req)
       resp = datastore_pb.GetResponse()
-      rpc = self.make_rpc_call(config, 'Get', req, resp,
-                               self.__get_hook, user_data)
-      rpcs.append(rpc)
+      return self.make_rpc_call(config, 'Get', req, resp,
+                                self.__get_hook, user_data)
+
+    base_req = datastore_pb.GetRequest()
+    self._set_request_read_policy(base_req, config)
+
+
     if isinstance(config, apiproxy_stub_map.UserRPC):
-      assert len(rpcs) == 1 and rpcs[0] is config, rpcs
-      return config
-    return MultiRpc(rpcs, extra_hook)
+      pbs = [self.__adapter.key_to_pb(key) for key in keys]
+      return make_get_call(base_req, pbs, extra_hook)
+
+    base_size = self._get_base_size(base_req)
+    max_count = (Configuration.max_get_keys(config, self.__config) or
+                 self.MAX_GET_KEYS)
+    if base_req.has_strong():
+      is_read_current = base_req.strong()
+    else:
+      is_read_current = (self.get_datastore_type() ==
+                         BaseConnection.HIGH_REPLICATION_DATASTORE)
+
+    indexed_keys_by_entity_group = self.__group_indexed_pbs_by_entity_group(
+        keys, self.__adapter.key_to_pb)
+
+
+
+
+
+
+
+
+    if is_read_current and not base_req.has_transaction():
+      max_egs_per_rpc = (Configuration.max_entity_groups_per_rpc(
+          config, self.__config))
+    else:
+      max_egs_per_rpc = None
+
+
+    pbsgen = self.__generate_pb_lists(
+        indexed_keys_by_entity_group, base_size, max_count, max_egs_per_rpc,
+        config)
+
+    rpcs = []
+    for pbs, indexes in pbsgen:
+      req = datastore_pb.GetRequest()
+      req.CopyFrom(base_req)
+      rpcs.append(make_get_call(req, pbs,
+                                self.__create_result_index_pairs(indexes)))
+    return MultiRpc(rpcs, self.__sort_result_index_pairs(extra_hook))
 
   def __get_hook(self, rpc):
     """Internal method used as get_result_hook for Get operation."""
@@ -1058,32 +1336,49 @@ class BaseConnection(object):
     NOTE: If any of the entities has an incomplete key, this will
     *not* patch up those entities with the complete key.
     """
-    base_req = datastore_pb.PutRequest()
-    base_size = self._get_base_size(base_req)
-    rpcs = []
-    max_count = ((isinstance(config, Configuration) and
-                  config.max_put_entities) or
-                 self.__config.max_put_entities or
-                 self.MAX_PUT_ENTITIES)
-    pbsgen = self.__generate_pb_lists(entities, self.__adapter.entity_to_pb,
-                                      base_size, max_count, config)
-    user_data = None
-    if isinstance(config, apiproxy_stub_map.UserRPC):
-      user_data = extra_hook
-    for pbs in pbsgen:
-      req = datastore_pb.PutRequest()
-      req.CopyFrom(base_req)
+
+    def make_put_call(req, pbs, user_data=None):
       req.entity_list().extend(pbs)
       self._check_entity_group(e.key() for e in req.entity_list())
       self._set_request_transaction(req)
       resp = datastore_pb.PutResponse()
-      rpc = self.make_rpc_call(config, 'Put', req, resp,
-                               self.__put_hook, user_data)
-      rpcs.append(rpc)
+      return self.make_rpc_call(config, 'Put', req, resp,
+                                self.__put_hook, user_data)
+
+
+    base_req = datastore_pb.PutRequest()
+
+
     if isinstance(config, apiproxy_stub_map.UserRPC):
-      assert len(rpcs) == 1 and rpcs[0] is config
-      return config
-    return MultiRpc(rpcs, extra_hook)
+      if self.__config.force_writes:
+        base_req.set_force(True)
+      pbs = [self.__adapter.entity_to_pb(entity) for entity in entities]
+      return make_put_call(base_req, pbs, extra_hook)
+
+    if Configuration.force_writes(config, self.__config):
+      base_req.set_force(True)
+    base_size = self._get_base_size(base_req)
+    max_count = (Configuration.max_put_entities(config, self.__config) or
+                 self.MAX_PUT_ENTITIES)
+    rpcs = []
+    indexed_entities_by_entity_group = self.__group_indexed_pbs_by_entity_group(
+        entities, self.__adapter.entity_to_pb)
+    if not base_req.has_transaction():
+      max_egs_per_rpc = (Configuration.max_entity_groups_per_rpc(
+          config, self.__config))
+    else:
+      max_egs_per_rpc = None
+
+    pbsgen = self.__generate_pb_lists(
+        indexed_entities_by_entity_group, base_size, max_count, max_egs_per_rpc,
+        config)
+
+    for pbs, indexes in pbsgen:
+      req = datastore_pb.PutRequest()
+      req.CopyFrom(base_req)
+      rpcs.append(make_put_call(req, pbs,
+                                self.__create_result_index_pairs(indexes)))
+    return MultiRpc(rpcs, self.__sort_result_index_pairs(extra_hook))
 
   def __put_hook(self, rpc):
     """Internal method used as get_result_hook for Put operation."""
@@ -1091,6 +1386,8 @@ class BaseConnection(object):
     self._update_entity_group(rpc.response.key_list())
     keys = [self.__adapter.pb_to_key(pb)
             for pb in rpc.response.key_list()]
+
+
     if rpc.user_data is not None:
       keys = rpc.user_data(keys)
     return keys
@@ -1118,38 +1415,57 @@ class BaseConnection(object):
     Returns:
       A MultiRpc object.
     """
-    base_req = datastore_pb.DeleteRequest()
-    base_size = self._get_base_size(base_req)
-    rpcs = []
-    max_count = ((isinstance(config, Configuration) and
-                  config.max_delete_keys) or
-                 self.__config.max_delete_keys or
-                 self.MAX_DELETE_KEYS)
-    pbsgen = self.__generate_pb_lists(keys, self.__adapter.key_to_pb,
-                                      base_size, max_count, config)
-    user_data = None
-    if isinstance(config, apiproxy_stub_map.UserRPC):
-      user_data = extra_hook
-    for pbs in pbsgen:
-      req = datastore_pb.DeleteRequest()
-      req.CopyFrom(base_req)
+
+    def make_delete_call(req, pbs, user_data=None):
       req.key_list().extend(pbs)
       self._check_entity_group(req.key_list())
       self._set_request_transaction(req)
       resp = datastore_pb.DeleteResponse()
-      rpc = self.make_rpc_call(config, 'Delete', req, resp,
-                               self.__delete_hook, user_data)
-      rpcs.append(rpc)
+      return self.make_rpc_call(config, 'Delete', req, resp,
+                                self.__delete_hook, user_data)
+
+
+    base_req = datastore_pb.DeleteRequest()
+
+
     if isinstance(config, apiproxy_stub_map.UserRPC):
-      assert len(rpcs) == 1 and rpcs[0] is config
-      return config
+      if self.__config.force_writes:
+        base_req.set_force(True)
+      pbs = [self.__adapter.key_to_pb(key) for key in keys]
+      return make_delete_call(base_req, pbs, extra_hook)
+
+    if Configuration.force_writes(config, self.__config):
+      base_req.set_force(True)
+    base_size = self._get_base_size(base_req)
+    max_count = (Configuration.max_delete_keys(config, self.__config) or
+                 self.MAX_DELETE_KEYS)
+    if not base_req.has_transaction():
+      max_egs_per_rpc = (Configuration.max_entity_groups_per_rpc(
+          config, self.__config))
+    else:
+      max_egs_per_rpc = None
+    indexed_keys_by_entity_group = self.__group_indexed_pbs_by_entity_group(
+        keys, self.__adapter.key_to_pb)
+
+
+
+    pbsgen = self.__generate_pb_lists(
+        indexed_keys_by_entity_group, base_size, max_count, max_egs_per_rpc,
+        config)
+    rpcs = []
+    for pbs, _ in pbsgen:
+      req = datastore_pb.DeleteRequest()
+      req.CopyFrom(base_req)
+      rpcs.append(make_delete_call(req, pbs))
     return MultiRpc(rpcs, extra_hook)
 
   def __delete_hook(self, rpc):
     """Internal method used as get_result_hook for Delete operation."""
     self.check_rpc_success(rpc)
     if rpc.user_data is not None:
+
       rpc.user_data(None)
+
 
 
   def begin_transaction(self, app):
@@ -1218,6 +1534,7 @@ class Connection(BaseConnection):
     self.__config = self.config
 
 
+
   def new_transaction(self):
     """Create a new transactional connection based on this one.
 
@@ -1229,8 +1546,10 @@ class Connection(BaseConnection):
     from the transaction's entity group, which in turn is gleaned from
     the first key used in the transaction.
     """
+
     return TransactionalConnection(adapter=self.__adapter,
                                    config=self.__config)
+
 
 
   def allocate_ids(self, key, size=None, max=None):
@@ -1353,8 +1672,13 @@ class TransactionalConnection(BaseConnection):
     """Internal helper: return size in bytes plus room for transaction."""
     trans = self.__transaction
     if trans is None:
+
+
+
+
       incr_size = 1000
     else:
+
       incr_size = trans.lengthString(trans.ByteSize()) + 1
     return (super(TransactionalConnection, self)._get_base_size(base_req) +
             incr_size)
@@ -1401,22 +1725,32 @@ class TransactionalConnection(BaseConnection):
       refers to a different top-level key than the the connection's
       entity group.
     """
+    base_entity_group_pb = self.__entity_group_pb
     for ref in key_pbs:
       entity_group_pb = ref
       if entity_group_pb.path().element_list()[1:]:
         entity_group_pb = self.__adapter.new_key_pb()
         entity_group_pb.CopyFrom(ref)
         del entity_group_pb.path().element_list()[1:]
-      if self.__entity_group_pb is None:
-        self.__entity_group_pb = entity_group_pb
+      if base_entity_group_pb is None:
+
+
+
+
+
+        base_entity_group_pb = entity_group_pb
       else:
         pb1 = entity_group_pb.path().element(0)
-        ok = (entity_group_pb == self.__entity_group_pb)
+        ok = (entity_group_pb == base_entity_group_pb)
         if ok:
-          ok = (entity_group_pb is self.__entity_group_pb or
+
+
+
+
+          ok = (entity_group_pb is base_entity_group_pb or
                 pb1.id() or pb1.name())
         if not ok:
-          pb0 = self.__entity_group_pb.path().element(0)
+          pb0 = base_entity_group_pb.path().element(0)
           def helper(pb):
             if pb.name():
               return 'name=%r' % pb.name()
@@ -1426,6 +1760,7 @@ class TransactionalConnection(BaseConnection):
               'Cannot operate on different entity groups in a transaction: '
               '(kind=%r, %s) and (kind=%r, %s).' %
               (pb0.type(), helper(pb0), pb1.type(), helper(pb1)))
+    self.__entity_group_pb = base_entity_group_pb
 
   def _update_entity_group(self, key_pbs):
     """Patch up the entity group if we wrote an entity with an incomplete key.
@@ -1436,6 +1771,10 @@ class TransactionalConnection(BaseConnection):
     Args:
       key_pbs: A list of entity_pb.Reference objects.
     """
+    if self.__entity_group_pb is None:
+      assert not key_pbs
+      return
+
     pb = self.__entity_group_pb.path().element(0)
     if pb.id() or pb.name():
       return
@@ -1465,6 +1804,7 @@ class TransactionalConnection(BaseConnection):
       query, or if the ancestor does not match the connection's entity
       group.
     """
+
     if self.__finished:
       raise datastore_errors.BadRequestError(
         'Cannot start a new operation in a finished transaction.')
@@ -1491,6 +1831,7 @@ class TransactionalConnection(BaseConnection):
     if self.__entity_group_pb is not None:
       app = self.__entity_group_pb.app()
     if app is None:
+
       app = os.getenv('APPLICATION_ID')
     self.__transaction = self.begin_transaction(app)
     return self.__transaction
@@ -1512,12 +1853,15 @@ class TransactionalConnection(BaseConnection):
     if self.__finished:
       raise datastore_errors.BadRequestError(
         'The transaction is already finished.')
+
+
     self.wait_for_all_pending_rpcs()
     assert not self.get_pending_rpcs()
     transaction = self.__transaction
     self.__finished = True
     self.__transaction = None
     return transaction
+
 
 
   def commit(self):
@@ -1527,6 +1871,8 @@ class TransactionalConnection(BaseConnection):
       True if the transaction was successfully committed.  False if
       the backend reported a concurrent transaction error.
     """
+
+
     rpc = self.create_rpc()
     rpc = self.async_commit(rpc)
     if rpc is None:
@@ -1564,6 +1910,7 @@ class TransactionalConnection(BaseConnection):
       return True
 
 
+
   def rollback(self):
     """Synchronous Rollback operation."""
     rpc = self.async_rollback(None)
@@ -1592,6 +1939,8 @@ class TransactionalConnection(BaseConnection):
   def __rollback_hook(self, rpc):
     """Internal method used as get_result_hook for Rollback."""
     self.check_rpc_success(rpc)
+
+
 
 
 

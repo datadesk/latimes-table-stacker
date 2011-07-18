@@ -15,11 +15,18 @@
 # limitations under the License.
 #
 
+
+
+
 """A Python blobstore API used by app developers.
 
 Contains methods uses to interface with Blobstore API.  Defines db.Key-like
 class representing a blob-key.  Contains API part that forward to apiproxy.
 """
+
+
+
+
 
 
 
@@ -56,6 +63,7 @@ __all__ = ['BLOB_INFO_KIND',
 BlobKey = datastore_types.BlobKey
 
 
+
 BLOB_INFO_KIND = '__BlobInfo__'
 
 BLOB_KEY_HEADER = 'X-AppEngine-BlobKey'
@@ -63,6 +71,8 @@ BLOB_KEY_HEADER = 'X-AppEngine-BlobKey'
 BLOB_RANGE_HEADER = 'X-AppEngine-BlobRange'
 
 MAX_BLOB_FETCH_SIZE = (1 << 20) - (1 << 15)
+
+
 
 UPLOAD_INFO_CREATION_HEADER = 'X-AppEngine-Upload-Creation'
 _BASE_CREATION_HEADER_FORMAT = '%Y-%m-%d %H:%M:%S'
@@ -158,6 +168,8 @@ def _parse_creation(creation_string, field_name):
   Raises:
     _CreationFormatError when the creation string is formatted incorrectly.
   """
+
+
   split_creation_string = creation_string.split('.', 1)
   if len(split_creation_string) != 2:
     raise _CreationFormatError(
@@ -249,13 +261,16 @@ def fetch_data(blob_key, start_index, end_index,
   elif not isinstance(blob_key, unicode):
     raise TypeError('Blob-key must be str, unicode or BlobKey: %s' % blob_key)
 
+
   if start_index < 0:
     raise DataIndexOutOfRangeError(
         'May not fetch blob at negative index.')
 
+
   if end_index < start_index:
     raise DataIndexOutOfRangeError(
         'Start index %d > end index %d' % (start_index, end_index))
+
 
   fetch_size = end_index - start_index + 1
 

@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Constants and static functions to support protocol buffer wire format."""
 
 
@@ -26,6 +29,10 @@ from google.net.proto2.python.public import message
 TAG_TYPE_BITS = 3
 TAG_TYPE_MASK = (1 << TAG_TYPE_BITS) - 1
 
+
+
+
+
 WIRETYPE_VARINT = 0
 WIRETYPE_FIXED64 = 1
 WIRETYPE_LENGTH_DELIMITED = 2
@@ -33,6 +40,7 @@ WIRETYPE_START_GROUP = 3
 WIRETYPE_END_GROUP = 4
 WIRETYPE_FIXED32 = 5
 _WIRETYPE_MAX = 5
+
 
 
 INT32_MAX = int((1 << 31) - 1)
@@ -43,10 +51,13 @@ INT64_MAX = (1 << 63) - 1
 INT64_MIN = -(1 << 63)
 UINT64_MAX = (1 << 64) - 1
 
+
 FORMAT_UINT32_LITTLE_ENDIAN = '<I'
 FORMAT_UINT64_LITTLE_ENDIAN = '<Q'
 FORMAT_FLOAT_LITTLE_ENDIAN = '<f'
 FORMAT_DOUBLE_LITTLE_ENDIAN = '<d'
+
+
 
 
 if struct.calcsize(FORMAT_UINT32_LITTLE_ENDIAN) != 4:
@@ -95,6 +106,8 @@ def ZigZagDecode(value):
 
 
 
+
+
 def Int32ByteSize(field_number, int32):
   return Int64ByteSize(field_number, int32)
 
@@ -104,6 +117,7 @@ def Int32ByteSizeNoTag(int32):
 
 
 def Int64ByteSize(field_number, int64):
+
   return UInt64ByteSize(field_number, 0xffffffffffffffff & int64)
 
 
@@ -177,13 +191,20 @@ def MessageByteSize(field_number, message):
 
 
 def MessageSetItemByteSize(field_number, msg):
+
+
+
+
   total_size = (2 * TagByteSize(1) + TagByteSize(2) + TagByteSize(3))
+
 
   total_size += _VarUInt64ByteSizeNoTag(field_number)
 
   message_size = msg.ByteSize()
 
+
   total_size += _VarUInt64ByteSizeNoTag(message_size)
+
 
   total_size += message_size
   return total_size
@@ -191,7 +212,9 @@ def MessageSetItemByteSize(field_number, msg):
 
 def TagByteSize(field_number):
   """Returns the bytes required to serialize a tag with this field number."""
+
   return _VarUInt64ByteSizeNoTag(PackTag(field_number, 0))
+
 
 
 

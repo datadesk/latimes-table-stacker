@@ -15,10 +15,17 @@
 # limitations under the License.
 #
 
+
+
+
 """DOS configuration tools.
 
 Library for parsing dos.yaml files and working with these in memory.
 """
+
+
+
+
 
 
 
@@ -53,6 +60,7 @@ class SubnetValidator(validation.Validator):
     except ValueError:
       raise validation.ValidationError('%s is not a valid IPv4 or IPv6 subnet' %
                                        value)
+
 
     parts = value.split('/')
     if len(parts) == 2 and not re.match('^[0-9]+$', parts[1]):

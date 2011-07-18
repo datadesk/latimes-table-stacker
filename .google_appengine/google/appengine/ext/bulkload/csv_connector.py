@@ -15,10 +15,20 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Bulkloader CSV reading and writing.
 
 Handle the CSV format specified in a bulkloader.yaml file.
 """
+
+
+
+
+
+
 
 
 
@@ -39,6 +49,8 @@ from google.appengine.ext.bulkload import connector_interface
 
 def utf8_recoder(stream, encoding):
   """Generator that reads an encoded stream and reencodes to UTF-8."""
+
+
   for line in codecs.getreader(encoding)(stream):
     yield line.encode('utf-8')
 
@@ -55,7 +67,11 @@ class UnicodeDictWriter(object):
       encoding: Desired encoding.
       kwds: Additional arguments to pass to the DictWriter.
     """
+
     writer = codecs.getwriter(encoding)
+
+
+
     if (writer is encodings.utf_8.StreamWriter or
         writer is encodings.ascii.StreamWriter or
         writer is encodings.latin_1.StreamWriter or
@@ -77,9 +93,11 @@ class UnicodeDictWriter(object):
     if self.no_recoding:
       return
 
+
     data = self.queue.getvalue()
     data = data.decode('utf-8')
     self.stream.write(data)
+
     self.queue.truncate(0)
 
 
@@ -118,6 +136,19 @@ class CsvConnector(connector_interface.ConnectorInterface):
             'CSV columns must be "from_header", or a column_list '
             'must be specified. (In transformer name %s.)' % name)
     csv_encoding = options.get('encoding', 'utf-8')
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     skip_import_header_row = options.get('skip_import_header_row',
@@ -180,6 +211,7 @@ class CsvConnector(connector_interface.ConnectorInterface):
 
     self.dict_generator = csv.DictReader(input_stream, self.column_list,
                                          **self.import_options)
+
     discard_line = self.skip_import_header_row and not self.from_header
 
     line_number = 0
@@ -189,6 +221,9 @@ class CsvConnector(connector_interface.ConnectorInterface):
         discard_line = False
         continue
 
+
+
+
       decoded_dict = {}
       for key, value in input_dict.iteritems():
         if key == None:
@@ -196,6 +231,7 @@ class CsvConnector(connector_interface.ConnectorInterface):
               'Got more values in row than headers on line %d.'
               % (line_number))
         if not self.column_list:
+
           key = unicode(key, 'utf-8')
         if value:
           value = unicode(value, 'utf-8')
@@ -210,12 +246,15 @@ class CsvConnector(connector_interface.ConnectorInterface):
       bulkload_state: Passed bulkload_state.
     """
     self.bulkload_state = bulkload_state
+
     self.output_stream = open(filename, 'wb')
 
   def __initialize_csv_writer(self, dictionary):
     """Actual initialization, happens on the first entity being written."""
     write_header = self.print_export_header_row
     if self.from_header:
+
+
       export_column_list = tuple(dictionary)
     else:
       export_column_list = self.column_list

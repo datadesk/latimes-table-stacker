@@ -15,11 +15,18 @@
 # limitations under the License.
 #
 
+
+
+
 """CronInfo tools.
 
 A library for working with CronInfo records, describing cron entries for an
 application. Supports loading the records from yaml.
 """
+
+
+
+
 
 
 
@@ -34,6 +41,7 @@ except ImportError:
 
 from google.appengine.cron import groc
 from google.appengine.cron import groctimespecification
+from google.appengine.api import appinfo
 from google.appengine.api import validation
 from google.appengine.api import yaml_builder
 from google.appengine.api import yaml_listener
@@ -42,6 +50,9 @@ from google.appengine.api import yaml_object
 _URL_REGEX = r'^/.*$'
 _TIMEZONE_REGEX = r'^.{0,100}$'
 _DESCRIPTION_REGEX = r'^.{0,499}$'
+_VERSION_REGEX = appinfo.VERSION_RE_STRING
+
+
 
 
 class GrocValidator(validation.Validator):
@@ -67,18 +78,24 @@ class TimezoneValidator(validation.Validator):
   def Validate(self, value, key=None):
     """Validates a timezone."""
     if value is None:
+
       return
     if not isinstance(value, basestring):
       raise TypeError('timezone must be a string, not \'%r\'' % type(value))
     if pytz is None:
+
       return value
     try:
       pytz.timezone(value)
     except pytz.UnknownTimeZoneError:
       raise validation.ValidationError('timezone \'%s\' is unknown' % value)
     except IOError:
+
+
       return value
     except:
+
+
       unused_e, v, t = sys.exc_info()
       logging.warning('pytz raised an unexpected error: %s.\n' % (v) +
                       'Traceback:\n' + '\n'.join(traceback.format_tb(t)))
@@ -92,6 +109,7 @@ URL = 'url'
 SCHEDULE = 'schedule'
 TIMEZONE = 'timezone'
 DESCRIPTION = 'description'
+TARGET = 'target'
 
 
 class MalformedCronfigurationFile(Exception):
@@ -105,7 +123,8 @@ class CronEntry(validation.Validated):
       URL: _URL_REGEX,
       SCHEDULE: GrocValidator(),
       TIMEZONE: TimezoneValidator(),
-      DESCRIPTION: validation.Optional(_DESCRIPTION_REGEX)
+      DESCRIPTION: validation.Optional(_DESCRIPTION_REGEX),
+      TARGET: validation.Optional(_VERSION_REGEX),
   }
 
 

@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Bulkloader XML reading and writing.
 
 Handle the XML format specified in a bulkloader.yaml file.
@@ -23,9 +27,17 @@ Handle the XML format specified in a bulkloader.yaml file.
 
 
 
+
+
+
+
+
+
 import codecs
 import logging
 import re
+
+
 
 try:
   from xml.etree import ElementTree
@@ -81,6 +93,9 @@ class SimpleXmlConnector(connector_interface.ConnectorInterface):
           'simplexml must specify xpath_to_nodes. (In transformer named %s)' %
           name)
 
+
+
+
     if not re.match(NODE_PATH_ONLY_RE, xpath_to_nodes):
       logging.warning('simplexml export only supports very simple '
                       '/root/to/node xpath_to_nodes for now.')
@@ -117,6 +132,7 @@ class SimpleXmlConnector(connector_interface.ConnectorInterface):
     self.bulkload_state = None
     self.depth = 0
 
+
     if re.match(NODE_PATH_ONLY_RE, xpath_to_nodes):
       self.node_list = self.xpath_to_nodes.split('/')[1:]
       self.entity_node = self.node_list[-1]
@@ -133,6 +149,8 @@ class SimpleXmlConnector(connector_interface.ConnectorInterface):
     xpath_to_nodes = self.xpath_to_nodes
     if (len(xpath_to_nodes) > 1 and xpath_to_nodes[0] == '/'
         and xpath_to_nodes[1] != '/'):
+
+
       if not tree.getroot().tag == xpath_to_nodes.split('/')[1]:
         return
       xpath_to_nodes = '/' + xpath_to_nodes.split('/', 2)[2]
@@ -142,9 +160,11 @@ class SimpleXmlConnector(connector_interface.ConnectorInterface):
       if self.xml_style == self.ELEMENT_CENTRIC:
         input_dict = {}
         for child in node.getchildren():
+
           if not child.tag in input_dict:
             input_dict[child.tag] = child.text
       else:
+
         input_dict = dict(node.items())
       input_dict['__node__'] = node
       yield input_dict
@@ -157,6 +177,7 @@ class SimpleXmlConnector(connector_interface.ConnectorInterface):
           'simplexml export only supports simple /root/to/node xpath_to_nodes '
           'for now.')
     self.output_stream = codecs.open(filename, 'wb', 'utf-8')
+
     self.output_stream.write('<?xml version="1.0"?>\n')
     self.depth = 0
     for node in self.node_list:
@@ -174,6 +195,7 @@ class SimpleXmlConnector(connector_interface.ConnectorInterface):
                                                        saxutils.escape(value),
                                                        name))
       else:
+
         self.output_stream.write('%s <%s>\n' % (self.indent, name))
         self.depth += 1
         self.indent = ' ' * self.depth
@@ -189,6 +211,7 @@ class SimpleXmlConnector(connector_interface.ConnectorInterface):
       self.write_iterable_as_elements(dictionary)
       self.output_stream.write('%s</%s>\n' % (self.indent, self.entity_node))
     else:
+
       self.output_stream.write('%s<%s ' % (self.indent, self.entity_node))
       for (name, value) in dictionary.iteritems():
         self.output_stream.write('%s=%s ' % (name, saxutils.quoteattr(value)))

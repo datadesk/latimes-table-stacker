@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """A module that handles deferred execution of callables via the task queue.
 
 Tasks consist of a callable and arguments to pass to it. The callable and its
@@ -84,6 +87,10 @@ Example usage:
 
 
 
+
+
+
+
 import logging
 import os
 import pickle
@@ -143,6 +150,7 @@ def run_from_datastore(key):
   """
   entity = _DeferredTaskEntity.get(key)
   if not entity:
+
     raise PermanentTaskFailure()
   try:
     ret = run(entity.data)
@@ -186,6 +194,7 @@ def _curry_callable(obj, *args, **kwargs):
     return (invoke_member, (obj.im_self, obj.im_func.__name__) + args, kwargs)
   elif isinstance(obj, types.BuiltinMethodType):
     if not obj.__self__:
+
       return (obj, args, kwargs)
     else:
       return (invoke_member, (obj.__self__, obj.__name__) + args, kwargs)
@@ -240,6 +249,7 @@ def defer(obj, *args, **kwargs):
     task = taskqueue.Task(payload=pickled, **taskargs)
     return task.add(queue, transactional=transactional)
   except taskqueue.TaskTooLargeError:
+
     key = _DeferredTaskEntity(data=pickled).put()
     pickled = serialize(run_from_datastore, str(key))
     task = taskqueue.Task(payload=pickled, **taskargs)
@@ -250,6 +260,7 @@ class TaskHandler(webapp.RequestHandler):
   """A webapp handler class that processes deferred invocations."""
 
   def post(self):
+
     headers = ["%s:%s" % (k, v) for k, v in self.request.headers.items()
                if k.lower().startswith("x-appengine-")]
     logging.info(", ".join(headers))
@@ -257,6 +268,7 @@ class TaskHandler(webapp.RequestHandler):
     try:
       run(self.request.body)
     except PermanentTaskFailure, e:
+
       logging.exception("Permanent failure attempting to execute task")
 
 

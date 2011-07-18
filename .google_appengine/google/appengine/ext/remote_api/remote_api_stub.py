@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """An apiproxy stub that calls a remote handler via HTTP.
 
 This allows easy remote access to the App Engine datastore, and potentially any
@@ -31,7 +34,8 @@ import getpass
 def auth_func():
   return (raw_input('Username:'), getpass.getpass('Password:'))
 
-remote_api_stub.ConfigureRemoteDatastore('my-app', '/remote_api', auth_func)
+remote_api_stub.ConfigureRemoteApi(None, '/_ah/remote_api', auth_func,
+                                   'my-app.appspot.com')
 
 # Now you can access the remote datastore just as if your code was running on
 # App Engine!
@@ -57,15 +61,19 @@ A few caveats:
 
 
 
+
+
+
+
 import google
 import os
 import pickle
 import random
-import sha
 import sys
 import thread
 import threading
 import yaml
+import hashlib
 
 from google.appengine.api import datastore
 from google.appengine.api import apiproxy_rpc
@@ -101,7 +109,9 @@ def GetUserAgent():
 
   product_tokens.append("Google-remote_api/1.0")
 
+
   product_tokens.append(appengine_rpc.GetPlatformToken())
+
 
   python_version = ".".join(str(i) for i in sys.version_info)
   product_tokens.append("Python/%s" % python_version)
@@ -117,8 +127,17 @@ class TransactionData(object):
   """Encapsulates data about an individual transaction."""
 
   def __init__(self, thread_id):
+
+
     self.thread_id = thread_id
+
+
+
     self.preconditions = {}
+
+
+
+
     self.entities = {}
 
 
@@ -136,6 +155,8 @@ class RemoteStub(object):
         google.appengine.tools.appengine_rpc.AbstractRpcServer.
       path: The path to the handler this stub should send requests to.
     """
+
+
     self._server = server
     self._path = path
     self._test_stub_map = _test_stub_map
@@ -151,6 +172,7 @@ class RemoteStub(object):
     try:
       test_stub = self._test_stub_map and self._test_stub_map.GetStub(service)
       if test_stub:
+
         test_stub.MakeSyncCall(service, call, request, response)
       else:
         self._MakeRealSyncCall(service, call, request, response)
@@ -161,7 +183,7 @@ class RemoteStub(object):
     request_pb = remote_api_pb.Request()
     request_pb.set_service_name(service)
     request_pb.set_method(call)
-    request_pb.mutable_request().set_contents(request.Encode())
+    request_pb.set_request(request.Encode())
 
     response_pb = remote_api_pb.Response()
     encoded_request = request_pb.Encode()
@@ -173,12 +195,12 @@ class RemoteStub(object):
       raise apiproxy_errors.ApplicationError(error_pb.code(),
                                              error_pb.detail())
     elif response_pb.has_exception():
-      raise pickle.loads(response_pb.exception().contents())
+      raise pickle.loads(response_pb.exception())
     elif response_pb.has_java_exception():
       raise UnknownJavaServerError("An unknown error has occured in the "
                                    "Java remote_api handler for this call.")
     else:
-      response.ParseFromString(response_pb.response().contents())
+      response.ParseFromString(response_pb.response())
 
   def CreateRPC(self):
     return apiproxy_rpc.RPC(stub=self)
@@ -207,6 +229,9 @@ class RemoteDatastoreStub(RemoteStub):
     self.default_result_count = default_result_count
     self.__queries = {}
     self.__transactions = {}
+
+
+
 
     self.__next_local_cursor = 1
     self.__local_cursor_lock = threading.Lock()
@@ -248,6 +273,7 @@ class RemoteDatastoreStub(RemoteStub):
     else:
       self.__queries[cursor_id] = None
 
+
     query_result.mutable_cursor().set_cursor(cursor_id)
 
   def _Dynamic_Next(self, next_request, query_result):
@@ -258,6 +284,7 @@ class RemoteDatastoreStub(RemoteStub):
     query = self.__queries[cursor_id]
 
     if query is None:
+
       query_result.set_more_results(False)
       return
     else:
@@ -271,12 +298,15 @@ class RemoteDatastoreStub(RemoteStub):
   def _Dynamic_Get(self, get_request, get_response):
     txid = None
     if get_request.has_transaction():
+
       txid = get_request.transaction().handle()
       txdata = self.__transactions[txid]
       assert (txdata.thread_id ==
           thread.get_ident()), "Transactions are single-threaded."
 
+
       keys = [(k, k.Encode()) for k in get_request.key_list()]
+
 
       new_request = datastore_pb.GetRequest()
       for key, enckey in keys:
@@ -290,13 +320,18 @@ class RemoteDatastoreStub(RemoteStub):
           'datastore_v3', 'Get', new_request, get_response)
 
     if txid is not None:
+
       newkeys = new_request.key_list()
       entities = get_response.entity_list()
       for key, entity in zip(newkeys, entities):
         entity_hash = None
         if entity.has_entity():
-          entity_hash = sha.new(entity.entity().Encode()).digest()
+          entity_hash = hashlib.sha1(entity.entity().Encode()).digest()
         txdata.preconditions[key.Encode()] = (key, entity_hash)
+
+
+
+
 
       new_response = datastore_pb.GetResponse()
       it = iter(get_response.entity_list())
@@ -320,6 +355,7 @@ class RemoteDatastoreStub(RemoteStub):
     if put_request.has_transaction():
       entities = put_request.entity_list()
 
+
       requires_id = lambda x: x.id() == 0 and not x.has_name()
       new_ents = [e for e in entities
                   if requires_id(e.key().path().element_list()[-1])]
@@ -337,6 +373,7 @@ class RemoteDatastoreStub(RemoteStub):
           ent.mutable_key().CopyFrom(key)
           ent.mutable_entity_group().add_element().CopyFrom(
               key.path().element(0))
+
 
       txid = put_request.transaction().handle()
       txdata = self.__transactions[txid]
@@ -399,6 +436,7 @@ class RemoteDatastoreStub(RemoteStub):
       else:
         deletes.add_key().CopyFrom(key)
 
+
     super(RemoteDatastoreStub, self).MakeSyncCall(
         'remote_datastore', 'Transaction',
         tx, datastore_pb.PutResponse())
@@ -434,6 +472,115 @@ class RemoteDatastoreStub(RemoteStub):
 
 ALL_SERVICES = set(remote_api_services.SERVICE_PB_MAP)
 
+
+def GetRemoteAppIdFromServer(server, path, remote_token=None):
+  """Return the app id from a connection to an existing server.
+
+  Args:
+    server: An appengine_rpc.AbstractRpcServer
+    path: The path to the remote_api handler for your app
+      (for example, '/_ah/remote_api').
+    remote_token: Token to validate that the response was to this request.
+  Returns:
+    App ID as reported by the remote server.
+  Raises:
+    ConfigurationError: The server returned an invalid response.
+  """
+  if not remote_token:
+    random.seed()
+    remote_token = str(random.random())[2:]
+  remote_token = str(remote_token)
+  urlargs = {'rtok': remote_token}
+  response = server.Send(path, payload=None, **urlargs)
+  if not response.startswith('{'):
+    raise ConfigurationError(
+        'Invalid response recieved from server: %s' % response)
+  app_info = yaml.load(response)
+  if not app_info or 'rtok' not in app_info or 'app_id' not in app_info:
+    raise ConfigurationError('Error parsing app_id lookup response')
+  if str(app_info['rtok']) != remote_token:
+    raise ConfigurationError('Token validation failed during app_id lookup. '
+                             '(sent %s, got %s)' % (repr(remote_token),
+                                                    repr(app_info['rtok'])))
+  return app_info['app_id']
+
+
+def ConfigureRemoteApiFromServer(server, path, app_id, services=None,
+                                 default_auth_domain=None):
+  """Does necessary setup to allow easy remote access to App Engine APIs.
+
+  Args:
+    server: An AbstractRpcServer
+    path: The path to the remote_api handler for your app
+      (for example, '/_ah/remote_api').
+    app_id: The app_id of your app, as declared in app.yaml.
+    services: A list of services to set up stubs for. If specified, only those
+      services are configured; by default all supported services are configured.
+    default_auth_domain: The authentication domain to use by default.
+
+  Raises:
+    urllib2.HTTPError: if app_id is not provided and there is an error while
+      retrieving it.
+    ConfigurationError: if there is a error configuring the Remote API.
+  """
+  if services is None:
+    services = set(ALL_SERVICES)
+  else:
+    services = set(services)
+    unsupported = services.difference(ALL_SERVICES)
+    if unsupported:
+      raise ConfigurationError('Unsupported service(s): %s'
+                               % (', '.join(unsupported),))
+
+  os.environ['APPLICATION_ID'] = app_id
+  os.environ.setdefault('AUTH_DOMAIN', default_auth_domain or 'gmail.com')
+  apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
+  if 'datastore_v3' in services:
+    services.remove('datastore_v3')
+    datastore_stub = RemoteDatastoreStub(server, path)
+    apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', datastore_stub)
+  stub = RemoteStub(server, path)
+  for service in services:
+    apiproxy_stub_map.apiproxy.RegisterStub(service, stub)
+
+
+def GetRemoteAppId(servername,
+                   path,
+                   auth_func,
+                   rpc_server_factory=appengine_rpc.HttpRpcServer,
+                   rtok=None,
+                   secure=False,
+                   save_cookies=False):
+  """Get the remote appid as reported at servername/path.
+
+  This will also return an AbstractRpcServer server, which can be used with
+  ConfigureRemoteApiFromServer.
+
+  Args:
+    servername: The hostname your app is deployed on.
+    path: The path to the remote_api handler for your app
+      (for example, '/_ah/remote_api').
+    auth_func: A function that takes no arguments and returns a
+      (username, password) tuple. This will be called if your application
+      requires authentication to access the remote_api handler (it should!)
+      and you do not already have a valid auth cookie.
+      <app_id>.appspot.com.
+    rpc_server_factory: A factory to construct the rpc server for the datastore.
+    rtok: The validation token to sent with app_id lookups. If None, a random
+      token is used.
+    secure: Use SSL when communicating with the server.
+    save_cookies: Forwarded to rpc_server_factory function.
+
+  Returns:
+    (app_id, server): The application ID and an AbstractRpcServer.
+  """
+  server = rpc_server_factory(servername, auth_func, GetUserAgent(),
+                              GetSourceName(), save_cookies=save_cookies,
+                              debug_data=False, secure=secure)
+  app_id = GetRemoteAppIdFromServer(server, path, rtok)
+  return app_id, server
+
+
 def ConfigureRemoteApi(app_id,
                        path,
                        auth_func,
@@ -450,10 +597,15 @@ def ConfigureRemoteApi(app_id,
   is None and a servername is provided, this function will send a request
   to the server to retrieve the app_id.
 
+  Note that if the app_id is specified, the internal appid must be used;
+  this may include a partition and a domain. It is often easier to let
+  remote_api_stub retreive the app_id automatically.
+
+
   Args:
-    app_id: The app_id of your app, as declared in app.yaml.
+    app_id: The app_id of your app, as declared in app.yaml, or None.
     path: The path to the remote_api handler for your app
-      (for example, '/remote_api').
+      (for example, '/_ah/remote_api').
     auth_func: A function that takes no arguments and returns a
       (username, password) tuple. This will be called if your application
       requires authentication to access the remote_api handler (it should!)
@@ -486,46 +638,10 @@ def ConfigureRemoteApi(app_id,
                               GetSourceName(), save_cookies=save_cookies,
                               debug_data=False, secure=secure)
   if not app_id:
-    if not rtok:
-      random.seed()
-      rtok = str(random.random())[2:]
-    urlargs = {'rtok': rtok}
-    response = server.Send(path, payload=None, **urlargs)
-    if not response.startswith('{'):
-      raise ConfigurationError(
-          'Invalid response recieved from server: %s' % response)
-    app_info = yaml.load(response)
-    if not app_info or 'rtok' not in app_info or 'app_id' not in app_info:
-      raise ConfigurationError('Error parsing app_id lookup response')
-    if app_info['rtok'] != rtok:
-      raise ConfigurationError('Token validation failed during app_id lookup. '
-                               '(sent %s, got %s)' % (repr(rtok),
-                                                      repr(app_info['rtok'])))
-    app_id = app_info['app_id']
+    app_id = GetRemoteAppIdFromServer(server, path, rtok)
 
-  if services is not None:
-    services = set(services)
-    unsupported = services.difference(ALL_SERVICES)
-    if unsupported:
-      raise ConfigurationError('Unsupported service(s): %s'
-                               % (', '.join(unsupported),))
-  else:
-    services = set(ALL_SERVICES)
-
-  os.environ['APPLICATION_ID'] = app_id
-  if default_auth_domain:
-    os.environ['AUTH_DOMAIN'] = default_auth_domain
-  elif 'AUTH_DOMAIN' not in os.environ:
-    os.environ['AUTH_DOMAIN'] = 'gmail.com'
-  apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
-  if 'datastore_v3' in services:
-    services.remove('datastore_v3')
-    datastore_stub = RemoteDatastoreStub(server, path)
-    apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', datastore_stub)
-  stub = RemoteStub(server, path)
-  for service in services:
-    apiproxy_stub_map.apiproxy.RegisterStub(service, stub)
-
+  ConfigureRemoteApiFromServer(server, path, app_id, services,
+                               default_auth_domain)
   return server
 
 
@@ -540,6 +656,7 @@ def MaybeInvokeAuthentication():
     datastore_stub._server.Send(datastore_stub._path, payload=None)
   else:
     raise ConfigurationError('remote_api is not configured.')
+
 
 
 ConfigureRemoteDatastore = ConfigureRemoteApi

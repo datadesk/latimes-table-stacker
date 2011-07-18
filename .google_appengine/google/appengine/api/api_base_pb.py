@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+
+
 from google.net.proto import ProtocolBuffer
 import array
 import dummy_thread as thread
@@ -66,6 +68,13 @@ class StringProto(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.value_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_value_):
+      n += 1
+      n += self.lengthString(len(self.value_))
+    return n
+
   def Clear(self):
     self.clear_value()
 
@@ -73,12 +82,19 @@ class StringProto(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(10)
     out.putPrefixedString(self.value_)
 
+  def OutputPartial(self, out):
+    if (self.has_value_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.value_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 10:
         self.set_value(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -103,6 +119,7 @@ class StringProto(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -150,6 +167,13 @@ class Integer32Proto(ProtocolBuffer.ProtocolMessage):
     n += self.lengthVarInt64(self.value_)
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_value_):
+      n += 1
+      n += self.lengthVarInt64(self.value_)
+    return n
+
   def Clear(self):
     self.clear_value()
 
@@ -157,12 +181,19 @@ class Integer32Proto(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(8)
     out.putVarInt32(self.value_)
 
+  def OutputPartial(self, out):
+    if (self.has_value_):
+      out.putVarInt32(8)
+      out.putVarInt32(self.value_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 8:
         self.set_value(d.getVarInt32())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -187,6 +218,7 @@ class Integer32Proto(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.NUMERIC,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -234,6 +266,13 @@ class Integer64Proto(ProtocolBuffer.ProtocolMessage):
     n += self.lengthVarInt64(self.value_)
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_value_):
+      n += 1
+      n += self.lengthVarInt64(self.value_)
+    return n
+
   def Clear(self):
     self.clear_value()
 
@@ -241,12 +280,19 @@ class Integer64Proto(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(8)
     out.putVarInt64(self.value_)
 
+  def OutputPartial(self, out):
+    if (self.has_value_):
+      out.putVarInt32(8)
+      out.putVarInt64(self.value_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 8:
         self.set_value(d.getVarInt64())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -271,6 +317,7 @@ class Integer64Proto(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.NUMERIC,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -317,6 +364,12 @@ class BoolProto(ProtocolBuffer.ProtocolMessage):
     n = 0
     return n + 2
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_value_):
+      n += 2
+    return n
+
   def Clear(self):
     self.clear_value()
 
@@ -324,12 +377,19 @@ class BoolProto(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(8)
     out.putBoolean(self.value_)
 
+  def OutputPartial(self, out):
+    if (self.has_value_):
+      out.putVarInt32(8)
+      out.putBoolean(self.value_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 8:
         self.set_value(d.getBoolean())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -354,6 +414,7 @@ class BoolProto(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.NUMERIC,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -400,6 +461,12 @@ class DoubleProto(ProtocolBuffer.ProtocolMessage):
     n = 0
     return n + 9
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_value_):
+      n += 9
+    return n
+
   def Clear(self):
     self.clear_value()
 
@@ -407,12 +474,19 @@ class DoubleProto(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(9)
     out.putDouble(self.value_)
 
+  def OutputPartial(self, out):
+    if (self.has_value_):
+      out.putVarInt32(9)
+      out.putDouble(self.value_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 9:
         self.set_value(d.getDouble())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -437,6 +511,7 @@ class DoubleProto(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.DOUBLE,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -484,6 +559,13 @@ class BytesProto(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.value_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_value_):
+      n += 1
+      n += self.lengthString(len(self.value_))
+    return n
+
   def Clear(self):
     self.clear_value()
 
@@ -491,12 +573,19 @@ class BytesProto(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(10)
     out.putPrefixedString(self.value_)
 
+  def OutputPartial(self, out):
+    if (self.has_value_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.value_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 10:
         self.set_value(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -522,6 +611,7 @@ class BytesProto(ProtocolBuffer.ProtocolMessage):
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
 
+
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
 class VoidProto(ProtocolBuffer.ProtocolMessage):
@@ -544,7 +634,11 @@ class VoidProto(ProtocolBuffer.ProtocolMessage):
 
   def ByteSize(self):
     n = 0
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    return n
 
   def Clear(self):
     pass
@@ -552,9 +646,14 @@ class VoidProto(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     pass
 
+  def OutputPartial(self, out):
+    pass
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -575,6 +674,7 @@ class VoidProto(ProtocolBuffer.ProtocolMessage):
   _TYPES = _BuildTagLookupTable({
     0: ProtocolBuffer.Encoder.NUMERIC,
   }, 0, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""

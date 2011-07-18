@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Helper CGI for OAuth in the development app server."""
 
 
@@ -22,15 +25,19 @@
 import cgi
 
 
+
 _GET_REQUEST_TOKEN_URL = '/_ah/OAuthGetRequestToken'
 _AUTHORIZE_TOKEN_URL = '/_ah/OAuthAuthorizeToken'
 _GET_ACCESS_TOKEN_URL = '/_ah/OAuthGetAccessToken'
 
+
 _OAUTH_CALLBACK_PARAM = 'oauth_callback'
+
 
 OAUTH_URL_PATTERN = (_GET_REQUEST_TOKEN_URL
                      + '|' + _AUTHORIZE_TOKEN_URL
                      + '|' + _GET_ACCESS_TOKEN_URL)
+
 
 
 TOKEN_APPROVAL_TEMPLATE = """<html>
@@ -57,6 +64,7 @@ TOKEN_APPROVAL_TEMPLATE = """<html>
 </body>
 </html>
 """
+
 
 TOKEN_APPROVED_TEMPLATE = """<html>
 <head>
@@ -206,6 +214,8 @@ def CreateOAuthDispatcher():
   Returns:
     New dispatcher capable of handling requests to the built-in OAuth handlers.
   """
+
+
 
   from google.appengine.tools import dev_appserver
 

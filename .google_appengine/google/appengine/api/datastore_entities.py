@@ -15,12 +15,21 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Classes for common kinds, including Contact, Message, and Event.
 
 Most of these kinds are based on the gd namespace "kinds" from GData:
 
   http://code.google.com/apis/gdata/common-elements.html
 """
+
+
+
+
+
 
 
 
@@ -82,6 +91,7 @@ class GdKind(datastore.Entity):
     self['title'] = title
     self['content'] = ''
 
+
     self._contact_properties = set(contact_properties)
     assert not self._contact_properties.intersection(self.keys())
 
@@ -108,6 +118,8 @@ class GdKind(datastore.Entity):
                    isinstance(value, list) and hasattr(value[0], 'ToXml'))
 
       for val in self._XmlEscapeValues(prop):
+
+
         if has_toxml:
           xml += '\n  %s' % val
         else:
@@ -255,19 +267,23 @@ class Event(GdKind):
     self._kind_properties = set(Contact.KIND_PROPERTIES)
     xml += self._KindPropertiesToXml()
 
+
     if 'author' in self:
       xml += """
   <author><name>%s</name></author>""" % self['author']
+
 
     if 'eventStatus' in self:
       xml += """
   <gd:eventStatus value="http://schemas.google.com/g/2005#event.%s" />""" % (
     self['eventStatus'])
 
+
     if 'where' in self:
       lines = ['<gd:where valueString="%s" />' % val
                for val in self._XmlEscapeValues('where')]
       xml += '\n  ' + '\n  '.join(lines)
+
 
     iso_format = '%Y-%m-%dT%H:%M:%S'
     xml += '\n  <gd:when'
@@ -315,7 +331,9 @@ class Contact(GdKind):
   CONTACT_SECTION_FOOTER = """
   </gd:contactSection>"""
 
+
   KIND_PROPERTIES = ['title', 'content', 'link', 'category']
+
 
   CONTACT_SECTION_PROPERTIES = ['email', 'geoPt', 'im', 'phoneNumber',
                                 'postalAddress']
@@ -329,8 +347,10 @@ class Contact(GdKind):
     """
     xml = GdKind.HEADER % self.kind().lower()
 
+
     self._kind_properties = set(Contact.KIND_PROPERTIES)
     xml += self._KindPropertiesToXml()
+
 
     xml += Contact.CONTACT_SECTION_HEADER
     self._kind_properties = set(Contact.CONTACT_SECTION_PROPERTIES)

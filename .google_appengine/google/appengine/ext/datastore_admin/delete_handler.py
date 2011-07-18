@@ -15,55 +15,45 @@
 # limitations under the License.
 #
 
+
+
+
 """Used to confirm and act on delete requests from the Admin Console."""
 
 
 
-import logging
+
+
 import re
 import urllib
 
-from google.appengine.ext import db
+from google.appengine.api import datastore
 from google.appengine.ext import webapp
 from google.appengine.ext.datastore_admin import utils
-from google.appengine.ext.mapreduce import control
 from google.appengine.ext.mapreduce import model
 from google.appengine.ext.mapreduce import operation
 
-MAPREDUCE_OBJECTS = ['MapreduceState', 'ShardState']
+MAPREDUCE_OBJECTS = [model.MapreduceState.kind(),
+                     model.ShardState.kind()]
 XSRF_ACTION = 'delete'
 KIND_AND_SIZE_RE = re.compile('^(.*)\|(-?[0-9]+)$')
 
 
-def DeleteEntity(entity):
+def DeleteEntity(key):
   """Delete function which deletes all processed entities.
 
   Args:
-    entity: entity to delete.
+    key: key of the entity to delete.
 
   Yields:
     a delete operation if the entity is not an active mapreduce object.
   """
-  if not entity.kind() in MAPREDUCE_OBJECTS or not entity['active']:
-    yield operation.db.Delete(entity)
-
-
-def _GetPrintableStrs(namespace, kinds):
-  """Returns tuples describing affected kinds and namespace.
-
-  Args:
-    namespace: namespace being targeted.
-    kinds: list of kinds being targeted.
-
-  Returns:
-    (namespace_str, kind_str) tuple used for display to user.
-  """
-  namespace_str = ''
-  if kinds:
-    kind_str = 'all %s entities' % ', '.join(kinds)
+  if key.kind() in MAPREDUCE_OBJECTS:
+    entity = datastore.Get(key)
+    if entity and not entity["active"]:
+      yield operation.db.Delete(key)
   else:
-    kind_str = ''
-  return (namespace_str, kind_str)
+    yield operation.db.Delete(key)
 
 
 class ConfirmDeleteHandler(webapp.RequestHandler):
@@ -87,9 +77,9 @@ class ConfirmDeleteHandler(webapp.RequestHandler):
     """
     namespace = handler.request.get('namespace')
     kinds = handler.request.get('kind', allow_multiple=True)
-    sizes_known, size_total, remainder = cls._ParseKindsAndSizes(kinds)
+    sizes_known, size_total, remainder = utils.ParseKindsAndSizes(kinds)
 
-    (namespace_str, kind_str) = _GetPrintableStrs(namespace, kinds)
+    (namespace_str, kind_str) = utils.GetPrintableStrs(namespace, kinds)
     template_params = {
         'form_target': DoDeleteHandler.SUFFIX,
         'kind_list': kinds,
@@ -103,36 +93,6 @@ class ConfirmDeleteHandler(webapp.RequestHandler):
         'xsrf_token': utils.CreateXsrfToken(XSRF_ACTION),
     }
     utils.RenderToResponse(handler, 'confirm_delete.html', template_params)
-
-  @classmethod
-  def _ParseKindsAndSizes(cls, kinds):
-    """Parses kind|size list and returns template parameters.
-
-    Args:
-      kinds: list of kinds to process.
-
-    Returns:
-      sizes_known: whether or not all kind objects have known sizes.
-      size_total: total size of objects with known sizes.
-      len(kinds) - 2: for template rendering of greater than 3 kinds.
-    """
-    sizes_known = True
-    size_total = 0
-    kinds_and_sizes = utils.RetrieveCachedStats()
-
-    if kinds_and_sizes:
-      for kind in kinds:
-        if kind in kinds_and_sizes:
-          size_total += kinds_and_sizes[kind]
-        else:
-          sizes_known = False
-    else:
-      sizes_known = False
-
-    if size_total:
-      size_total = utils.GetPrettyBytes(size_total)
-
-    return sizes_known, size_total, len(kinds) - 2
 
   def get(self):
     """Handler for get requests to datastore_admin/confirm_delete."""
@@ -156,11 +116,13 @@ class DoDeleteHandler(webapp.RequestHandler):
     """
     jobs = self.request.get('job', allow_multiple=True)
     error = self.request.get('error', '')
+    xsrf_error = self.request.get('xsrf_error', '')
 
     template_params = {
         'job_list': jobs,
         'mapreduce_detail': self.MAPREDUCE_DETAIL,
         'error': error,
+        'xsrf_error': xsrf_error,
     }
     utils.RenderToResponse(self, 'do_delete.html', template_params)
 
@@ -171,31 +133,25 @@ class DoDeleteHandler(webapp.RequestHandler):
     """
     namespace = self.request.get('namespace')
     kinds = self.request.get('kind', allow_multiple=True)
-    (namespace_str, _) = _GetPrintableStrs(namespace, kinds)
-    app_id = self.request.get('app_id')
+    (namespace_str, kinds_str) = utils.GetPrintableStrs(namespace, kinds)
     token = self.request.get('xsrf_token')
 
     jobs = []
     if utils.ValidateXsrfToken(token, XSRF_ACTION):
       try:
-        for kind in kinds:
-          name = 'Delete all %s objects%s' % (kind, namespace_str)
-          mapreduce_params = {
-              'entity_kind': kind,
-          }
-
-          if utils.config.CLEANUP_MAPREDUCE_STATE:
-            mapreduce_params['done_callback'] = '%s/%s' % (
-                utils.config.BASE_PATH, DeleteDoneHandler.SUFFIX)
-
-          jobs.append(control.start_map(
-              name, self.DELETE_HANDLER,
-              self.INPUT_READER, mapreduce_params,
-              mapreduce_parameters=mapreduce_params,
-              base_path=utils.config.MAPREDUCE_PATH,
-              _app=app_id))
-
+        op = utils.StartOperation(
+            'Deleting %s%s' % (kinds_str, namespace_str))
+        name_template = 'Delete all %(kind)s objects%(namespace)s'
+        jobs = utils.RunMapForKinds(
+            op,
+            kinds,
+            name_template,
+            self.DELETE_HANDLER,
+            self.INPUT_READER,
+            {})
         error = ''
+
+
       except Exception, e:
         error = self._HandleException(e)
 
@@ -216,33 +172,3 @@ class DoDeleteHandler(webapp.RequestHandler):
     page for user.
     """
     return str(e)
-
-
-class DeleteDoneHandler(webapp.RequestHandler):
-  """Handler to delete data associated with successful MapReduce jobs."""
-
-  SUFFIX = 'delete_done'
-
-  def post(self):
-    """Uses mapreduce_id param to delete data associated with a successful job.
-    """
-    if 'Mapreduce-Id' in self.request.headers:
-      mapreduce_id = self.request.headers['Mapreduce-Id']
-
-      keys = []
-      job_success = True
-      for shard_state in model.ShardState.find_by_mapreduce_id(mapreduce_id):
-        keys.append(shard_state.key())
-        if not shard_state.result_status == 'success':
-          job_success = False
-
-      if job_success:
-        keys.append(model.MapreduceState.get_key_by_job_id(mapreduce_id))
-        keys.append(model.MapreduceControl.get_key_by_job_id(mapreduce_id))
-        db.delete(keys)
-        logging.info('State for successful job %s was deleted.', mapreduce_id)
-      else:
-        logging.info('Job %s was not successful so no state was deleted.', (
-            mapreduce_id))
-    else:
-      logging.error('Done callback called without Mapreduce Id.')

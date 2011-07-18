@@ -15,6 +15,21 @@
 # limitations under the License.
 #
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """Operations which can be yielded from mappers.
 
 Operation is callable that takes context.Context as a parameter.
@@ -23,7 +38,9 @@ on recieving from handler function.
 """
 
 
+
 import db
 import counters
+from base import Operation
 
-__all__ = ['db', 'counters']
+__all__ = ['db', 'counters', 'Operation']

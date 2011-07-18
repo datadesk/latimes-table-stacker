@@ -14,9 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+
+
 """Errors used in the urlfetch API
 developers.
 """
+
+
+
+
+
 
 
 
@@ -38,13 +46,19 @@ class InvalidURLError(Error):
 
 
 class DownloadError(Error):
-  """Raised when the we could not fetch the URL for any reason.
+  """Raised when we could not fetch the URL for any reason.
 
   Note that this exception is only raised when we could not contact the
   server. HTTP errors (e.g., 404) are returned in as the status_code field
   in the return value of Fetch, and no exception is raised.
   """
 
+class DeadlineExceededError(DownloadError):
+  """Raised when we could not fetch the URL because the deadline was exceeded.
+
+  This can occur with either the client-supplied 'deadline' or the system
+  default, if the client does not supply a 'deadline' parameter.
+  """
 
 class ResponseTooLargeError(Error):
   """Raised when the response was too large and was truncated."""
@@ -55,3 +69,6 @@ class ResponseTooLargeError(Error):
 class InvalidMethodError(Error):
   """Raised when an invalid value for 'method' is provided"""
 
+
+class SSLCertificateError(Error):
+  """Raised when an invalid server certificate is presented."""

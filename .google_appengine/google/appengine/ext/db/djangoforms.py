@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Support for creating Django (new) forms from Datastore data models.
 
 This is our best shot at supporting as much of Django as possible: you
@@ -79,25 +82,40 @@ Notes:
 
 
 
+
+
+
+
+
 import itertools
 import logging
 
 
+
+
+
 import django.core.exceptions
 import django.utils.datastructures
+
+
 
 try:
   from django import newforms as forms
 except ImportError:
   from django import forms
 
+
+
 try:
   from django.utils.translation import ugettext_lazy as _
 except ImportError:
   pass
 
+
 from google.appengine.api import users
 from google.appengine.ext import db
+
+
 
 
 
@@ -128,12 +146,16 @@ def monkey_patch(name, bases, namespace):
   it is recommended to give PatchClass the same name as TargetClass.
   """
 
+
   assert len(bases) == 1, 'Exactly one base class is required'
   base = bases[0]
   for name, value in namespace.iteritems():
     if name not in ('__metaclass__', '__module__'):
       setattr(base, name, value)
   return base
+
+
+
 
 
 
@@ -299,6 +321,8 @@ class BlobProperty(db.BlobProperty):
     This extracts the content from the UploadedFile instance returned
     by the FileField instance.
     """
+
+
     if value.__class__.__name__ == 'UploadedFile':
       return db.Blob(value.content)
     return super(BlobProperty, self).make_value_from_form(value)
@@ -404,12 +428,17 @@ class BooleanProperty(db.BooleanProperty):
     if value is None:
       return None
     if isinstance(value, basestring) and value.lower() == 'false':
+
+
       return False
     return bool(value)
 
 
 class StringListProperty(db.StringListProperty):
   __metaclass__ = monkey_patch
+
+
+
 
 
   def get_form_field(self, **kwargs):
@@ -501,6 +530,7 @@ class ModelChoiceField(forms.Field):
                                            help_text, *args, **kwargs)
     self.empty_label = empty_label
     self.reference_class = reference_class
+
     self._query = query
     self._choices = choices
     self._update_widget_choices()
@@ -508,6 +538,7 @@ class ModelChoiceField(forms.Field):
   def _update_widget_choices(self):
     """Helper to copy the choices to the widget."""
     self.widget.choices = self.choices
+
 
 
   def _get_query(self):
@@ -526,9 +557,14 @@ class ModelChoiceField(forms.Field):
 
   def _generate_choices(self):
     """Generator yielding (key, label) pairs from the query results."""
+
+
     yield ('', self.empty_label)
+
+
     for inst in self._query:
       yield (inst.key(), unicode(inst))
+
 
 
   def _get_choices(self):
@@ -556,6 +592,7 @@ class ModelChoiceField(forms.Field):
 
     This turns a non-empty value into a model instance.
     """
+
     value = super(ModelChoiceField, self).clean(value)
     if not value:
       return None
@@ -627,6 +664,9 @@ def property_clean(prop, value):
   """
   if value is not None:
     try:
+
+
+
       prop.validate(prop.make_value_from_form(value))
     except (db.BadValueError, ValueError), e:
       raise forms.ValidationError(unicode(e))
@@ -643,6 +683,8 @@ class ModelFormOptions(object):
   These instance attributes are copied from the 'Meta' class that is
   usually present in a ModelForm class, and all default to None.
   """
+
+
 
 
   def __init__(self, options=None):
@@ -671,10 +713,14 @@ class ModelFormMetaclass(type):
     are added to this based on the Datastore Model class specified
     by the Meta attribute.
     """
+
     fields = sorted(((field_name, attrs.pop(field_name))
                      for field_name, obj in attrs.items()
                      if isinstance(obj, forms.Field)),
                     key=lambda obj: obj[1].creation_counter)
+
+
+
     for base in bases[::-1]:
       if hasattr(base, 'base_fields'):
         fields = base.base_fields.items() + fields
@@ -684,6 +730,9 @@ class ModelFormMetaclass(type):
 
     opts = ModelFormOptions(attrs.get('Meta', None))
     attrs['_meta'] = opts
+
+
+
 
     base_models = []
     for base in bases:
@@ -695,7 +744,12 @@ class ModelFormMetaclass(type):
       raise django.core.exceptions.ImproperlyConfigured(
           "%s's base classes define more than one model." % class_name)
 
+
+
     if opts.model is not None:
+
+
+
       if base_models and base_models[0] is not opts.model:
         raise django.core.exceptions.ImproperlyConfigured(
             '%s defines a different model than its parent.' % class_name)
@@ -711,8 +765,11 @@ class ModelFormMetaclass(type):
         if form_field is not None:
           model_fields[name] = form_field
 
+
       model_fields.update(declared_fields)
       attrs['base_fields'] = model_fields
+
+
 
       props = opts.model.properties()
       for name, field in model_fields.iteritems():
@@ -770,7 +827,12 @@ class BaseModelForm(forms.BaseForm):
           continue
         object_data[name] = prop.get_value_for_form(instance)
     if initial is not None:
+
       object_data.update(initial)
+
+
+
+
     kwargs = dict(data=data, files=files, auto_id=auto_id,
                   prefix=prefix, initial=object_data,
                   error_class=error_class, label_suffix=label_suffix)
@@ -822,14 +884,18 @@ class BaseModelForm(forms.BaseForm):
         instance = opts.model(**converted_data)
         self.instance = instance
       else:
+
         for name, value in converted_data.iteritems():
           if name == 'key_name':
+
             continue
           setattr(instance, name, value)
     except db.BadValueError, err:
       raise ValueError('The %s could not be %s (%s)' %
                        (opts.model.kind(), fail_message, err))
     if commit:
+
+
       instance.put()
     return instance
 

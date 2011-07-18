@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Validation tools for generic object structures.
 
 This library is used for defining classes with constrained attributes.
@@ -33,6 +36,10 @@ validator that ensure the correct type is to use the Type validator.
 This validation library is mainly intended for use with the YAML object
 builder.  See yaml_object.py.
 """
+
+
+
+
 
 
 
@@ -60,6 +67,8 @@ class ValidationError(Error):
     if hasattr(cause, 'args') and cause.args:
       Error.__init__(self, message, *cause.args)
     else:
+
+
       Error.__init__(self, message)
     self.message = message
     self.cause = cause
@@ -106,8 +115,122 @@ def AsValidator(validator):
                                    str(validator))
 
 
-class Validated(object):
-  """Base class for other classes that require validation.
+def _SimplifiedValue(validator, value):
+  """Convert any value to simplified collections and basic types.
+
+  Args:
+    validator: An instance of Validator that corresponds with 'value'.
+      May also be 'str' or 'int' if those were used instead of a full
+      Validator.
+    value: Value to convert to simplified collections.
+
+  Returns:
+    The value as a dictionary if it is a ValidatedBase object.  A list of
+    items converted to simplified collections if value is a list
+    or a tuple. Otherwise, just the value.
+  """
+  if isinstance(value, ValidatedBase):
+
+    return value.ToDict()
+  elif isinstance(value, (list, tuple)):
+
+    return [_SimplifiedValue(validator, item) for item in value]
+  elif isinstance(validator, Validator):
+    return validator.ToValue(value)
+  return value
+
+
+class ValidatedBase(object):
+  """Base class for all validated objects."""
+
+  @classmethod
+  def GetValidator(self, key):
+    """Safely get the Validator corresponding to the given key.
+
+    This function should be overridden by subclasses
+
+    Args:
+      key: The attribute or item to get a validator for.
+
+    Returns:
+      Validator associated with key or attribute.
+
+    Raises:
+      ValidationError if the requested key is illegal.
+    """
+    raise NotImplementedError('Subclasses of ValidatedBase must '
+                              'override GetValidator.')
+
+  def SetMultiple(self, attributes):
+    """Set multiple values on Validated instance.
+
+    All attributes will be validated before being set.
+
+    Args:
+      attributes: A dict of attributes/items to set.
+
+    Raises:
+      ValidationError when no validated attribute exists on class.
+    """
+    for key, value in attributes.iteritems():
+      self.Set(key, value)
+
+  def Set(self, key, value):
+    """Set a single value on Validated instance.
+
+    This method should be overridded by sub-classes.
+
+    This method can only be used to assign validated attributes/items.
+
+    Args:
+      key: The name of the attributes
+      value: The value to set
+
+    Raises:
+      ValidationError when no validated attribute exists on class.
+    """
+    raise NotImplementedError('Subclasses of ValidatedBase must override Set.')
+
+  def CheckInitialized(self):
+    """Checks that all required fields are initialized.
+
+    This function is called after all attributes have been checked to
+    verify any higher level constraints, for example ensuring all required
+    attributes are present.
+
+    Subclasses should override this function and raise an exception for
+    any errors.
+    """
+    pass
+
+  def ToDict(self):
+    """Convert ValidatedBase object to a dictionary.
+
+    Recursively traverses all of its elements and converts everything to
+    simplified collections.
+
+    Subclasses should override this method.
+
+    Returns:
+      A dictionary mapping all attributes to simple values or collections.
+    """
+    raise NotImplementedError('Subclasses of ValidatedBase must '
+                              'override ToDict.')
+
+  def ToYAML(self):
+    """Print validated object as simplified YAML.
+
+    Returns:
+      Object as a simplified YAML string compatible with parsing using the
+      SafeLoader.
+    """
+    return yaml.dump(self.ToDict(),
+                     default_flow_style=False,
+                     Dumper=yaml.SafeDumper)
+
+
+class Validated(ValidatedBase):
+  """Base class for classes that require validation.
 
   A class which intends to use validated fields should sub-class itself from
   this class.  Each class should define an 'ATTRIBUTES' class variable which
@@ -123,6 +246,7 @@ class Validated(object):
   Attributes that are not listed under ATTRIBUTES work like normal and are
   not validated upon assignment.
   """
+
 
   ATTRIBUTES = None
 
@@ -141,13 +265,14 @@ class Validated(object):
           'The class %s does not define an ATTRIBUTE variable.'
           % self.__class__)
 
-    for key in self.ATTRIBUTES.keys():
-      object.__setattr__(self, key, self.GetAttribute(key).default)
 
-    self.Set(**attributes)
+    for key in self.ATTRIBUTES.keys():
+      object.__setattr__(self, key, self.GetValidator(key).default)
+
+    self.SetMultiple(attributes)
 
   @classmethod
-  def GetAttribute(self, key):
+  def GetValidator(self, key):
     """Safely get the underlying attribute definition as a Validator.
 
     Args:
@@ -157,24 +282,40 @@ class Validated(object):
       Validator associated with key or attribute value wrapped in a
       validator.
     """
+    if key not in self.ATTRIBUTES:
+      raise ValidationError(
+          'Unexpected attribute \'%s\' for object of type %s.' %
+          (key, self.__name__))
+
     return AsValidator(self.ATTRIBUTES[key])
 
-  def Set(self, **attributes):
-    """Set multiple values on Validated instance.
+  def Set(self, key, value):
+    """Set a single value on Validated instance.
 
-    This method can only be used to assign validated methods.
+    This method can only be used to assign validated attributes.
 
     Args:
-      attributes: Attributes to set on object.
+      key: The name of the attributes
+      value: The value to set
 
     Raises:
       ValidationError when no validated attribute exists on class.
     """
-    for key, value in attributes.iteritems():
-      if key not in self.ATTRIBUTES:
-        raise ValidationError('Class \'%s\' does not have attribute \'%s\''
-                               % (self.__class__, key))
-      setattr(self, key, value)
+    setattr(self, key, value)
+
+  def Get(self, key):
+    """Get a single value on Validated instance.
+
+    This method can only be used to retrieve validated attributes.
+
+    Args:
+      key: The name of the attributes
+
+    Raises:
+      ValidationError when no validated attribute exists on class.
+    """
+    self.GetValidator(key)
+    return getattr(self, key)
 
   def CheckInitialized(self):
     """Checks that all required fields are initialized.
@@ -192,11 +333,10 @@ class Validated(object):
     """
     for key in self.ATTRIBUTES.iterkeys():
       try:
-        self.GetAttribute(key)(getattr(self, key))
+        self.GetValidator(key)(getattr(self, key))
       except MissingAttribute, e:
         e.message = "Missing required value '%s'." % key
         raise e
-
 
   def __setattr__(self, key, value):
     """Set attribute.
@@ -214,15 +354,11 @@ class Validated(object):
       value: Attributes new value.
 
     Raises:
-      ValidationError when trying to assign to a value that does not exist.
+      ValidationError when trying to assign to an attribute
+      that does not exist.
     """
-
-    if key in self.ATTRIBUTES:
-      value = self.GetAttribute(key)(value, key)
-      object.__setattr__(self, key, value)
-    else:
-      raise ValidationError('Class \'%s\' does not have attribute \'%s\''
-                            % (self.__class__, key))
+    value = self.GetValidator(key)(value, key)
+    object.__setattr__(self, key, value)
 
   def __str__(self):
     """Formatted view of validated object and nested values."""
@@ -277,31 +413,6 @@ class Validated(object):
       result = result ^ hash(key) ^ hash(value)
     return result
 
-  @staticmethod
-  def _ToValue(validator, value):
-    """Convert any value to simplified collections and basic types.
-
-    Args:
-      validator: An instance of Validator that corresponds with 'value'.
-        May also be 'str' or 'int' if those were used instead of a full
-        Validator.
-      value: Value to convert to simplified collections.
-
-    Returns:
-      The value as a dictionary if it is a Validated object.
-      A list of items converted to simplified collections if value is a list
-        or a tuple.
-      Otherwise, just the value.
-    """
-    if isinstance(value, Validated):
-      return value.ToDict()
-    elif isinstance(value, (list, tuple)):
-      return [Validated._ToValue(validator, item) for item in value]
-    else:
-      if isinstance(validator, Validator):
-        return validator.ToValue(value)
-      return value
-
   def ToDict(self):
     """Convert Validated object to a dictionary.
 
@@ -317,20 +428,144 @@ class Validated(object):
     result = {}
     for name, validator in self.ATTRIBUTES.iteritems():
       value = getattr(self, name)
+
       if not(isinstance(validator, Validator) and value == validator.default):
-        result[name] = Validated._ToValue(validator, value)
+        result[name] = _SimplifiedValue(validator, value)
     return result
 
-  def ToYAML(self):
-    """Print validated object as simplified YAML.
+
+class ValidatedDict(ValidatedBase, dict):
+  """Base class for validated dictionaries.
+
+  You can control the keys and values that are allowed in the dictionary
+  by setting KEY_VALIDATOR and VALUE_VALIDATOR to subclasses of Validator (or
+  things that can be interpreted as validators, see AsValidator).
+
+  For example if you wanted only capitalized keys that map to integers
+  you could do:
+
+    class CapitalizedIntegerDict(ValidatedDict):
+      KEY_VALIDATOR = Regex('[A-Z].*')
+      VALUE_VALIDATOR = int  # this gets interpreted to Type(int)
+
+  The following code would result in an error:
+
+    my_dict = CapitalizedIntegerDict()
+    my_dict['lowercase'] = 5  # Throws a validation exception
+
+  You can freely nest Validated and ValidatedDict inside each other so:
+
+    class MasterObject(Validated):
+      ATTRIBUTES = {'paramdict': CapitalizedIntegerDict}
+
+  Could be used to parse the following yaml:
+    paramdict:
+      ArbitraryKey: 323
+      AnotherArbitraryKey: 9931
+  """
+  KEY_VALIDATOR = None
+  VALUE_VALIDATOR = None
+
+  def __init__(self, **kwds):
+    """Construct a validated dict by interpreting the key and value validators.
+
+    Args:
+      **kwds: keyword arguments will be validated and put into the dict.
+    """
+    self.update(kwds)
+
+  @classmethod
+  def GetValidator(self, key):
+    """Check the key for validity and return a corresponding value validator.
+
+    Args:
+      key: The key that will correspond to the validator we are returning.
+    """
+    key = AsValidator(self.KEY_VALIDATOR)(key, 'key in %s' % self.__name__)
+    return AsValidator(self.VALUE_VALIDATOR)
+
+  def __setitem__(self, key, value):
+    """Set an item.
+
+    Only attributes accepted by GetValidator and values that validate
+    with the validator returned from GetValidator are allowed to be set
+    in this dictionary.
+
+    Args:
+      key: Name of item to set.
+      value: Items new value.
+
+    Raises:
+      ValidationError when trying to assign to a value that does not exist.
+    """
+    dict.__setitem__(self, key, self.GetValidator(key)(value, key))
+
+  def setdefault(self, key, value=None):
+    """Trap setdefaultss to ensure all key/value pairs are valid.
+
+    See the documentation for setdefault on dict for usage details.
+
+    Raises:
+      ValidationError if the specified key is illegal or the
+      value invalid.
+    """
+    return dict.setdefault(self, key, self.GetValidator(key)(value, key))
+
+  def update(self, other, **kwds):
+    """Trap updates to ensure all key/value pairs are valid.
+
+    See the documentation for update on dict for usage details.
+
+    Raises:
+      ValidationError if any of the specified keys are illegal or
+      values invalid.
+    """
+    if hasattr(other, 'keys') and callable(getattr(other, 'keys')):
+      newother = {}
+      for k in other:
+        newother[k] = self.GetValidator(k)(other[k], k)
+    else:
+      newother = [(k, self.GetValidator(k)(v, k)) for (k, v) in other]
+
+    newkwds = {}
+    for k in kwds:
+      newkwds[k] = self.GetValidator(k)(kwds[k], k)
+
+    dict.update(self, newother, **newkwds)
+
+  def Set(self, key, value):
+    """Set a single value on Validated instance.
+
+    This method checks that a given key and value are valid and if so
+    puts the item into this dictionary.
+
+    Args:
+      key: The name of the attributes
+      value: The value to set
+
+    Raises:
+      ValidationError when no validated attribute exists on class.
+    """
+    self[key] = value
+
+  def ToDict(self):
+    """Convert ValidatedBase object to a dictionary.
+
+    Recursively traverses all of its elements and converts everything to
+    simplified collections.
+
+    Subclasses should override this method.
 
     Returns:
-      Object as a simplified YAML string compatible with parsing using the
-      SafeLoader.
+      A dictionary mapping all attributes to simple values or collections.
     """
-    return yaml.dump(self.ToDict(),
-                     default_flow_style=False,
-                     Dumper=yaml.SafeDumper)
+    result = {}
+    for name, value in self.iteritems():
+      validator = self.GetValidator(name)
+      result[name] = _SimplifiedValue(validator, value)
+    return result
+
+
 
 
 
@@ -421,38 +656,48 @@ class Type(Validator):
       convert: Cause conversion if value is not the right type.
         Conversion is done by calling the constructor of the type
         with the value as its first parameter.
+      default: Default assignment is made during initialization and will
+        not pass through validation.
     """
     super(Type, self).__init__(default)
     self.expected_type = expected_type
     self.convert = convert
 
   def Validate(self, value, key):
-    """Validate that value is correct type.
+    """Validate that value has the correct type.
 
     Args:
       value: Value to validate.
       key: Name of the field being validated.
 
     Returns:
-      None if value is None, value if value is of correct type, converted
-      value if the validator is configured to convert.
+      value if value is of the correct type. value is coverted to the correct
+      type if the Validator is configured to do so.
 
     Raises:
-      ValidationError if value is not of the right type and validator
-      is not configured to convert.
+      MissingAttribute: if value is None and the expected type is not NoneType.
+      ValidationError: if value is not of the right type and the validator
+        is either configured not to convert or cannot convert.
     """
     if not isinstance(value, self.expected_type):
-      if value is not None and self.convert:
+      if value is None:
+        raise MissingAttribute('Missing value is required.')
+
+      if self.convert:
         try:
           return self.expected_type(value)
         except ValueError, e:
-          raise ValidationError('Type conversion failed for value \'%s\' '
-                                'key %s.' % (value, key), e)
+          raise ValidationError(
+              'Value %r for %s could not be converted to type %s.' % (
+                  value, key, self.expected_type.__name__), e)
         except TypeError, e:
-          raise ValidationError('Expected value of type %s for key %s, but got '
-                                '\'%s\'.' % (self.expected_type, key, value))
+          raise ValidationError(
+              'Value %r for %s is not of the expected type %s' % (
+                  value, key, self.expected_type.__name__), e)
       else:
-        raise MissingAttribute('Missing value is required.')
+        raise ValidationError(
+              'Value %r for %s is not of the expected type %s' % (
+                  value, key, self.expected_type.__name__))
     else:
       return value
 
@@ -508,11 +753,13 @@ class Options(Validator):
             "Option '%s' already defined for options property." % alias)
       alias_map[alias] = original
 
+
     for option in options:
       if isinstance(option, str):
         AddAlias(option, option)
 
       elif isinstance(option, (list, tuple)):
+
         if len(option) != 2:
           raise AttributeDefinitionError("Alias is defined as a list of tuple "
                                          "with two items.  The first is the "
@@ -548,7 +795,7 @@ class Options(Validator):
       raise ValidationError('Value for options field must not be None.')
     value = str(value)
     if value not in self.options:
-      raise ValidationError('Value \'%s\' for key %s not in %s.'
+      raise ValidationError('Value \'%s\' for %s not in %s.'
                             % (value, key, self.options))
     return self.options[value]
 
@@ -672,7 +919,7 @@ class Regex(Validator):
       cast_value = TYPE_UNICODE(value)
 
     if self.re.match(cast_value) is None:
-      raise ValidationError('Value \'%s\' for key %s does not match expression '
+      raise ValidationError('Value \'%s\' for %s does not match expression '
                             '\'%s\'' % (value, key, self.re.pattern))
     return cast_value
 
@@ -752,7 +999,7 @@ class _RegexStrValue(object):
     try:
       return re.compile(regex)
     except re.error, e:
-      raise ValidationError('Value \'%s\' for key %s does not compile: %s' %
+      raise ValidationError('Value \'%s\' for %s does not compile: %s' %
                             (regex, self.__key, e), e)
 
   @property
@@ -931,15 +1178,14 @@ class Repeated(Validator):
       wrong type.
     """
     if not isinstance(value, list):
-      raise ValidationError('Repeated fields for %s must be sequence, '
-                            'but found \'%s\'.' % (key, value))
+      raise ValidationError('Value \'%s\' for %s should be a sequence but '
+                            'is not.' % (value, key))
 
     for item in value:
       if isinstance(self.constructor, Validator):
         item = self.constructor.Validate(item, key)
       elif not isinstance(item, self.constructor):
-        raise ValidationError('Repeated items for %s must be %s, but found '
-                              '\'%s\'.' %
-                              (key, str(self.constructor), str(item)))
+        raise ValidationError('Value element \'%s\' for %s must be type %s.' % (
+            str(item), key, self.constructor.__name__))
 
     return value

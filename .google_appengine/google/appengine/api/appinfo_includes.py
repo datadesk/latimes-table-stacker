@@ -15,7 +15,18 @@
 # limitations under the License.
 #
 
+
+
+
 """Used to parse app.yaml files while following builtins/includes directives."""
+
+
+
+
+
+
+
+
 
 
 
@@ -32,7 +43,7 @@ class IncludeFileNotFound(Exception):
   """Raised if a specified include file cannot be found on disk."""
 
 
-def Parse(appinfo_file):
+def Parse(appinfo_file, open_fn=open):
   """Parse an AppYaml file and merge referenced includes and builtins."""
   try:
     appinfo_path = appinfo_file.name
@@ -44,7 +55,8 @@ def Parse(appinfo_file):
                     'attribute "name" as as full file path.')
 
   appyaml = appinfo.LoadSingleAppInfo(appinfo_file)
-  appyaml = _MergeBuiltinsIncludes(appinfo_path, appyaml)
+  appyaml = _MergeBuiltinsIncludes(appinfo_path, appyaml, open_fn)
+
 
   if not appyaml.handlers:
     raise appinfo_errors.MissingURLMapping(
@@ -57,34 +69,42 @@ def Parse(appinfo_file):
   return appyaml
 
 
-def _MergeBuiltinsIncludes(appinfo_path, appyaml):
+def _MergeBuiltinsIncludes(appinfo_path, appyaml, open_fn=open):
   """Merges app.yaml files from builtins and includes directives in appyaml.
 
   Args:
-    appinfo_path: the application directory
+    appinfo_path: the application directory.
     appyaml: the yaml file to obtain builtins and includes directives from.
+    open_fn: file opening function to pass to _ResolveIncludes, used when
+             reading yaml files.
 
   Returns:
     the modified appyaml object which incorporates referenced yaml files.
   """
 
+
+
   if not appyaml.builtins:
     appyaml.builtins = [appinfo.BuiltinHandler(default='on')]
+
   else:
     if not appinfo.BuiltinHandler.IsDefined(appyaml.builtins, 'default'):
       appyaml.builtins.append(appinfo.BuiltinHandler(default='on'))
+
 
   aggregate_appinclude = (
       _ResolveIncludes(appinfo_path,
                        appinfo.AppInclude(builtins=appyaml.builtins,
                                           includes=appyaml.includes),
-                       os.path.dirname(appinfo_path)))
+                       os.path.dirname(appinfo_path),
+                       open_fn=open_fn))
 
   return appinfo.AppInclude.MergeAppYamlAppInclude(appyaml,
                                                    aggregate_appinclude)
 
 
-def _ResolveIncludes(included_from, app_include, basepath, state=None):
+def _ResolveIncludes(included_from, app_include, basepath, state=None,
+                     open_fn=open):
   """Recursively includes all encountered builtins/includes directives.
 
   This function takes an initial AppInclude object specified as a parameter
@@ -99,6 +119,7 @@ def _ResolveIncludes(included_from, app_include, basepath, state=None):
     basepath: application basepath.
     state: contains the list of included and excluded files as well as the
            directives of all encountered AppInclude objects.
+    open_fn: file opening function udes, used when reading yaml files.
 
   Returns:
     AppInclude object merged from following all builtins/includes defined in
@@ -111,20 +132,29 @@ def _ResolveIncludes(included_from, app_include, basepath, state=None):
 
   class RecurseState(object):
 
+
+
+
+
     def __init__(self):
       self.includes = {}
       self.excludes = {}
       self.aggregate_appinclude = appinfo.AppInclude()
 
+
   if not state:
     state = RecurseState()
 
+
   appinfo.AppInclude.MergeAppIncludes(state.aggregate_appinclude, app_include)
+
 
   includes_list = _ConvertBuiltinsToIncludes(included_from, app_include,
                                              state)
 
+
   includes_list.extend(app_include.includes or [])
+
 
   for i in includes_list:
     inc_path = _ResolvePath(included_from, i, basepath)
@@ -137,13 +167,16 @@ def _ResolveIncludes(included_from, app_include, basepath, state=None):
                       inc_path, state.excludes[inc_path], included_from)
     elif not inc_path in state.includes:
       state.includes[inc_path] = included_from
-      yaml_file = open(inc_path, 'r')
+      yaml_file = open_fn(inc_path, 'r')
       try:
         inc_yaml = appinfo.LoadAppInclude(yaml_file)
-        _ResolveIncludes(inc_path, inc_yaml, basepath, state=state)
+        _ResolveIncludes(inc_path, inc_yaml, basepath, state=state,
+                         open_fn=open_fn)
       except appinfo_errors.EmptyConfigurationFile:
+
         if not os.path.basename(os.path.dirname(inc_path)) == 'default':
           logging.warning('Nothing to include in %s', inc_path)
+
 
   return state.aggregate_appinclude
 
@@ -171,8 +204,10 @@ def _ConvertBuiltinsToIncludes(included_from, app_include, state):
   if app_include.builtins:
     builtins_list = appinfo.BuiltinHandler.ListToTuples(app_include.builtins)
     for builtin_name, on_or_off in builtins_list:
+
       if not on_or_off:
         continue
+
 
       yaml_path = builtins.get_yaml_path(builtin_name)
 
@@ -211,10 +246,18 @@ def _ResolvePath(included_from, included_path, basepath):
     absolute path of the first file found for included_path or ''.
   """
 
+
+
+
+
+
+
   path = os.path.join(os.path.dirname(included_from), included_path)
   if not _IsFileOrDirWithFile(path):
+
     path = os.path.join(basepath, included_path)
     if not _IsFileOrDirWithFile(path):
+
       path = included_path
       if not _IsFileOrDirWithFile(path):
         return ''

@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Makes API calls to various Google-provided services.
 
 Provides methods for making calls into Google Apphosting services and APIs
@@ -31,6 +34,15 @@ from google3.apphosting.runtime import _apphosting_runtime___python__apiproxy
 from google.appengine.runtime import apiproxy_errors
 from google.net.proto2.python.public import message
 
+
+
+
+
+
+
+
+
+
 OK                =  0
 RPC_FAILED        =  1
 CALL_NOT_FOUND    =  2
@@ -44,6 +56,7 @@ REQUEST_TOO_LARGE =  9
 CAPABILITY_DISABLED = 10
 FEATURE_DISABLED = 11
 RESPONSE_TOO_LARGE = 12
+
 
 _ExceptionsMap = {
   RPC_FAILED:
@@ -83,6 +96,8 @@ _ExceptionsMap = {
 
 
 }
+
+
 
 PROTO_BASE_CLASSES = (ProtocolBuffer.ProtocolMessage, message.Message)
 
@@ -124,6 +139,7 @@ class RPC(apiproxy_rpc.RPC):
       rpc = None
       if hasattr(exc, "_appengine_apiproxy_rpc"):
         rpc = exc._appengine_apiproxy_rpc
+
       new_exc = apiproxy_errors.InterruptedError(exc, rpc)
       raise new_exc.__class__, new_exc, tb
     return True
@@ -209,3 +225,8 @@ def MakeSyncCall(package, call, request, response):
   rpc.MakeCall(package, call, request, response)
   rpc.Wait()
   rpc.CheckSuccess()
+
+
+def CancelApiCalls():
+  """Cancels all outstanding API calls."""
+  _apphosting_runtime___python__apiproxy.CancelApiCalls()

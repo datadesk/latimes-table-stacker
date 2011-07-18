@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Blobstore support classes.
 
 Classes:
@@ -46,9 +49,14 @@ from google.appengine.tools import dev_appserver_upload
 from webob import byterange
 
 
+
 UPLOAD_URL_PATH = '_ah/upload/'
 
+
 UPLOAD_URL_PATTERN = '/%s(.*)' % UPLOAD_URL_PATH
+
+
+AUTO_MIME_TYPE = 'application/vnd.google.appengine.auto'
 
 
 def GetBlobStorage():
@@ -74,6 +82,8 @@ def ParseRangeHeader(range_header):
   """
   if not range_header:
     return None, None
+
+
   original_stdout = sys.stdout
   sys.stdout = cStringIO.StringIO()
   try:
@@ -122,6 +132,7 @@ def ParseContentRangeHeader(content_range_header):
     return None
   parsed_content_range = _FixedContentRange.parse(content_range_header)
   if parsed_content_range:
+
     return parsed_content_range.start, parsed_content_range.stop
   return None, None
 
@@ -151,6 +162,7 @@ def DownloadRewriter(response, request_headers):
   blob_key = response.headers.getheader(blobstore.BLOB_KEY_HEADER)
   if blob_key:
     del response.headers[blobstore.BLOB_KEY_HEADER]
+
 
     try:
       blob_info = datastore.Get(
@@ -185,10 +197,14 @@ def DownloadRewriter(response, request_headers):
               content_range_start = blob_size + start
             content_range = byterange.ContentRange(
                 content_range_start, blob_size - 1, blob_size)
+
+
             content_range.stop -= 1
             content_range_header = str(content_range)
           else:
             range = byterange.ContentRange(start, end, blob_size)
+
+
             range.stop -= 1
             content_range_header = str(range)
           response.headers['Content-Range'] = content_range_header
@@ -207,6 +223,8 @@ def DownloadRewriter(response, request_headers):
           content_range = byterange.ContentRange(start,
                                                  parsed_end,
                                                  blob_size)
+
+
           content_range.stop -= 1
           content_range.stop = min(content_range.stop, blob_size - 2)
           content_length = min(parsed_end, blob_size - 1) - start + 1
@@ -220,11 +238,15 @@ def DownloadRewriter(response, request_headers):
       response.body = cStringIO.StringIO(blob_stream.read(content_length))
       response.headers['Content-Length'] = str(content_length)
 
-      if not response.headers.getheader('Content-Type'):
+      content_type = response.headers.getheader('Content-Type')
+      if not content_type or content_type == AUTO_MIME_TYPE:
         response.headers['Content-Type'] = blob_info['content_type']
       response.large_response = True
 
+
+
     except datastore_errors.EntityNotFoundError:
+
       response.status_code = 500
       response.status_message = 'Internal Error'
       response.body = cStringIO.StringIO()
@@ -245,6 +267,8 @@ def CreateUploadDispatcher(get_blob_storage=GetBlobStorage):
   Returns:
     New dispatcher capable of handling large blob uploads.
   """
+
+
   from google.appengine.tools import dev_appserver
 
   class UploadDispatcher(dev_appserver.URLDispatcher):
@@ -258,6 +282,8 @@ def CreateUploadDispatcher(get_blob_storage=GetBlobStorage):
       """
       self.__cgi_handler = dev_appserver_upload.UploadCGIHandler(
           get_blob_storage())
+
+
 
     def Dispatch(self,
                  request,
@@ -274,9 +300,11 @@ def CreateUploadDispatcher(get_blob_storage=GetBlobStorage):
         New AppServerRequest indicating request forward to upload success
         handler.
       """
+
       if base_env_dict['REQUEST_METHOD'] != 'POST':
         outfile.write('Status: 400\n\n')
         return
+
 
       upload_key = re.match(UPLOAD_URL_PATTERN, request.relative_url).group(1)
       try:
@@ -292,19 +320,24 @@ def CreateUploadDispatcher(get_blob_storage=GetBlobStorage):
                                        environ=base_env_dict)
 
         try:
+
+
           mime_message_string = self.__cgi_handler.GenerateMIMEMessageString(
               upload_form)
           datastore.Delete(upload_session)
           self.current_session = upload_session
 
+
           header_end = mime_message_string.find('\n\n') + 1
           content_start = header_end + 1
-          header_text = mime_message_string[:header_end]
-          content_text = mime_message_string[content_start:]
+          header_text = mime_message_string[:header_end].replace('\n', '\r\n')
+          content_text = mime_message_string[content_start:].replace('\n',
+                                                                     '\r\n')
+
 
           complete_headers = ('%s'
-                              'Content-Length: %d\n'
-                              '\n') % (header_text, len(content_text))
+                              'Content-Length: %d\r\n'
+                              '\r\n') % (header_text, len(content_text))
 
           return dev_appserver.AppServerRequest(
               success_path,
@@ -318,6 +351,7 @@ def CreateUploadDispatcher(get_blob_storage=GetBlobStorage):
         logging.error('Could not find session for %s', upload_key)
         outfile.write('Status: 404\n\n')
 
+
     def EndRedirect(self, redirected_outfile, original_outfile):
       """Handle the end of upload complete notification.
 
@@ -330,6 +364,8 @@ def CreateUploadDispatcher(get_blob_storage=GetBlobStorage):
       if (response.status_code in (301, 302, 303) and
           (not response.body or len(response.body.read()) == 0)):
         contentless_outfile = cStringIO.StringIO()
+
+
         contentless_outfile.write('Status: %s\n' % response.status_code)
         contentless_outfile.write(''.join(response.headers.headers))
         contentless_outfile.seek(0)

@@ -15,10 +15,14 @@
 # limitations under the License.
 #
 
+
+
+
 """A fast but lossy, totally generic object formatter."""
 
 
 import types
+
 
 
 EASY_TYPES = (type(None), int, long, float, bool)
@@ -63,6 +67,7 @@ def _format_value(val, limit, level, len=len, repr=repr):
   Returns:
     A str instance.
   """
+
   if level <= 0:
     return '...'
 
@@ -147,6 +152,9 @@ def _format_value(val, limit, level, len=len, repr=repr):
     first = True
 
     if issubclass(typ, BUILTIN_TYPES):
+
+
+
       for builtin_typ in BUILTIN_TYPES:
         if issubclass(typ, builtin_typ):
           try:
@@ -214,6 +222,9 @@ def _format_value(val, limit, level, len=len, repr=repr):
     return ''.join(buffer)
 
   if issubclass(typ, BUILTIN_TYPES):
+
+
+
     for builtin_typ in BUILTIN_TYPES:
       if issubclass(typ, builtin_typ):
         try:

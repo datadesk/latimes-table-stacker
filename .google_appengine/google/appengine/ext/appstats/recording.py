@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+
+
+
 """Userland RPC instrumentation for App Engine."""
 
 
@@ -52,8 +55,10 @@ class ConfigDefaults(object):
   DEBUG = False
   DUMP_LEVEL = -1
 
+
   KEY_DISTANCE = 100
   KEY_MODULUS = 1000
+
 
   KEY_NAMESPACE = '__appstats__'
   KEY_PREFIX = '__appstats__'
@@ -62,23 +67,41 @@ class ConfigDefaults(object):
   FULL_SUFFIX = ':full'
   LOCK_SUFFIX = '<lock>'
 
+
   MAX_STACK = 10
   MAX_LOCALS = 10
   MAX_REPR = 100
   MAX_DEPTH = 10
 
+
+
   RE_STACK_BOTTOM = r'dev_appserver\.py'
   RE_STACK_SKIP = r'recording\.py|apiproxy_stub_map\.py'
 
+
   LOCK_TIMEOUT = 1
+
+
 
   TZOFFSET = 8*3600
 
-  stats_url = '/stats'
+
+  stats_url = '/_ah/stats'
+
 
   RECORD_FRACTION = 1.0
 
+
+
+
+
+
+
+
+
+
   FILTER_LIST = []
+
 
 
   def should_record(env):
@@ -150,6 +173,7 @@ class ConfigDefaults(object):
     return key
 
 
+
 config = lib_config.register('appstats', ConfigDefaults.__dict__)
 
 
@@ -178,6 +202,7 @@ class Recorder(object):
     self.overhead = (time.time() - self.start_timestamp)
 
 
+
   def http_method(self):
     """Return the request method, e.g. 'GET' or 'POST'."""
     return self.env.get('REQUEST_METHOD', 'GET')
@@ -204,6 +229,7 @@ class Recorder(object):
       data: Optional value to record.  This can be anything; the value
         will be formatted using format_value() before it is recorded.
     """
+
     pre_now = time.time()
     sreq = format_value(data)
     now = time.time()
@@ -229,6 +255,7 @@ class Recorder(object):
     pre_now = time.time()
     sreq = format_value(request)
     if rpc is not None:
+
       self.pending[rpc] = len(self.traces)
     now = time.time()
     delta = int(1000 * (now - self.start_timestamp))
@@ -260,6 +287,8 @@ class Recorder(object):
     api_mcycles = 0
     if rpc is not None:
       api_mcycles = rpc.cpu_usage_mcycles
+
+
       index = self.pending.get(rpc)
       if index is not None:
         del self.pending[rpc]
@@ -272,6 +301,7 @@ class Recorder(object):
           self.overhead += (time.time() - now)
           return
     else:
+
       for trace in reversed(self.traces):
         if (trace.service_call_name() == key and
             not trace.response_data_summary()):
@@ -282,6 +312,7 @@ class Recorder(object):
           trace.set_duration_milliseconds(duration)
           self.overhead += (time.time() - now)
           return
+
 
     logging.warn('RPC response without matching request')
     trace = datamodel_pb.IndividualRpcStatsProto()
@@ -357,6 +388,7 @@ class Recorder(object):
     if len(full_encoded) <= memcache.MAX_VALUE_SIZE:
       return part_encoded, full_encoded
     if config.MAX_LOCALS > 0:
+
       for trace in proto.individual_stats_list():
         for frame in trace.call_stack_list():
           frame.clear_variables()
@@ -365,12 +397,14 @@ class Recorder(object):
         logging.warn('Full proto too large to save, cleared variables.')
         return part_encoded, full_encoded
     if config.MAX_STACK > 0:
+
       for trace in proto.individual_stats_list():
         trace.clear_call_stack()
       full_encoded = proto.Encode()
       if len(full_encoded) <= memcache.MAX_VALUE_SIZE:
         logging.warn('Full proto way too large to save, cleared frames.')
         return part_encoded, full_encoded
+
     logging.warn('Full proto WAY too large to save, clipped to 100 traces.')
     del proto.individual_stats_list()[100:]
     full_encoded = proto.Encode()
@@ -492,6 +526,7 @@ class Recorder(object):
       level = config.DUMP_LEVEL
     if level < 0:
       return
+
     logging.info('APPSTATS: %s "%s %s%s" %s %.3f',
                  format_time(self.start_timestamp),
                  self.http_method(),
@@ -564,6 +599,7 @@ class Recorder(object):
     if self.sys_path_entries is None:
       self.init_sys_path_entries()
     filename = frame.f_code.co_filename
+
     if filename and not (filename.startswith('<') and filename.endswith('>')):
       for i, entry in self.sys_path_entries:
         if filename.startswith(entry):
@@ -687,6 +723,8 @@ class StatsProto(datamodel_pb.RequestStatProto):
     attributes of the entries in .individual_stats_list().
     """
     datamodel_pb.RequestStatProto.__init__(self, *args, **kwds)
+
+
     for r in self.individual_stats_list():
       r.api_milliseconds = mcycles_to_msecs(r.api_mcycles())
 
@@ -737,6 +775,7 @@ def load_summary_protos():
     else:
       records.append(pb)
   logging.info('Loaded %d raw records, %d valid', len(results), len(records))
+
   records.sort(key=lambda pb: -pb.start_timestamp_milliseconds())
   return records
 
@@ -800,6 +839,7 @@ class AppstatsDjangoMiddleware(object):
       None)
     end_recording(response.status_code, firepython_set_extension_data)
     return response
+
 
 
 AppStatsDjangoMiddleware =  AppstatsDjangoMiddleware
@@ -869,6 +909,10 @@ def appstats_wsgi_middleware(app):
   return appstats_wsgi_wrapper
 
 
+
+
+
+
 recorder = None
 
 
@@ -898,6 +942,7 @@ def start_recording(env=None):
     env = os.environ
   if not config.should_record(env):
     return
+
   if memcache.add(lock_key(), 0,
                   time=config.LOCK_TIMEOUT, namespace=config.KEY_NAMESPACE):
     recorder = Recorder(env)
@@ -924,6 +969,11 @@ def end_recording(status, firepython_set_extension_data=None):
     try:
       rec.record_http_status(status)
       rec.save()
+
+
+
+
+
       if (firepython_set_extension_data and
           (os.getenv('SERVER_SOFTWARE', '').startswith('Dev') or
            users.is_current_user_admin())):
@@ -961,10 +1011,12 @@ def post_call_hook(service, call, request, response, rpc=None, error=None):
   on to the record_rpc_request() method of the global 'recorder'
   variable, unless the latter is None.
   """
+
   if recorder is not None:
     if config.DEBUG:
       logging.debug('post_call_hook: recording %s.%s', service, call)
     recorder.record_rpc_response(service, call, request, response, rpc)
+
 
 
 apiproxy_stub_map.apiproxy.GetPreCallHooks().Append('appstats', pre_call_hook)

@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+
+
 from google.net.proto import ProtocolBuffer
 import array
 import dummy_thread as thread
@@ -25,6 +27,7 @@ __pychecker__ = """maxreturns=0 maxbranches=0 no-callinit
 from google.appengine.api.api_base_pb import *
 import google.appengine.api.api_base_pb
 class BlobstoreServiceError(ProtocolBuffer.ProtocolMessage):
+
 
   OK           =    0
   INTERNAL_ERROR =    1
@@ -66,7 +69,11 @@ class BlobstoreServiceError(ProtocolBuffer.ProtocolMessage):
 
   def ByteSize(self):
     n = 0
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    return n
 
   def Clear(self):
     pass
@@ -74,9 +81,14 @@ class BlobstoreServiceError(ProtocolBuffer.ProtocolMessage):
   def OutputUnchecked(self, out):
     pass
 
+  def OutputPartial(self, out):
+    pass
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -97,6 +109,7 @@ class BlobstoreServiceError(ProtocolBuffer.ProtocolMessage):
   _TYPES = _BuildTagLookupTable({
     0: ProtocolBuffer.Encoder.NUMERIC,
   }, 0, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -144,6 +157,13 @@ class CreateUploadURLRequest(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.success_path_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_success_path_):
+      n += 1
+      n += self.lengthString(len(self.success_path_))
+    return n
+
   def Clear(self):
     self.clear_success_path()
 
@@ -151,12 +171,19 @@ class CreateUploadURLRequest(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(10)
     out.putPrefixedString(self.success_path_)
 
+  def OutputPartial(self, out):
+    if (self.has_success_path_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.success_path_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 10:
         self.set_success_path(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -181,6 +208,7 @@ class CreateUploadURLRequest(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -228,6 +256,13 @@ class CreateUploadURLResponse(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.url_))
     return n + 1
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_url_):
+      n += 1
+      n += self.lengthString(len(self.url_))
+    return n
+
   def Clear(self):
     self.clear_url()
 
@@ -235,12 +270,19 @@ class CreateUploadURLResponse(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(10)
     out.putPrefixedString(self.url_)
 
+  def OutputPartial(self, out):
+    if (self.has_url_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.url_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 10:
         self.set_url(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -265,6 +307,7 @@ class CreateUploadURLResponse(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -309,12 +352,23 @@ class DeleteBlobRequest(ProtocolBuffer.ProtocolMessage):
     n = 0
     n += 1 * len(self.blob_key_)
     for i in xrange(len(self.blob_key_)): n += self.lengthString(len(self.blob_key_[i]))
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    n += 1 * len(self.blob_key_)
+    for i in xrange(len(self.blob_key_)): n += self.lengthString(len(self.blob_key_[i]))
+    return n
 
   def Clear(self):
     self.clear_blob_key()
 
   def OutputUnchecked(self, out):
+    for i in xrange(len(self.blob_key_)):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.blob_key_[i])
+
+  def OutputPartial(self, out):
     for i in xrange(len(self.blob_key_)):
       out.putVarInt32(10)
       out.putPrefixedString(self.blob_key_[i])
@@ -325,6 +379,8 @@ class DeleteBlobRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 10:
         self.add_blob_key(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -354,6 +410,7 @@ class DeleteBlobRequest(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -447,6 +504,19 @@ class FetchDataRequest(ProtocolBuffer.ProtocolMessage):
     n += self.lengthVarInt64(self.end_index_)
     return n + 3
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_blob_key_):
+      n += 1
+      n += self.lengthString(len(self.blob_key_))
+    if (self.has_start_index_):
+      n += 1
+      n += self.lengthVarInt64(self.start_index_)
+    if (self.has_end_index_):
+      n += 1
+      n += self.lengthVarInt64(self.end_index_)
+    return n
+
   def Clear(self):
     self.clear_blob_key()
     self.clear_start_index()
@@ -460,6 +530,17 @@ class FetchDataRequest(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(24)
     out.putVarInt64(self.end_index_)
 
+  def OutputPartial(self, out):
+    if (self.has_blob_key_):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.blob_key_)
+    if (self.has_start_index_):
+      out.putVarInt32(16)
+      out.putVarInt64(self.start_index_)
+    if (self.has_end_index_):
+      out.putVarInt32(24)
+      out.putVarInt64(self.end_index_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
@@ -472,6 +553,8 @@ class FetchDataRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 24:
         self.set_end_index(d.getVarInt64())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -504,6 +587,7 @@ class FetchDataRequest(ProtocolBuffer.ProtocolMessage):
     2: ProtocolBuffer.Encoder.NUMERIC,
     3: ProtocolBuffer.Encoder.NUMERIC,
   }, 3, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -551,6 +635,13 @@ class FetchDataResponse(ProtocolBuffer.ProtocolMessage):
     n += self.lengthString(len(self.data_))
     return n + 2
 
+  def ByteSizePartial(self):
+    n = 0
+    if (self.has_data_):
+      n += 2
+      n += self.lengthString(len(self.data_))
+    return n
+
   def Clear(self):
     self.clear_data()
 
@@ -558,12 +649,19 @@ class FetchDataResponse(ProtocolBuffer.ProtocolMessage):
     out.putVarInt32(8002)
     out.putPrefixedString(self.data_)
 
+  def OutputPartial(self, out):
+    if (self.has_data_):
+      out.putVarInt32(8002)
+      out.putPrefixedString(self.data_)
+
   def TryMerge(self, d):
     while d.avail() > 0:
       tt = d.getVarInt32()
       if tt == 8002:
         self.set_data(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -588,6 +686,7 @@ class FetchDataResponse(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1000: ProtocolBuffer.Encoder.STRING,
   }, 1000, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -632,12 +731,23 @@ class DecodeBlobKeyRequest(ProtocolBuffer.ProtocolMessage):
     n = 0
     n += 1 * len(self.blob_key_)
     for i in xrange(len(self.blob_key_)): n += self.lengthString(len(self.blob_key_[i]))
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    n += 1 * len(self.blob_key_)
+    for i in xrange(len(self.blob_key_)): n += self.lengthString(len(self.blob_key_[i]))
+    return n
 
   def Clear(self):
     self.clear_blob_key()
 
   def OutputUnchecked(self, out):
+    for i in xrange(len(self.blob_key_)):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.blob_key_[i])
+
+  def OutputPartial(self, out):
     for i in xrange(len(self.blob_key_)):
       out.putVarInt32(10)
       out.putPrefixedString(self.blob_key_[i])
@@ -648,6 +758,8 @@ class DecodeBlobKeyRequest(ProtocolBuffer.ProtocolMessage):
       if tt == 10:
         self.add_blob_key(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -677,6 +789,7 @@ class DecodeBlobKeyRequest(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""
@@ -721,12 +834,23 @@ class DecodeBlobKeyResponse(ProtocolBuffer.ProtocolMessage):
     n = 0
     n += 1 * len(self.decoded_)
     for i in xrange(len(self.decoded_)): n += self.lengthString(len(self.decoded_[i]))
-    return n + 0
+    return n
+
+  def ByteSizePartial(self):
+    n = 0
+    n += 1 * len(self.decoded_)
+    for i in xrange(len(self.decoded_)): n += self.lengthString(len(self.decoded_[i]))
+    return n
 
   def Clear(self):
     self.clear_decoded()
 
   def OutputUnchecked(self, out):
+    for i in xrange(len(self.decoded_)):
+      out.putVarInt32(10)
+      out.putPrefixedString(self.decoded_[i])
+
+  def OutputPartial(self, out):
     for i in xrange(len(self.decoded_)):
       out.putVarInt32(10)
       out.putPrefixedString(self.decoded_[i])
@@ -737,6 +861,8 @@ class DecodeBlobKeyResponse(ProtocolBuffer.ProtocolMessage):
       if tt == 10:
         self.add_decoded(d.getPrefixedString())
         continue
+
+
       if (tt == 0): raise ProtocolBuffer.ProtocolBufferDecodeError
       d.skipData(tt)
 
@@ -766,6 +892,7 @@ class DecodeBlobKeyResponse(ProtocolBuffer.ProtocolMessage):
     0: ProtocolBuffer.Encoder.NUMERIC,
     1: ProtocolBuffer.Encoder.STRING,
   }, 1, ProtocolBuffer.Encoder.MAX_TYPE)
+
 
   _STYLE = """"""
   _STYLE_CONTENT_TYPE = """"""

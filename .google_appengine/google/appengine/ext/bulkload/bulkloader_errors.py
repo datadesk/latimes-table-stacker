@@ -15,7 +15,15 @@
 # limitations under the License.
 #
 
+
+
+
+
 """Exceptions raised by bulkloader methods."""
+
+
+
+
 
 
 
@@ -26,6 +34,7 @@ class Error(Exception):
 
 class ErrorOnTransform(Error):
   """An exception was raised during this transform."""
+
 
 
 class InvalidConfiguration(Error):
