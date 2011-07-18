@@ -152,6 +152,7 @@ def update_or_create_table(yaml_data):
         obj.slug=yaml_data.get("slug", yaml_data['yaml_name'])
         obj.byline=yaml_data.get("byline", '')
         obj.publication_date=yaml_data['publication_date']
+        obj.legend=yaml_data.get('legend', '')
         obj.description=yaml_data.get('description', '')
         obj.footer=yaml_data.get('footer', '')
         obj.sources=yaml_data.get('sources', '')
@@ -173,6 +174,7 @@ def update_or_create_table(yaml_data):
             slug=yaml_data.get("slug", yaml_data['yaml_name']),
             byline=yaml_data.get("byline", ""),
             publication_date=yaml_data['publication_date'],
+            legend=yaml_data.get('legend', ''),
             description=yaml_data.get('description', ''),
             footer=yaml_data.get('footer', ''),
             sources=yaml_data.get('sources', ''),

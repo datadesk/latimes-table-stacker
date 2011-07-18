@@ -28,6 +28,7 @@ class Table(db.Model):
     byline = db.StringProperty(required=False)
     publication_date = db.DateProperty(required=True)
     description = db.TextProperty(required=False)
+    legend = db.TextProperty(required=False)
     footer = db.TextProperty(required=False)
     sources = db.TextProperty(required=False)
     credits = db.TextProperty(required=False)

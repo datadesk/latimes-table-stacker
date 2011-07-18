@@ -14,6 +14,7 @@ body {font-size:14px;}
 #table_fu div#similar a {text-decoration:none;}
 #table_fu div#sources, div#credits, div#tags {margin-bottom:5px}
 #table_fu div#byline {text-align:right; margin-bottom:5px;}
+#table_fu div#legend {float:left; margin-bottom:10px; margin-top:-5px;}
 #table_fu div#ribbon {clear: both; display: block; overflow:visible;}
 #table_fu div#controls{width:50%; position:relative;}
 #table_fu div#pager{position:absolute; right:0; top: 0; margin-bottom:2px;}
