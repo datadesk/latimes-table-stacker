@@ -3,7 +3,7 @@ table:
   file:  status-of-la-marijuana-dispensaries.csv
   slug: status-of-la-marijuana-dispensaries
   byline: John Hoeffel
-  legend: "<img src='/media/img/bubble_legend.png'>"
+  legend: "<img src='/media/img/tribubble_legend.png'>"
   description: "<p>The Los Angeles city attorney’s office has warned more than 200 medical marijuana dispensaries to shut down immediately or face legal action. The warnings began with letters sent to 141 dispensaries on March 7 and another 60 on March 23. Dispensaries targeted include those that did not register to participate in a lottery &mdash; not yet scheduled &mdash; that will select 100 collectives to operate in the city. Operators of 231 dispensaries have applied to be included in the drawing.</p><p>The list below includes both dispensaries ordered to close, and those vying to stay open by participating in the lottery.</p>"
   column_options:
     columns:

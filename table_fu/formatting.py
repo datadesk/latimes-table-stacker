@@ -211,7 +211,7 @@ def bubble(value, yes_icon='/media/img/bubble_yes.png',
     
     The first letter of each type is what should be provided, i.e. Y, N.
     """
-    img = "<img alt='%(name)s' title='%(name)s' class='tribubble' src='%(icon)s'>"
+    img = "<img alt='%(name)s' title='%(name)s' class='bubble' src='%(icon)s'>"
     if value == 'Y':
         return img % dict(name='Yes', icon=yes_icon)
     elif value == 'N':
@@ -331,6 +331,28 @@ def title(value):
     return re.sub("\d([A-Z])", lambda m: m.group(0).lower(), t)
 
 
+def tribubble(value, yes_icon='/media/img/tribubble_yes.png',
+    partly_icon='/media/img/tribubble_partly.png',
+    no_icon="/media/img/tribubble_no.png", empty="&mdash;"):
+    """
+    Returns one of three "Consumer Reports" style bubbles that indicate:
+    
+        - Yes (Filled bubble)
+        - Partly (Half-filled bubble)
+        - No (Empty bubble)
+    
+    The first letter of each type is what should be provided, i.e. Y, P, N.
+    """
+    img = "<img class='bubble' src='%(icon)s'>"
+    if value.lower() == 'y':
+        return img % dict(name='Yes', icon=yes_icon)
+    elif value.lower() == 'p':
+        return img % dict(name='Partly', icon=partly_icon)
+    elif value.lower() == 'n':
+        return img % dict(name='No', icon=no_icon)
+    else:
+        return empty
+
 
 DEFAULT_FORMATTERS = {
     'ap_state': ap_state,
@@ -341,8 +363,9 @@ DEFAULT_FORMATTERS = {
     'intcomma': intcomma,
     'percentage': percentage,
     'percent_change': percent_change,
-    'title': title,
     'ratio': ratio,
+    'title': title,
+    'tribubble': tribubble,
 }
 
 class Formatter(object):

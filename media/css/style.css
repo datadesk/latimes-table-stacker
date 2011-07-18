@@ -32,3 +32,4 @@ body {font-size:14px;}
 #table_fu th.sorted, td.sorted {background-color: #e5ecf9 !important;}
 #table_fu th.headerSortDown{background: #e5ecf9 url(/media/img/up.png) no-repeat 99% 50%;}
 #table_fu th.headerSortUp{background: #e5ecf9 url(/media/img/down.png) no-repeat 99% 50%;}
+#table_fu img.bubble {margin: auto;}
