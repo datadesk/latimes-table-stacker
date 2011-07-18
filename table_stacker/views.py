@@ -51,7 +51,7 @@ def table_index(request):
     A list of all the public tables
     """
     # Check if the page is cached
-    cache_key = 'table_index'
+    cache_key = get_cache_key('table_index')
     cached_response = get_cached_response(request, cache_key)
     if cached_response:
         return cached_response
@@ -71,7 +71,7 @@ def table_page(request, page):
     if page == '1':
         return HttpResponseRedirect('/')
     # Check if it's cached
-    cache_key = 'table_page:%s' % page
+    cache_key = get_cache_key('table_page:%s' % page)
     cached_response = get_cached_response(request, cache_key)
     if cached_response:
         return cached_response
@@ -88,7 +88,7 @@ def tag_page(request, tag, page):
     Lists tables with a certain tag.
     """
     # Check if the page is cached
-    cache_key = 'tag_page:%s-%s' % (tag, page)
+    cache_key = get_cache_key('tag_page:%s-%s' % (tag, page))
     cached_response = get_cached_response(request, cache_key)
     if cached_response:
         return cached_response
@@ -119,7 +119,7 @@ def table_detail(request, slug):
     A detail page all about one of the tables.
     """
     # Check if it's cached
-    cache_key = 'table_detail:%s' % slug
+    cache_key = get_cache_key('table_detail:%s' % slug)
     cached_response = get_cached_response(request, cache_key)
     if cached_response:
         return cached_response
