@@ -15,6 +15,7 @@
 # Django settings for google-app-engine-django project.
 
 import os
+import yaml
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -101,6 +102,8 @@ TEMPLATE_DIRS = (
 )
 YAML_DIR = os.path.join(ROOT_PATH, 'yaml')
 CSV_DIR = os.path.join(ROOT_PATH, 'csv')
+APP_VERSION = yaml.load(open(os.path.join(ROOT_PATH, "app.yaml"), "r")).get("version")
+
 
 INSTALLED_APPS = (
      'django.contrib.humanize',

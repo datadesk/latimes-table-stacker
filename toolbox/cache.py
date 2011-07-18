@@ -7,7 +7,7 @@ def get_cache_key(cache_key):
     Returns a cache key with a version number baked in.
     """
     # Bake the current version id in the cache key
-    return '%s-%s' % (settings.CACHE_VERSION, cache_key)
+    return '%s-%s' % (settings.APP_VERSION, cache_key)
 
 
 def get_cached_response(request, cache_key):
