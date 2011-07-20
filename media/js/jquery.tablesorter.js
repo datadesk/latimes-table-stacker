@@ -712,7 +712,7 @@
             return $.tablesorter.isDigit(s,c);
         },
         format: function(s) {
-            return $.tablesorter.formatFloat(s);
+            return $.tablesorter.formatFloat(s.replace(new RegExp(/\,/g),""));
         },
         type: "numeric"
     });
@@ -754,7 +754,7 @@
             return /^(https?|ftp|file):\/\/$/.test(s);
         },
         format: function(s) {
-            return jQuery.trim(s.replace(new RegExp(/(https?|ftp|file):\/\//),''));
+            return $.trim(s.replace(new RegExp(/(https?|ftp|file):\/\//),''));
         },
         type: "text"
     });
@@ -837,6 +837,17 @@
         },
       type: "numeric"
     });
+
+    ts.addParser({
+      id: "fancyNumber",
+      is: function(s) {
+        return /^[0-9]?[0-9,\.]*$/.test(s);
+      },
+      format: function(s) {
+        return $.tablesorter.formatFloat( s.replace(/,/g,'') );
+      },
+      type: "numeric"
+    });
     
     // add default widgets
     ts.addWidget({
@@ -850,5 +861,26 @@
             .removeClass(table.config.widgetZebra.css[0]).addClass(table.config.widgetZebra.css[1]);
             if(table.config.debug) { $.tablesorter.benchmark("Applying Zebra widget", time); }
         }
-    });    
+    });
+    
+    ts.addWidget({
+        id: "columnHighlight",
+        format: function(table) {
+          if (!this.tds)
+            this.tds =  $("td", table.tBodies[0]);
+          if (!this.headers)
+            this.headers = $("thead th", table);
+          this.tds.removeClass("sorted");
+          var ascSort = $("th." + table.config.cssAsc);
+          var descSort = $("th." + table.config.cssDesc);
+          if (ascSort.length)
+            index = this.headers.index(ascSort[0]);
+          if (descSort.length)
+            index = this.headers.index(descSort[0]);
+          $("tr td:nth-child(" + (index+1) + ")", table.tBodies[0]).each(function(row){
+            $(this).addClass('sorted');
+          });
+        }
+      });
+    
 })(jQuery);

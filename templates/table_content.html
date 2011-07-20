@@ -1,11 +1,6 @@
     <script type='text/javascript'>
-      {% if table %}
-        var sortPlease = true;
         var sortOrder = {{ table.sorted_by }};
         var perPage = {{ table.per_page }};
-      {% else %}
-        var sortPlease = false;
-      {% endif %}
     </script>
     
     <div class="clear"></div>
