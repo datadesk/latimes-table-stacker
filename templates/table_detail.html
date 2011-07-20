@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ object.title|safe }} - {{ block.super }}{% endblock %}
+{% block title %}{{ object.title|safe }}{% endblock %}
 
 {% if object.description %}
     {% block description %}{{ object.description|striptags|safe }}{% endblock %}
@@ -23,9 +23,25 @@
             .tablesorterMultiPageFilter({ filterSelector: $("#filter input", fu) });
         });
     </script>
+    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
 {% endblock %}
 
 {% block headline %}
+    <div id="share">
+        <ul>
+            <li>
+                <a data-text="" href="http://twitter.com/share" class="twitter-share-button"
+                    data-count="horizontal">Tweet</a>
+                <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+            </li>
+            <li>
+                <g:plusone size="medium"></g:plusone>
+            </li>
+            <li>
+                <iframe src="http://www.facebook.com/plugins/like.php?app_id=167409373327708&amp;href&amp;send=false&amp;layout=button_count&amp;width=90&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=arial&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px; height:21px;" allowTransparency="true"></iframe>
+            </li>
+        </ul>
+    </div>
     <h4 id="kicker">{% if object.kicker %}{{ object.kicker|safe }}{% else %}Spreadsheet{% endif %}</h4>
     <h1 id="title">{{ object.title|safe }}</h1>
 {% endblock %}
