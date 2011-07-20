@@ -25,6 +25,7 @@ class Table(db.Model):
     # The goodies
     title = db.StringProperty(required=True)
     slug = db.StringProperty(required=True)
+    kicker = db.StringProperty(required=False)
     byline = db.StringProperty(required=False)
     publication_date = db.DateProperty(required=True)
     description = db.TextProperty(required=False)

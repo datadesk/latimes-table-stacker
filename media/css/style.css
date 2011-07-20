@@ -5,6 +5,9 @@ body {font-size:14px;}
 #table_list .pubdate {font-size:12px;}
 #table_list .description {margin-top:1px; margin-bottom:15px;}
 #table_list tbody tr:nth-child(even) td, tbody tr.even td {background-color:white;}
+#header {margin:15px 0 0 0;}
+h4#kicker {letter-spacing: 0.03em; font-size:13px; text-transform:uppercase; color:black; display:block; margin:0;}
+h1#title {margin:0 0 5px 0;}
 #table_fu {width: 950px; font-size: 14px; line-height: 20px; color: #333;}
 #table_fu div#description p {margin-left:2px; margin-bottom: 10px; text-align: left; line-height: 140%;}
 #table_fu div{margin-bottom: 14px;}
