@@ -22,7 +22,7 @@ table:
       Applied for lottery:
         method: bubble
       Ordered to close:
-        method: bubble
+        method: checkbox
     per_page: 500
   is_published: true
   publication_date: 2011-04-04

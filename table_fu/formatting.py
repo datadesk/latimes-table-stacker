@@ -220,6 +220,26 @@ def bubble(value, yes_icon='/media/img/bubble_yes.png',
         return empty
 
 
+def checkbox(value,
+    yes_icon='<img class="vote" src="/media/img/checkbox_yes.png">',
+    no_icon='<img class="vote" src="/media/img/checkbox_no.png">',
+    ):
+    """
+    Returns one of three icons:
+    
+        - Yes (checked box)
+        - No (empty box)
+    
+    The first letter of each type is what should be provided, i.e. Y, N, anything else.
+    """
+    if value.lower() == 'y':
+        return yes_icon
+    elif value.lower() == 'n':
+        return no_icon
+    else:
+        return ''
+
+
 def dollar_signs(value):
     """
     Converts an integer into the corresponding number of dollar sign symbols.
@@ -357,6 +377,7 @@ def tribubble(value, yes_icon='/media/img/tribubble_yes.png',
 DEFAULT_FORMATTERS = {
     'ap_state': ap_state,
     'bubble': bubble,
+    'checkbox': checkbox,
     'dollar_signs': dollar_signs,
     'dollars': dollars,
     'link': link,
