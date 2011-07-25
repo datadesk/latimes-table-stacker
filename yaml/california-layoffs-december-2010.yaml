@@ -18,6 +18,8 @@ table:
     sorted_by:
       - Employees Affected: descending
     formatting:
+      Layoff Date:
+        method: short_ap_date
       Employees Affected:
         method: intcomma
       Company Name:

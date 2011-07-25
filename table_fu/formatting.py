@@ -5,6 +5,8 @@ template filters.
 """
 import re
 from toolbox import statestyle
+from toolbox.dateutil.parser import parse as dateparse
+from django.template.defaultfilters import date as dateformat
 
 
 def _saferound(value, decimal_places):
@@ -174,6 +176,40 @@ def ratio(value, precision=0):
     return _saferound(f, decimal_places) + ':1'
 
 
+def short_ap_date(value):
+    """
+    Reformats a date string as in an abbreviated AP format.
+    
+        Example:
+        
+             >> short_ap_date('2010-04-03')
+            'Apr. 2, 2011'
+        
+    """
+    # Split any date ranges and create a list
+    value = value.replace("&ndash;", "-")
+    date_parts = value.split(" - ")
+    date_list = []
+    for date_string in date_parts:
+        try:
+            dt = dateparse(date_string)
+        except ValueError:
+            return value
+        # Check if this date is a "month-only" date
+        # that needs to be specially formatted.
+        if re.match('^\w{3,}\.?\s\d{4}$', date_string):
+            dt = dateformat(dt, "M Y")
+        # Otherwise just use the standard format
+        else:
+            dt = dateformat(dt, "M j, Y")
+        # All months except May are abbreviated
+        # and need a period added.
+        if not dt.startswith("May"):
+            dt = dt[:3] + "." + dt[3:]
+        date_list.append(dt)
+    return " &ndash; ".join(date_list)
+
+
 def title(value):
     """
     Converts a string into titlecase.
@@ -219,6 +255,7 @@ DEFAULT_FORMATTERS = {
     'percentage': percentage,
     'percent_change': percent_change,
     'ratio': ratio,
+    'short_ap_date': short_ap_date,
     'title': title,
     'tribubble': tribubble,
 }

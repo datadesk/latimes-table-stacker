@@ -848,7 +848,65 @@
       },
       type: "numeric"
     });
-    
+
+ts.addParser({
+        id: "shortApDate",
+        is: function(s) {
+            return /^[A-Za-z]{3}\.{0,1}\s\d{1,2}\,{1}\s\d{4}/.test(s);
+        },
+        format: function(s) {
+            // Month definitions we'll need later
+            var months = {
+                'Jan': 0, 
+                'Feb': 1, 
+                'Mar': 2, 
+                'Apr': 3, 
+                'May': 4, 
+                'Jun': 5,
+                'Jul': 6,
+                'Aug': 7,
+                'Sep': 8,
+                'Oct': 9,
+                'Nov': 10,
+                'Dec': 11
+            };
+            // If it's in the date format we're looking for ...
+            if (/^[A-Za-z]{3}\.{0,1}\s\d{1,2}\,{1}\s\d{4}/.test(s)) {
+                // Trim any date ranges down to their first date
+                s = s.split("-", 1)[0];
+                s = s.split("&ndash;", 1)[0];
+                s = $.trim(s);
+                // Parse out the month, day and year
+                var sParts = s.split(" ");
+                var month = months[sParts[0].replace(".", "")];
+                var day = sParts[1].replace(",", "");
+                var year = sParts[2];
+                // Convert it to a date object
+                var date = new Date(year, month, day);
+                return $.tablesorter.formatFloat(date.getTime());
+            } else {
+                // If it's a "month-only" date we expect the following format
+                if (/^[A-Z-a-z]{3}\.?\s\d{4}$/.test(s)) {
+                    var sParts = s.split(" ");
+                    var month = months[sParts[0].replace(".", "")];
+                    var year = sParts[1];
+                    // Set to the first day of the month
+                    var date = new Date(year, month, 1);
+                    return $.tablesorter.formatFloat(date.getTime());
+                }
+                // If the string is in our "future" list we want to sort high,
+                // set it to a gigantic date
+                if (/Pending|In Progress/.test(s)) {
+                    var date = new Date(3030, 0, 1);
+                    return $.tablesorter.formatFloat(date.getTime());
+                }
+                // Otherwise, just return 0
+                return $.tablesorter.formatFloat(0);
+            }
+        },
+        type: "numeric"
+    });
+
     // add default widgets
     ts.addWidget({
         id: "zebra",
