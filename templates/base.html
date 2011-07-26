@@ -23,16 +23,6 @@
     {% block extra-js %}
     {% endblock %}
 
-    <script>
-      {% if table %}
-        var sortPlease = true;
-        var sortOrder = {{ table.sorted_by }};
-        var perPage = {{ table.per_page }};
-      {% else %}
-        var sortPlease = false;
-      {% endif %}
-    </script>
-
   </head>
   <body>
     <div class="container">
