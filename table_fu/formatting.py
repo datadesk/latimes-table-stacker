@@ -4,9 +4,10 @@ Inspired by James Bennett's template_utils and Django's
 template filters.
 """
 import re
+from datetime import datetime
 from toolbox import statestyle
 from toolbox.dateutil.parser import parse as dateparse
-from django.template.defaultfilters import date as dateformat
+from django.template.defaultfilters import date as dateformater
 
 
 def _saferound(value, decimal_places):
@@ -176,7 +177,7 @@ def ratio(value, precision=0):
     return _saferound(f, decimal_places) + ':1'
 
 
-def short_ap_date(value):
+def short_ap_date(value, date_format=None):
     """
     Reformats a date string as in an abbreviated AP format.
     
@@ -192,16 +193,19 @@ def short_ap_date(value):
     date_list = []
     for date_string in date_parts:
         try:
-            dt = dateparse(date_string)
+            if date_format:
+                dt = datetime.strptime(date_string, date_format)
+            else:
+                dt = dateparse(date_string)
         except ValueError:
             return value
         # Check if this date is a "month-only" date
         # that needs to be specially formatted.
         if re.match('^\w{3,}\.?\s\d{4}$', date_string):
-            dt = dateformat(dt, "M Y")
+            dt = dateformater(dt, "M Y")
         # Otherwise just use the standard format
         else:
-            dt = dateformat(dt, "M j, Y")
+            dt = dateformater(dt, "M j, Y")
         # All months except May are abbreviated
         # and need a period added.
         if not dt.startswith("May"):

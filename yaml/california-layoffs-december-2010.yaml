@@ -20,6 +20,8 @@ table:
     formatting:
       Layoff Date:
         method: short_ap_date
+        options:
+          date_format: "%m/%d/%y"
       Employees Affected:
         method: intcomma
       Company Name:
