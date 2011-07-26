@@ -5,20 +5,23 @@
     <title>{% block title %}All Tables{% endblock %}</title>
     <meta name="keywords" content="{% block keywords %}{% endblock %}" >
     <meta name="description" content="{% block description %}{% endblock %}" >
-
+    
     <link href='/media/css/blueprint/screen.css' rel='stylesheet' type='text/css' media='all' />
     <link href='/media/css/blueprint/typography.css' rel='stylesheet' type='text/css' media='all' />
     <link href='/media/css/style.css' rel='stylesheet' type='text/css' media='all' />
     {% block extra-css %}
     {% endblock %}
-
+    
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <script type="text/javascript">
       google.load("jquery", "1", {uncompressed:true})
     </script>
     {% block extra-js %}
     {% endblock %}
-
+    
+    {% block extra-head %}
+        <link rel="alternate" href="/feeds/latest/" type="application/rss+xml" title="Latest spreadsheets" id="latest" />
+    {% endblock %}
   </head>
   <body>
     <div class="container">

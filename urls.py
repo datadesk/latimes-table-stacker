@@ -34,7 +34,7 @@ urlpatterns = patterns('table_stacker.views',
     
     # Extras
     url(r'^feeds/(?P<url>.*)/$', feed,
-        {'feed_dict': dict(latest=LatestTables,)}, name='feeds'),
+        {'feed_dict': dict(latest=LatestTables)}, name='feeds'),
     url(r'^sitemap.xml$', 'sitemap', name='sitemap')
 )
 
