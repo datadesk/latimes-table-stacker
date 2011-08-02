@@ -15,7 +15,7 @@ table:
       - Production (Short tons): descending
     formatting:
       State:
-        method: short_ap_state
+        method: ap_state
       Production (Short tons):
         method: intcomma
   is_published: true

@@ -815,6 +815,25 @@
     });
 
     ts.addParser({
+        id: "simpleBulletGraph",
+        is: function(s) {
+            return /bullet\-graph\-sort/.test(s);
+        },
+        format: function(s) {
+            if (!s) {
+                return -1.0;
+            }
+            s = $(s);
+            // Hack to get around IE bugs
+            var wrap = $("<div>").append($(s));
+            // Pull the hidden data value we'll sort by
+            var data = $(".bullet\-graph\-sort", wrap).attr("data");
+            return $.tablesorter.formatFloat(parseFloat(data));
+        },
+        type: "numeric"
+    });
+
+    ts.addParser({
         id: "time",
         is: function(s) {
             return /^(([0-2]?[0-9]:[0-5][0-9])|([0-1]?[0-9]:[0-5][0-9]\s(am|pm)))$/.test(s);

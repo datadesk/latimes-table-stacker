@@ -1,0 +1,39 @@
+table:
+  title: Cubs Home Run Tracker, Aug. 2, 2011
+  file:  cubs-home-run-tracker.csv
+  slug: cubs-home-run-tracker
+  byline: Ben Welsh
+  description: <p>The number of home runs hit so far this year by Chicago Cubs position players compared against each player's career high.</p>
+  column_options:
+      columns:
+        - Position
+        - Player
+        - At bats
+        - Home runs
+        - Career high
+        - Comparison
+      style:
+        Position: "text-align:left; width:60px;"
+        Player: "text-align: left;"
+        At bats: "text-align:right;"
+        Home runs: "text-align:right;"
+        Career high: "text-align:right;"
+        Comparison: 'width:250px; padding-top:5px;'
+      sorted_by:
+        - Home runs: descending
+      formatting:
+        Comparison:
+          method: simple_bullet_graph
+          arguments: 
+            - Career high
+          options:
+              max: 60
+
+  is_published: true
+  publication_date: 2011-08-02
+  sources: Baseball Reference
+  credits: 'Ben Welsh'
+  tags:
+    - Sports
+    - Chicago Cubs
+    - Baseball

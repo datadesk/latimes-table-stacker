@@ -214,6 +214,42 @@ def short_ap_date(value, date_format=None):
     return " &ndash; ".join(date_list)
 
 
+def simple_bullet_graph(actual, target, width='95%', max=None):
+    """
+    Renders a simple bullet graph that compares a target line against
+    an actual value.
+    
+    Unlike a conventional bullet graph, it does not shade the background
+    into groups. Instead, it's all one solid color.
+    """
+    html = """
+        <div class="bullet-graph-wrap" style="width:%(width)s; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:%(width)s;"></div>
+            <div data="%(sort)s" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: %(target)s%%;"></div>
+            <div class="bullet-graph-actual" style="width: %(actual)s%%"></div>
+        </div>
+    """
+    if not max:
+        raise ValueError("Max keyword argument must be provided.")
+    try:
+        target_percent = (float(target) / max) * 100
+        actual_percent = (float(actual) / max) * 100
+    except ValueError:
+        return ""
+    try:
+        sort = actual_percent / target_percent
+    except:
+        sort = 0.0
+    config = dict(
+        width=width,
+        target=target_percent,
+        actual=actual_percent,
+        sort=sort,
+    )
+    return html % config
+
+
 def title(value):
     """
     Converts a string into titlecase.
@@ -260,6 +296,7 @@ DEFAULT_FORMATTERS = {
     'percent_change': percent_change,
     'ratio': ratio,
     'short_ap_date': short_ap_date,
+    'simple_bullet_graph': simple_bullet_graph,
     'title': title,
     'tribubble': tribubble,
 }
