@@ -15,12 +15,11 @@ Features
 
    <hr>
 
-Resources
-=========
+In the wild
+===========
 
-* `Source code <https://www.github.com/datadesk/latimes-table-stacker/>`_
-* White-label demonstration at `http://table-stacker.appspot.com <http://table-stacker.appspot.com>`_
-* Real world deployment at `http://spreadsheets.latimes.com/ <http://spreadsheets.latimes.com/>`_
+* `White-label deployment <http://table-stacker.appspot.com>`_
+* `http://spreadsheets.latimes.com/ <http://spreadsheets.latimes.com/>`_
 
 .. raw:: html
 
