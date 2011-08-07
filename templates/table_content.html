@@ -1,8 +1,3 @@
-    <script type='text/javascript'>
-        var sortOrder = {{ table.sorted_by }};
-        var perPage = {{ table.per_page }};
-    </script>
-    
     <div class="clear"></div>
     
     {% if object.similar_tables %}
@@ -74,4 +69,24 @@
     {% if object.tags %}<div id="tags">Tags: {{ object.get_html_tag_list|safe }}</div>{% endif %}
     {% if object.sources %}<div id="sources">Sources: {{ object.sources|safe }}</div>{% endif %}
     {% if object.credits %}<div id="credits">Credits: {{ object.credits|safe }}</div>{% endif %}
+    
+    <script type='text/javascript'>
+        var sortOrder = {{ table.sorted_by }};
+        var perPage = {{ table.per_page }};
+        $(document).ready(function(){
+            var fu = $('#table_fu');
+            var table = window.table = $('#data', fu)
+                .tablesorter({ widgets: ['columnHighlight'], sortList: sortOrder })
+                .tablesorterPager({ container: $("#pager", fu), size: perPage, positionFixed: false })
+                .tablesorterMultiPageFilter({ filterSelector: $("#filter input", fu) });
+            var urlSortColumn = getParameterByName("sortColumn");
+            var urlSortOrder = getParameterByName("sortOrder");
+            if (urlSortColumn && urlSortOrder) {
+                urlSortColumn  = parseInt(urlSortColumn);
+                urlSortOrder  = parseInt(urlSortOrder);
+                newSort = [[urlSortColumn, urlSortOrder]];
+                $("table").trigger("sorton", [newSort]); 
+            };
+        });
+    </script>
 
