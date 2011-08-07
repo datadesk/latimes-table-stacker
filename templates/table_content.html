@@ -50,7 +50,7 @@
         <thead>
             <tr>
             {% for header in table.headers %}
-              <th style="cursor: pointer; {% if header.style %}{{ header.style }}{% endif %}">
+              <th style="cursor: pointer; {% if header.style %}{% if header.sortable %}cursor: pointer;{% else %}cursor:default; background:none;{% endif %} {{ header.style }}{% endif %}">
                 {{ header }}
               </th>
             {% endfor %}
@@ -78,9 +78,17 @@
         $(document).ready(function(){
             var fu = $('#table_fu');
             var table = window.table = $('#data', fu)
-                .tablesorter({ widgets: ['columnHighlight'], sortList: sortOrder })
-                .tablesorterPager({ container: $("#pager", fu), size: perPage, positionFixed: false })
-                .tablesorterMultiPageFilter({ filterSelector: $("#filter input", fu) });
+              .tablesorter({
+                widgets: ['columnHighlight'],
+                sortList: sortOrder{% if table.sorter_config %},
+                headers: {% for key, value in table.sorter_config.items %}{ 
+                            {{ key }}: {
+                                sorter: {% if value %}'{{ value }}'{% else %}false{% endif %} 
+                            }{% if not forloop.last %},{% endif %}
+                        }{% endfor %}{% endif %}
+               })
+              .tablesorterPager({ container: $("#pager", fu), size: perPage, positionFixed: false })
+              .tablesorterMultiPageFilter({ filterSelector: $("#filter input", fu) });
             var urlSortColumn = getParameterByName("sortColumn");
             var urlSortOrder = getParameterByName("sortOrder");
             if (urlSortColumn && urlSortOrder) {
