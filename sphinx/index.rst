@@ -471,7 +471,6 @@ The following YAML configuration options specify how to present the columns in t
                 arguments:
                   - LinkColumnName
 
-    * ``link``: 
     * ``percentage``: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.
     * ``percent_change``: Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. Defauls to one decimal place. Zero division errors should print out as "N/A."
     * ``title``: Converts a string into titlecase.

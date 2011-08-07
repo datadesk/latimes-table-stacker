@@ -454,8 +454,20 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 </div>
 </dd></dl>
 
+<dl class="method">
+<dt id="link">
+<tt class="descname">link</tt><big>(</big><em>title</em>, <em>url</em><big>)</big><a class="headerlink" href="#link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">TextColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">link</span>
+    <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
+      <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">LinkColumnName</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">link</span></tt>: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.</li>
 <li><tt class="docutils literal"><span class="pre">percentage</span></tt>: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.</li>
 <li><tt class="docutils literal"><span class="pre">percent_change</span></tt>: Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. Defauls to one decimal place. Zero division errors should print out as &#8220;N/A.&#8221;</li>
 <li><tt class="docutils literal"><span class="pre">title</span></tt>: Converts a string into titlecase.</li>
