@@ -38,6 +38,8 @@ def get_table_page(request, page):
         object_list = object_list.fetch(limit=page_size, offset=offset)
     except:
         raise Http404
+    if not object_list:
+        raise Http404
     if offset + page_size >= total:
         has_next = False
         next_page_number = None
@@ -112,6 +114,8 @@ def tag_page(request, tag, page):
         offset = (page_size*(int(page)-1))
         object_list = object_list.fetch(limit=page_size, offset=offset)
     except:
+        raise Http404
+    if not object_list:
         raise Http404
     if offset + page_size >= total:
         has_next = False
