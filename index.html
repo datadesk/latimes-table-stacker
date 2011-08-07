@@ -319,12 +319,52 @@
 <dd><p>A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column&#8217;s name,
 followed by a dictionary requesting a particular method and, if necessary, customization options and other columns to be passed in as arguments. Optional.</p>
 <dl class="method">
-<dt>
-<tt class="descname">ap_state(value):</tt></dt>
+<dt id="ap_state">
+<tt class="descname">ap_state</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#ap_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a state&#8217;s name, FIPS code or postal abbreviation to A.P. style. Returns the submitted string if a conversion cannot be made.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ap_state</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="bubble">
+<tt class="descname">bubble</tt><big>(</big><em>value</em>, <em>yes_icon=&quot;/media/img/bubble_yes.png&quot;</em>, <em>no_icon=&quot;/media/img/bubble_no.png&quot;</em>, <em>empty=&quot;&amp;mdash;&quot;</em><big>)</big><a class="headerlink" href="#bubble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns one of two &#8220;Consumer Reports&#8221; style bubbles that indicate yes (a filled bubble) or no (an empty bubble). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made the empty argument is returned.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">bubble</span>
+</pre></div>
+</div>
+<p>You can customize the output by overriding the defaults</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">bubble</span>
+    <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">yes_icon</span><span class="p-Indicator">:</span> <span class="s">&quot;http://example.com/yes.png&quot;</span>
+      <span class="l-Scalar-Plain">no_icon</span><span class="p-Indicator">:</span> <span class="s">&quot;http://example.com/no.png&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="checkbox">
+<tt class="descname">checkbox</tt><big>(</big><em>value</em>, <em>yes_icon='&lt;img class=&quot;vote&quot; src=&quot;/media/img/checkbox_yes.png&quot;&gt;'</em>, <em>no_icon='&lt;img class=&quot;vote&quot; src=&quot;/media/img/checkbox_no.png&quot;&gt;'</em><big>)</big><a class="headerlink" href="#checkbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">checkbox</span>
+</pre></div>
+</div>
+<p>You can customize the output by overriding the defaults</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">checkbox</span>
+    <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">yes_icon</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;img</span><span class="nv"> </span><span class="s">src=&#39;http://example.com/yes.png&#39;&gt;&quot;</span>
+      <span class="l-Scalar-Plain">no_icon</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;img</span><span class="nv"> </span><span class="s">src=&#39;http://example.com/no.png&#39;&gt;&quot;</span>
 </pre></div>
 </div>
 </dd></dl>

@@ -317,7 +317,7 @@ The following YAML configuration options specify how to present the columns in t
     A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column's name, 
     followed by a dictionary requesting a particular method and, if necessary, customization options and other columns to be passed in as arguments. Optional.
     
-    .. method:: ap_state(value):
+    .. method:: ap_state(value)
        
         Converts a state's name, FIPS code or postal abbreviation to A.P. style. Returns the submitted string if a conversion cannot be made.
         
@@ -327,6 +327,48 @@ The following YAML configuration options specify how to present the columns in t
               ColumnName:
                 method: ap_state
     
+    .. method:: bubble(value, yes_icon="/media/img/bubble_yes.png", no_icon="/media/img/bubble_no.png", empty="&mdash;")
+    
+        Returns one of two "Consumer Reports" style bubbles that indicate yes (a filled bubble) or no (an empty bubble). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made the empty argument is returned.
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: bubble
+                
+        You can customize the output by overriding the defaults
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: bubble
+                options:
+                  yes_icon: "http://example.com/yes.png"
+                  no_icon: "http://example.com/no.png"
+    
+    .. method:: checkbox(value, yes_icon='<img class="vote" src="/media/img/checkbox_yes.png">',  no_icon='<img class="vote" src="/media/img/checkbox_no.png">')
+    
+        Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.
+
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: checkbox
+                
+        You can customize the output by overriding the defaults
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: checkbox
+                options:
+                  yes_icon: "<img src='http://example.com/yes.png'>"
+                  no_icon: "<img src='http://example.com/no.png'>"
+
     .. method:: dollars(value)
     
         Converts an number to a string containing commas every three digits with a dollar sign at the front.
