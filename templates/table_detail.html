@@ -6,6 +6,16 @@
     {% block description %}{{ object.description|striptags|safe }}{% endblock %}
 {% endif %}
 
+{% block facebook %}
+    {{ block.super }}
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="{{ object.title|safe }}"/>
+    <meta property="og:url" content="{{ object.get_absolute_url }}"/>
+    {% if object.description %}
+    <meta property="og:description" content="{{ object.description|striptags|safe }}"/>
+    {% endif %}
+{% endblock %}
+
 {% if object.tag_list %}
     {% block keywords %}{{ object.get_keywords_list }}, {{ block.super }}{% endblock %}
 {% endif %}
