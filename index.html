@@ -434,6 +434,26 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 </div>
 </dd></dl>
 
+<dl class="method">
+<dt id="image">
+<tt class="descname">image</tt><big>(</big><em>value</em>, <em>width=''</em>, <em>height=''</em><big>)</big><a class="headerlink" href="#image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accepts a URL and returns an HTML image tag ready to be displayed.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">image</span>
+</pre></div>
+</div>
+<p>Optionally, you can set the height and width with keyword arguments.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">image</span>
+    <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">height</span><span class="p-Indicator">:</span> <span class="s">&quot;30px&quot;</span>
+      <span class="l-Scalar-Plain">width</span><span class="p-Indicator">:</span> <span class="s">&quot;30px&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">link</span></tt>: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.</li>
 <li><tt class="docutils literal"><span class="pre">percentage</span></tt>: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.</li>

@@ -437,6 +437,27 @@ The following YAML configuration options specify how to present the columns in t
             formatting:
               ColumnName:
                 method: intcomma
+    
+    .. method:: image(value, width='', height='')
+    
+        Accepts a URL and returns an HTML image tag ready to be displayed.
+        
+        .. code-block:: yaml
+            
+            formatting:
+              ColumnName:
+                method: image
+    
+        Optionally, you can set the height and width with keyword arguments.
+
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: image
+                options:
+                  height: "30px"
+                  width: "30px"
 
     * ``link``: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.
     * ``percentage``: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.
