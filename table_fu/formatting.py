@@ -299,6 +299,28 @@ def tribubble(value, yes_icon='/media/img/tribubble_yes.png',
         return empty
 
 
+def vote(value,
+    yes_vote='<img class="vote" src="/media/img/thumb_up.png">',
+    no_vote='<img class="vote" src="/media/img/thumb_down.png">',
+    did_not_vote="<b style='font-size:130%;'>&mdash;</b>"
+    ):
+    """
+    Returns one of three icons:
+    
+        - Yes (Thumbs up)
+        - Partly (Thumbs down)
+        - No (Bolded em dash)
+    
+    The first letter of each type is what should be provided, i.e. Y, N, anything else.
+    """
+    if value.lower() == 'y':
+        return yes_vote
+    elif value.lower() == 'n':
+        return no_vote
+    else:
+        return did_not_vote
+
+
 DEFAULT_FORMATTERS = {
     'ap_state': ap_state,
     'bubble': bubble,
@@ -315,6 +337,7 @@ DEFAULT_FORMATTERS = {
     'simple_bullet_graph': simple_bullet_graph,
     'title': title,
     'tribubble': tribubble,
+    'vote': vote,
 }
 
 class Formatter(object):

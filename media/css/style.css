@@ -40,6 +40,7 @@ h1#title {margin:0 0 5px 0; font-size:32px;}
 #table_fu th.headerSortDown{background: #e5ecf9 url(/media/img/up.png) no-repeat 99% 50%;}
 #table_fu th.headerSortUp{background: #e5ecf9 url(/media/img/down.png) no-repeat 99% 50%;}
 #table_fu img.bubble {margin: auto;}
+#table_fu img.vote {margin:auto;}
 /* Bullet graphs */
 #table_fu div.bullet-graph-wrap { position: relative; width: 100%; height: 21px; top: 0; left: 0; margin: 0; padding: 0; }
 #table_fu div.bullet-graph-box1 { position: absolute; height: 20px; width: 30%; left: 0; background-color: #eeeeee; z-index: 1; font-size: 0; }
