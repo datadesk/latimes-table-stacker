@@ -370,12 +370,31 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 </dd></dl>
 
 <dl class="method">
+<dt id="dollar_signs">
+<tt class="descname">dollar_signs</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#dollar_signs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an integer into the corresponding number of dollar sign symbols (ie. 3 -&gt; &#8220;$$$&#8221;). Meant to emulate the illustration of price range on Yelp. If something besides an integer is submitted, &#8220;N/A&#8221; is returned.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">dollar_signs</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="dollars">
-<tt class="descname">dollars</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#dollars" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts an number to a string containing commas every three digits with a dollar sign at the front.</p>
+<tt class="descname">dollars</tt><big>(</big><em>value</em>, <em>decimal_places=2</em><big>)</big><a class="headerlink" href="#dollars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an number to a string containing commas every three digits with a dollar sign at the front. Returns &#8220;N/A&#8221; if the something besides a number if submitted.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">dollars</span>
+</pre></div>
+</div>
+<p>The number of decimal places the number is rounded at can controlled with an option. The default is two decimal places.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">dollars</span>
+    <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">decimal_places</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
 </pre></div>
 </div>
 </dd></dl>

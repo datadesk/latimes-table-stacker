@@ -349,9 +349,9 @@ The following YAML configuration options specify how to present the columns in t
                   no_icon: "http://example.com/no.png"
     
     .. method:: checkbox(value, yes_icon='<img class="vote" src="/media/img/checkbox_yes.png">',  no_icon='<img class="vote" src="/media/img/checkbox_no.png">')
-    
+        
         Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.
-
+        
         .. code-block:: yaml
         
             formatting:
@@ -368,17 +368,36 @@ The following YAML configuration options specify how to present the columns in t
                 options:
                   yes_icon: "<img src='http://example.com/yes.png'>"
                   no_icon: "<img src='http://example.com/no.png'>"
-
-    .. method:: dollars(value)
     
-        Converts an number to a string containing commas every three digits with a dollar sign at the front.
+    .. method:: dollar_signs(value)
+    
+        Converts an integer into the corresponding number of dollar sign symbols (ie. 3 -> "$$$"). Meant to emulate the illustration of price range on Yelp. If something besides an integer is submitted, "N/A" is returned.
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: dollar_signs
+    
+    .. method:: dollars(value, decimal_places=2)
+    
+        Converts an number to a string containing commas every three digits with a dollar sign at the front. Returns "N/A" if the something besides a number if submitted.
     
         .. code-block:: yaml
             
             formatting:
               ColumnName:
                 method: dollars
-
+    
+        The number of decimal places the number is rounded at can controlled with an option. The default is two decimal places.
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: dollars
+                options:
+                  decimal_places: 0
     
     * ``intcomma``: Converts an integer to a string containing commas every three digits.
     * ``link``: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.
