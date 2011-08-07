@@ -318,6 +318,30 @@
 <tt class="descname">formatting</tt><a class="headerlink" href="#formatting" title="Permalink to this definition">¶</a></dt>
 <dd><p>A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column&#8217;s name,
 followed by a dictionary requesting a particular method and, if necessary, customization options and other columns to be passed in as arguments. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">Employees Affected</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">intcomma</span>
+  <span class="l-Scalar-Plain">Company Name</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">title</span>
+  <span class="l-Scalar-Plain">Title</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">link</span>
+    <span class="l-Scalar-Plain">argument</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">url</span>
+</pre></div>
+</div>
+<p>If you&#8217;d like to add a new filter of your own, open the <tt class="docutils literal"><span class="pre">table_fu/formatting.py</span></tt> file and add it there. Formatting filters are simple functions that accept a value and return the transformed value we&#8217;d like to present.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a string into titlecase.</span>
+
+<span class="sd">    Lifted from Django.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot;([a-z])&#39;([A-Z])&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">value</span><span class="o">.</span><span class="n">title</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot;\d([A-Z])&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After you&#8217;ve written a new filter, add it to the DEFAULT_FORMATTERS dictionary in that same file and you should now be available for use in YAML configuration files.</p>
+<p><strong>Available formatting filters</strong></p>
 <dl class="method">
 <dt id="ap_state">
 <tt class="descname">ap_state</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#ap_state" title="Permalink to this definition">¶</a></dt>
@@ -399,45 +423,23 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 </div>
 </dd></dl>
 
+<dl class="method">
+<dt id="intcomma">
+<tt class="descname">intcomma</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#intcomma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an integer to a string containing commas every three digits.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">intcomma</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">intcomma</span></tt>: Converts an integer to a string containing commas every three digits.</li>
 <li><tt class="docutils literal"><span class="pre">link</span></tt>: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.</li>
 <li><tt class="docutils literal"><span class="pre">percentage</span></tt>: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.</li>
 <li><tt class="docutils literal"><span class="pre">percent_change</span></tt>: Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. Defauls to one decimal place. Zero division errors should print out as &#8220;N/A.&#8221;</li>
 <li><tt class="docutils literal"><span class="pre">title</span></tt>: Converts a string into titlecase.</li>
 </ul>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
-  <span class="l-Scalar-Plain">Employees Affected</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">intcomma</span>
-  <span class="l-Scalar-Plain">Company Name</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">title</span>
-  <span class="l-Scalar-Plain">Title</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">link</span>
-    <span class="l-Scalar-Plain">argument</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">url</span>
-</pre></div>
-</div>
-<p>If you&#8217;d like to add a new filter of your own, open the <tt class="docutils literal"><span class="pre">table_fu/formatting.py</span></tt> file and add it there. Formatting filters are simple functions that accept a value and return the transformed value we&#8217;d like to present.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Converts a string into titlecase.</span>
-
-<span class="sd">    Lifted from Django.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot;([a-z])&#39;([A-Z])&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">value</span><span class="o">.</span><span class="n">title</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot;\d([A-Z])&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">t</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>After you&#8217;ve written a new filter, add it to the DEFAULT_FORMATTERS dictionary in that same file and you should now be available for use in YAML configuration files.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">DEFAULT_FORMATTERS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&#39;link&#39;</span><span class="p">:</span> <span class="n">link</span><span class="p">,</span>
-    <span class="s">&#39;intcomma&#39;</span><span class="p">:</span> <span class="n">intcomma</span><span class="p">,</span>
-    <span class="s">&#39;dollars&#39;</span><span class="p">:</span> <span class="n">dollars</span><span class="p">,</span>
-    <span class="s">&#39;percentage&#39;</span><span class="p">:</span> <span class="n">percentage</span><span class="p">,</span>
-    <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
-<span class="p">}</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="attribute">

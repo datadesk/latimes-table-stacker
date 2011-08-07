@@ -316,6 +316,35 @@ The following YAML configuration options specify how to present the columns in t
 
     A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column's name, 
     followed by a dictionary requesting a particular method and, if necessary, customization options and other columns to be passed in as arguments. Optional.
+
+    .. code-block:: yaml
+
+        formatting:
+          Employees Affected:
+            method: intcomma
+          Company Name:
+            method: title
+          Title:
+            method: link
+            argument: url
+
+    If you'd like to add a new filter of your own, open the ``table_fu/formatting.py`` file and add it there. Formatting filters are simple functions that accept a value and return the transformed value we'd like to present.
+
+    .. code-block:: python
+
+        def title(value):
+            """
+            Converts a string into titlecase.
+            
+            Lifted from Django.
+            """
+            value = value.lower()
+            t = re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
+            return re.sub("\d([A-Z])", lambda m: m.group(0).lower(), t)
+
+    After you've written a new filter, add it to the DEFAULT_FORMATTERS dictionary in that same file and you should now be available for use in YAML configuration files.
+        
+    **Available formatting filters**
     
     .. method:: ap_state(value)
        
@@ -399,48 +428,20 @@ The following YAML configuration options specify how to present the columns in t
                 options:
                   decimal_places: 0
     
-    * ``intcomma``: Converts an integer to a string containing commas every three digits.
+    .. method:: intcomma(value)
+    
+        Converts an integer to a string containing commas every three digits.
+    
+        .. code-block:: yaml
+            
+            formatting:
+              ColumnName:
+                method: intcomma
+
     * ``link``: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.
     * ``percentage``: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.
     * ``percent_change``: Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. Defauls to one decimal place. Zero division errors should print out as "N/A."
     * ``title``: Converts a string into titlecase.
-
-    .. code-block:: yaml
-
-        formatting:
-          Employees Affected:
-            method: intcomma
-          Company Name:
-            method: title
-          Title:
-            method: link
-            argument: url
-
-    If you'd like to add a new filter of your own, open the ``table_fu/formatting.py`` file and add it there. Formatting filters are simple functions that accept a value and return the transformed value we'd like to present.
-
-    .. code-block:: python
-
-        def title(value):
-            """
-            Converts a string into titlecase.
-            
-            Lifted from Django.
-            """
-            value = value.lower()
-            t = re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
-            return re.sub("\d([A-Z])", lambda m: m.group(0).lower(), t)
-
-    After you've written a new filter, add it to the DEFAULT_FORMATTERS dictionary in that same file and you should now be available for use in YAML configuration files.
-
-    .. code-block:: python
-
-        DEFAULT_FORMATTERS = {
-            'link': link,
-            'intcomma': intcomma,
-            'dollars': dollars,
-            'percentage': percentage,
-            'title': title,
-        }
 
 .. attribute:: per_page
 
