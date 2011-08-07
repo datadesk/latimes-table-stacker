@@ -507,9 +507,96 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 </div>
 </dd></dl>
 
-<ul class="simple">
-<li><tt class="docutils literal"><span class="pre">title</span></tt>: Converts a string into titlecase.</li>
-</ul>
+<dl class="method">
+<dt id="short_ap_date">
+<tt class="descname">short_ap_date</tt><big>(</big><em>value</em>, <em>date_format=None</em><big>)</big><a class="headerlink" href="#short_ap_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reformats a date string in an abbreviated AP format.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">short_ap_date</span>
+</pre></div>
+</div>
+<p>The method tries to parse the datestring automatically, but in some cases (i.e. dates in the first century) or less common date formats
+you might need to specifiy the date format using <a class="reference external" href="http://docs.python.org/library/datetime.html#strftime-strptime-behavior">strptime standards</a>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">short_ap_date</span>
+    <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">date_format</span><span class="p-Indicator">:</span> <span class="s">&quot;%Y-%m-%d&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="simple_bullet_graph">
+<tt class="descname">simple_bullet_graph</tt><big>(</big><em>actual</em>, <em>target</em>, <em>width='95%'</em>, <em>max=None</em><big>)</big><a class="headerlink" href="#simple_bullet_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders a simple <a class="reference external" href="http://en.wikipedia.org/wiki/Bullet_graph">bullet graph</a> that compares a target line against an actual value. Unlike a conventional bullet graph, it does not shade the background into groups. Instead, it&#8217;s all one solid color.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ActualValueColumn</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">simple_bullet_graph</span>
+    <span class="l-Scalar-Plain">arguments</span><span class="p-Indicator">:</span>
+      <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">TargetValueColumn</span>
+    <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">max</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">60</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">title</tt><big>(</big><em>value</em><big>)</big></dt>
+<dd><p>Converts a string into titlecase.</p>
+<blockquote>
+<div><div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">title</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="tribubble">
+<tt class="descname">tribubble</tt><big>(</big><em>value</em>, <em>yes_icon='/media/img/tribubble_yes.png'</em>, <em>partly_icon='/media/img/tribubble_partly.png'</em>, <em>no_icon=&quot;/media/img/tribubble_no.png&quot;</em>, <em>empty=&quot;&amp;mdash;&quot;</em><big>)</big><a class="headerlink" href="#tribubble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns one of three &#8220;Consumer Reports&#8221; style bubbles that indicate yes (filled bubble), partly (half-filled bubble), no (empty bubble). The first letter of each type is what should be provided (i.e. Y, N, P). If a match cannot be made the empty argument is returned.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">tribubble</span>
+</pre></div>
+</div>
+<p>You can customize the output by overriding the defaults</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">tribubble</span>
+    <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">yes_icon</span><span class="p-Indicator">:</span> <span class="s">&quot;http://example.com/yes.png&quot;</span>
+      <span class="l-Scalar-Plain">no_icon</span><span class="p-Indicator">:</span> <span class="s">&quot;http://example.com/no.png&quot;</span>
+      <span class="l-Scalar-Plain">partly_icon</span><span class="p-Indicator">:</span> <span class="s">&quot;http://example.com/partly.png&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="vote">
+<tt class="descname">vote</tt><big>(</big><em>value</em>, <em>yes_vote='&lt;img class=&quot;vote&quot; src=&quot;/media/img/thumb_up.png&quot;&gt;'</em>, <em>no_vote='&lt;img class=&quot;vote&quot; src=&quot;/media/img/thumb_down.png&quot;&gt;'</em>, <em>did_not_vote=&quot;&lt;b style='font-size:130%;'&gt;&amp;mdash;&lt;/b&gt;&quot;</em><big>)</big><a class="headerlink" href="#vote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns one of three icons representing the outcome a vote: Yes (thumbs up); No (thumbs down); Did not vote (Bolded emdash). The first letter of each type is what should be provided, i.e. Y, N, anything else.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">vote</span>
+</pre></div>
+</div>
+<p>You can customize the output by overriding the defaults</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">vote</span>
+    <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">yes_vote</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;img</span><span class="nv"> </span><span class="s">src=&#39;http://example.com/yes.png&#39;&gt;&quot;</span>
+      <span class="l-Scalar-Plain">no_vote</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;img</span><span class="nv"> </span><span class="s">src=&#39;http://example.com/no.png&#39;&gt;&quot;</span>
+      <span class="l-Scalar-Plain">did_not_vote</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;img</span><span class="nv"> </span><span class="s">src=&#39;http://example.com/didnotvote.png&#39;&gt;&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="attribute">

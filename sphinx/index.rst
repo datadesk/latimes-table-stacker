@@ -512,8 +512,95 @@ The following YAML configuration options specify how to present the columns in t
                 options:
                   decimal_places: 0
                   multiply: false
+    
+    .. method:: short_ap_date(value, date_format=None)
+    
+        Reformats a date string in an abbreviated AP format.
+        
+        .. code-block:: yaml
+            
+            formatting:
+              ColumnName:
+                method: short_ap_date
+                
+        The method tries to parse the datestring automatically, but in some cases (i.e. dates in the first century) or less common date formats
+        you might need to specifiy the date format using `strptime standards <http://docs.python.org/library/datetime.html#strftime-strptime-behavior>`_.
 
-    * ``title``: Converts a string into titlecase.
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: short_ap_date
+                options:
+                  date_format: "%Y-%m-%d"
+    
+    .. method:: simple_bullet_graph(actual, target, width='95%', max=None)
+    
+        Renders a simple `bullet graph <http://en.wikipedia.org/wiki/Bullet_graph>`_ that compares a target line against an actual value. Unlike a conventional bullet graph, it does not shade the background into groups. Instead, it's all one solid color.
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ActualValueColumn:
+                method: simple_bullet_graph
+                arguments:
+                  - TargetValueColumn
+                options:
+                  max: 60
+    
+    .. method:: title(value)
+    
+        Converts a string into titlecase.
+        
+            .. code-block:: yaml
+            
+                formatting:
+                  ColumnName:
+                    method: title
+    
+    .. method:: tribubble(value, yes_icon='/media/img/tribubble_yes.png', partly_icon='/media/img/tribubble_partly.png', no_icon="/media/img/tribubble_no.png", empty="&mdash;")
+    
+        Returns one of three "Consumer Reports" style bubbles that indicate yes (filled bubble), partly (half-filled bubble), no (empty bubble). The first letter of each type is what should be provided (i.e. Y, N, P). If a match cannot be made the empty argument is returned.
+    
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: tribubble
+                
+        You can customize the output by overriding the defaults
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: tribubble
+                options:
+                  yes_icon: "http://example.com/yes.png"
+                  no_icon: "http://example.com/no.png"
+                  partly_icon: "http://example.com/partly.png"
+    
+    .. method:: vote(value, yes_vote='<img class="vote" src="/media/img/thumb_up.png">', no_vote='<img class="vote" src="/media/img/thumb_down.png">', did_not_vote="<b style='font-size:130%;'>&mdash;</b>")
+    
+        Returns one of three icons representing the outcome a vote: Yes (thumbs up); No (thumbs down); Did not vote (Bolded emdash). The first letter of each type is what should be provided, i.e. Y, N, anything else.
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: vote
+                
+        You can customize the output by overriding the defaults
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: vote
+                options:
+                  yes_vote: "<img src='http://example.com/yes.png'>"
+                  no_vote: "<img src='http://example.com/no.png'>"
+                  did_not_vote: "<img src='http://example.com/didnotvote.png'>"
 
 .. attribute:: per_page
 
