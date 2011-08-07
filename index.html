@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -7,8 +8,8 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Table Stacker Documentation &mdash; Table Stacker v0.1 documentation</title>
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <title>Features &mdash; Table Stacker v0.1 documentation</title>
+    <link rel="stylesheet" href="_static/latimes.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -22,33 +23,28 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Table Stacker v0.1 documentation" href="#" />
-    <link rel="next" title="Getting started" href="gettingstarted.html" /> 
+    <link rel="top" title="Table Stacker v0.1 documentation" href="#" /> 
   </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="gettingstarted.html" title="Getting started"
-             accesskey="N">next</a> |</li>
-        <li><a href="#">Table Stacker v0.1 documentation</a> &raquo;</li> 
-      </ul>
-    </div>  
-
+  <body>              
+<a href="http://www.github.com/datadesk/Table Stacker/">
+    <img style="position: absolute; top: 0; right: 0; border: 0;" src="_static/forkme.png" alt="Fork me on GitHub">
+</a>
+<div class="banner">
+    <h1><a href="#"><img src="_static/banner.png"></a></h1>
+    <h2>Version 0.1 :: <a href="http://github.com/datadesk">http://github.com/datadesk</a></h2>
+</div>
+<div class="banner-underline"></div> 
+  
+    
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="table-stacker-documentation">
-<h1>Table Stacker Documentation<a class="headerlink" href="#table-stacker-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Publish spreadsheets as interactive tables. And do it on deadline.</p>
+  <blockquote class="epigraph">
+<div>Publish spreadsheets as interactive tables. And do it on deadline.</div></blockquote>
 <div class="section" id="features">
-<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li>Convert a CSV file into an interactive HTML table that sorts, filters and paginates.</li>
 <li>Quickly publish interactives tables to Google App Engine and serve them on the web for free.</li>
@@ -56,78 +52,437 @@
 <li>Post an RSS feed and sitemap that promote the latest data.</li>
 <li>Link similar datasets together with blog-style tagging.</li>
 </ul>
-</div>
+<hr></div>
 <div class="section" id="resources">
-<h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
+<h1>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><a class="reference external" href="https://www.github.com/datadesk/latimes-table-stacker/">Source code</a></li>
 <li><a class="reference external" href="http://table-stacker.appspot.com">Working demonstration</a></li>
 </ul>
+<hr></div>
+<div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial will walk you through the process of installing Table Stacker and publishing an example.</p>
+<p><strong>Requirements</strong></p>
+<ul class="simple">
+<li><a class="reference external" href="http://git-scm.com/">git</a></li>
+<li><a class="reference external" href="http://www.python.org/download/releases/2.5.5/">python2.5</a></li>
+<li><a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a></li>
+</ul>
+<p><strong>01. Register a new application with Google App Engine</strong></p>
+<p>Go to <a class="reference external" href="https://appengine.google.com/">https://appengine.google.com/</a>. Don&#8217;t download the SDK. Don&#8217;t read the docs. Just create an account and mint a new application with a name like <tt class="docutils literal"><span class="pre">my-table-stacker</span></tt>. It serves as the unique identifer for your app inside the Google system, and the namespace where it will first appear online (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<p><strong>02. Install the code on your computer</strong></p>
+<p>It&#8217;s not required, but I recommend creating a virtual environment to store your application. I like to do this with the Python module <a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a>, which creates a walled-off garden for the Python code to work without distraction from the outside world. If you don&#8217;t have it, you&#8217;ll need to install it now, which just might be as easy as:</p>
+<div class="highlight-python"><pre>$ pip install virtualenv
+# Or maybe ...
+$ sudo easy_install install virtualenv
+# Or, if you're in Ubuntu ...
+$ sudo apt-get install python-virtualenv</pre>
 </div>
-<div class="section" id="table-of-contents">
-<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#register-a-new-application-with-google-app-engine">01. Register a new application with Google App Engine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#install-the-code-on-your-computer">02. Install the code on your computer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#set-your-application-id">03. Set your application id</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#launch-a-test-version-of-the-site">04. Launch a test version of the site</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#load-the-example-table">05. Load the example table</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#check-it-out">06. Check it out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#deploy-your-app">07. Deploy your app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#load-the-demo-table-on-your-live-site">08. Load the demo table on your live site</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#id3">09. Check it out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#publish-you-own-data-table">10. Publish you own data table</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="configuration.html#example">Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="configuration.html#metadata-options">Metadata Options</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#title">title</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#file">file</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#slug">slug</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#byline">byline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#description">description</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#is-published">is_published</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#publication-date">publication_date</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#sources">sources</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#credits">credits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#tags">tags</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="configuration.html#column-options">Column Options</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#columns">columns</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#style">style</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#sorted-by">sorted_by</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#formatting">formatting</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#per-page">per_page</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration.html#show-download-links">show_download_links</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="customization.html#css-styles">CSS Styles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization.html#template-layout">Template Layout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization.html#data-formatting">Data formatting</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="managementcommands.html">Management commands</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="managementcommands.html#deletealltables-options">deletealltables [options]</a></li>
-<li class="toctree-l2"><a class="reference internal" href="managementcommands.html#deletetable-config-file-name-options">deletetable &lt;config_file_name&gt; [options]</a></li>
-<li class="toctree-l2"><a class="reference internal" href="managementcommands.html#listtables-options">listtables [options]</a></li>
-<li class="toctree-l2"><a class="reference internal" href="managementcommands.html#loadalltables-options">loadalltables [options]</a></li>
-<li class="toctree-l2"><a class="reference internal" href="managementcommands.html#loadtable-config-file-name-options">loadtable &lt;config_file_name&gt; [options]</a></li>
-<li class="toctree-l2"><a class="reference internal" href="managementcommands.html#runserver">runserver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="managementcommands.html#update">update</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
-</ul>
+<p>Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I&#8217;m going to call this project <tt class="docutils literal"><span class="pre">my-table-stacker</span></tt>, but you should substitute whatever you&#8217;re calling your version.</p>
+<div class="highlight-python"><pre>$ virtualenv --no-site-packages my-table-stacker</pre>
+</div>
+<p>Now jump into the directory it creates.</p>
+<div class="highlight-python"><pre>$ cd table-stacker</pre>
+</div>
+<p>Activate the private environment with virtualenv&#8217;s custom command.</p>
+<div class="highlight-python"><pre>$ . bin/activate</pre>
+</div>
+<p>Download the latest version of the code repository into a directory called <tt class="docutils literal"><span class="pre">project</span></tt>.</p>
+<div class="highlight-python"><pre>$ git clone git://github.com/datadesk/latimes-table-stacker.git project</pre>
+</div>
+<p>And jump in and get ready to work.</p>
+<div class="highlight-python"><pre>$ cd project</pre>
+</div>
+<p><strong>03. Set your application id</strong></p>
+<p>In the <tt class="docutils literal"><span class="pre">project</span></tt> folder you will find a file called <tt class="docutils literal"><span class="pre">app.yaml</span></tt>. It contains the basic configuration for your Google App Engine site. You only need to make one little change: Replace <tt class="docutils literal"><span class="pre">my-table-stacker</span></tt> with the application id you registered in step one.</p>
+<div class="highlight-python"><pre>application: my-table-stacker</pre>
+</div>
+<p><strong>04. Launch a test version of the site</strong></p>
+<p>You&#8217;ll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the <tt class="docutils literal"><span class="pre">project</span></tt> directory and fire off the following. It is a <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port">Django management command</a> that will start a test version of the site on your machine.</p>
+<p>Note that you&#8217;ll see me using <tt class="docutils literal"><span class="pre">python2.5</span></tt> throughout, instead of the usual <tt class="docutils literal"><span class="pre">python</span></tt> command. This is because I work in Ubuntu and I&#8217;ve found that Google App Engine <a class="reference external" href="http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/">is not compatible with newer versions of Python</a>. I suspect is is the case with other operating systems, but I&#8217;m not sure. So, I&#8217;d recommend using <tt class="docutils literal"><span class="pre">python2.5</span></tt> but, as always, your mileage may vary.</p>
+<div class="highlight-python"><pre>$ python2.5 manage.py runserver</pre>
+</div>
+<p><strong>05. Load the example table</strong></p>
+<p>You&#8217;ll learn how to layout your own data later, but for now we&#8217;ll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our <tt class="docutils literal"><span class="pre">loadtable</span></tt> management command to follow instructions in the <tt class="docutils literal"><span class="pre">major-us-coal-mines-2009</span></tt> configuration file and create a new table in the test site we just launched at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
+<div class="highlight-python"><pre>$ python2.5 manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000</pre>
+</div>
+<p><strong>06. Check it out</strong></p>
+<p>If everything clicked, you should see your demo site up and running with the coal mines table at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
+<p><strong>07. Deploy your app</strong></p>
+<p>Once everything&#8217;s set, deploying your application to Google App Engine only takes a single command. Here it is.</p>
+<div class="highlight-python"><pre>$ python2.5 manage.py update</pre>
+</div>
+<p><strong>08. Load the demo table on your live site</strong></p>
+<p>You&#8217;ll run the same <tt class="docutils literal"><span class="pre">loadtable</span></tt> command from step five, but drop the host option. It will post to your live site by default, so it&#8217;s unnecessary this time around.</p>
+<div class="highlight-python"><pre>$ python2.5 manage.py loadtable major-us-coal-mines-2009</pre>
+</div>
+<p><strong>09. Check it out</strong></p>
+<p>You should now see your starter site up and running at <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>. You might draw errors for a few minutes as the app builds its indexes, but don&#8217;t worry. It&#8217;ll be ready after you have a cup of coffee.</p>
+<p><strong>10. Publish you own data table</strong></p>
+<p>Before you can publish your own data table, you&#8217;ll need to learn about our YAML-based configuration system. But don&#8217;t worry, it&#8217;s not that hard. You can read about it in the <tt class="xref doc docutils literal"><span class="pre">configuration</span></tt> section or school yourself by mimicking the examples files in the project&#8217;s <tt class="docutils literal"><span class="pre">yaml</span></tt> subdirectory folder.</p>
+<hr></div>
+<div class="section" id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<p>Each published table is drawn from a CSV file you provide and styled according to the rules outlined in a configuration file written in <a class="reference external" href="http://en.wikipedia.org/wiki/YAML">YAML</a> configuration file. CSV files are stored in the <tt class="docutils literal"><span class="pre">csv</span></tt> folder in the root directory. YAML configuration files are stored in the <tt class="docutils literal"><span class="pre">yaml</span></tt> folder, with one configuration per file.</p>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Here is an example YAML configuration that specifies how to layout <a class="reference external" href="http://table-stacker.appspot.com/major-us-coal-mines-2009/">this demonstration table</a>.</p>
+<div class="highlight-python"><pre>table:
+  title: Major U.S. coal mines, 2009
+  file:  major-us-coal-mines-2009.csv
+  slug: major-us-coal-mines-2009
+  byline: Ben Welsh
+  description: &lt;p&gt;A list of the largest coal-producing U.S. mines for the year 2009. The U.S. Energy Information Administration reports the production of all mines that produce more than 4 million short tons. In 2009, 47 mines qualified by the list. All together, major mines produced more than 650 million short tons of coal, a majority of the roughly 1 billion total short tons unearthed across the nation. Wyoming mines dominate the list, filling out the first nine positions.&lt;/p&gt;
+  column_options:
+    columns:
+      - Mine
+      - Company
+      - Type
+      - State
+      - Production (Short tons)
+    style:
+      Mine: 'text-align:left; width:250px;'
+      Company: 'text-align:left; width:250px;'
+      Type: "width:80px;"
+      State: "width:100px;"
+    sorted_by:
+      - Production (Short tons): descending
+    formatting:
+      Production (Short tons):
+        method: intcomma
+  is_published: true
+  publication_date: 2011-01-12
+  sources: &lt;a href="http://www.eia.doe.gov/cneaf/coal/page/acr/acr_sum.html"&gt;U.S. Energy Information Administration&lt;/a&gt;
+  credits: &lt;a href="mailto:ben.welsh@latimes.com"&gt;Ben Welsh&lt;/a&gt;
+  tags:
+    - Coal
+    - Energy
+    - Mines
+    - Business</pre>
 </div>
 </div>
+<div class="section" id="metadata-options">
+<h2>Metadata Options<a class="headerlink" href="#metadata-options" title="Permalink to this headline">¶</a></h2>
+<p>The following YAML configuration options detail how to present a number of attributes about the table. All entries should be placed inside a dictionary titled <tt class="docutils literal"><span class="pre">table</span></tt>.</p>
+<dl class="attribute">
+<dt id="title">
+<tt class="descname">title</tt><a class="headerlink" href="#title" title="Permalink to this definition">¶</a></dt>
+<dd><p>The headline that will appear in lists and at the top of the table&#8217;s detail page. Required.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">title</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Major U.S. coal mines, 2009</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="file">
+<tt class="descname">file</tt><a class="headerlink" href="#file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the CSV file the table will be based on. It should be in the <tt class="docutils literal"><span class="pre">csv</span></tt> directory with a header row included. Required.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">major-us-coal-mines-2009.csv</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="slug">
+<tt class="descname">slug</tt><a class="headerlink" href="#slug" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string that serves as the unique identifier of the table in the database and doubles as the relative url of its web page. It cannot be used for more than one table in your database. It&#8217;s recommended that you do not use spaces or strange characters. Required.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">major-us-coal-mines-2009</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="byline">
+<tt class="descname">byline</tt><a class="headerlink" href="#byline" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name or list of names that will appear as a byline in lists and on the table&#8217;s detail page. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">byline</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Bob Woodard and Carl Bernstein</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="description">
+<tt class="descname">description</tt><a class="headerlink" href="#description" title="Permalink to this definition">¶</a></dt>
+<dd><p>A block of text describing the table that will appear above the table on its detail page. HTML can and should be included. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">description</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;p&gt;A list of the largest coal-producing U.S. mines for the year 2009.&lt;/p&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="is_published">
+<tt class="descname">is_published</tt><a class="headerlink" href="#is_published" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean <tt class="docutils literal"><span class="pre">true</span></tt> or <tt class="docutils literal"><span class="pre">false</span></tt> that indicates whether the table should be published. If set to <tt class="docutils literal"><span class="pre">false</span></tt>, the table will be loaded in the database but will not appear on the site. Required.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">is_published</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="publication_date">
+<tt class="descname">publication_date</tt><a class="headerlink" href="#publication_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>The date that will appear alongside with the byline. Should be provided in <tt class="docutils literal"><span class="pre">YYYY-MM-DD</span></tt> format. Required.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">publication_date</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">2011-01-12</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sources">
+<tt class="descname">sources</tt><a class="headerlink" href="#sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>A block of text describing where the data came from. Will appear at the bottom of the table detail page after the phrase <tt class="docutils literal"><span class="pre">Sources:</span></tt>. HTML can and should be included. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">sources</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;a href=&quot;http://www.eia.doe.gov/cneaf/coal/page/acr/acr_sum.html&quot;&gt;U.S. Energy Information Administration&lt;/a&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="credits">
+<tt class="descname">credits</tt><a class="headerlink" href="#credits" title="Permalink to this definition">¶</a></dt>
+<dd><p>A block of text listing all the people who helped make the page. Will appear at the bottom of the table detail page after the phrase <tt class="docutils literal"><span class="pre">Credits:</span></tt>. HTML can and should be included. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">credits</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;a href=&quot;mailto:russ.stanton@latimes.com&quot;&gt;Russ Stanton&lt;/a&gt;</span>
+<span class="c1"># Or ...</span>
+<span class="l-Scalar-Plain">credits</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Bob Woodward and Carl Bernstein</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="tags">
+<tt class="descname">tags</tt><a class="headerlink" href="#tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of blog-style tags that apply to the table. Will appear in a list at the bottom of the table&#8217;s detail page and be used to generate lists that connect this table to similar tables. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tags</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Coal</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Energy</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Mines</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Business</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="column-options">
+<h2>Column Options<a class="headerlink" href="#column-options" title="Permalink to this headline">¶</a></h2>
+<p>The following YAML configuration options specify how to present the columns in the data table. They should appear as entries in a dictionary titled <tt class="docutils literal"><span class="pre">column_options</span></tt>.</p>
+<dl class="attribute">
+<dt id="columns">
+<tt class="descname">columns</tt><a class="headerlink" href="#columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of the columns from the CSV that should appear in the published table. They will appear in the order specified here. Key names should correspond to headers in the CSV file. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">columns</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Mine</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Company</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Type</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">State</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Production (Short tons)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="style">
+<tt class="descname">style</tt><a class="headerlink" href="#style" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary that specifies custom CSS to be applied to columns in the data table. CSS declarations should be included just as they would in an HTML <tt class="docutils literal"><span class="pre">style</span></tt> attribute. Key names should correspond to headers in the CSV file. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">style</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">Mine</span><span class="p-Indicator">:</span> <span class="s">&#39;text-align:left;</span><span class="nv"> </span><span class="s">width:250px;&#39;</span>
+  <span class="l-Scalar-Plain">Company</span><span class="p-Indicator">:</span> <span class="s">&#39;text-align:left;</span><span class="nv"> </span><span class="s">width:250px;&#39;</span>
+  <span class="l-Scalar-Plain">Type</span><span class="p-Indicator">:</span> <span class="s">&quot;width:80px;&quot;</span>
+  <span class="l-Scalar-Plain">State</span><span class="p-Indicator">:</span> <span class="s">&quot;width:100px;&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sorted_by">
+<tt class="descname">sorted_by</tt><a class="headerlink" href="#sorted_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>A single item list that specifies which column that table should be sorted by default, and which directions. Key names should correspond to headers in the CSV file. The direction can be either <tt class="docutils literal"><span class="pre">ascending</span></tt> or <tt class="docutils literal"><span class="pre">descending</span></tt>. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">sorted_by</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Production (Short tons)</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">descending</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="formatting">
+<tt class="descname">formatting</tt><a class="headerlink" href="#formatting" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column&#8217;s name, followed by a dictionary requesting a particular method and, if necessary, identifing other columns to be passed in arguments. Optional.</p>
+<p>Available methods:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">dollars</span></tt>: Converts an number to a string containing commas every three digits with a dollar sign at the front.</li>
+<li><tt class="docutils literal"><span class="pre">intcomma</span></tt>: Converts an integer to a string containing commas every three digits.</li>
+<li><tt class="docutils literal"><span class="pre">link</span></tt>: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.</li>
+<li><tt class="docutils literal"><span class="pre">percentage</span></tt>: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.</li>
+<li><tt class="docutils literal"><span class="pre">percent_change</span></tt>: Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. Defauls to one decimal place. Zero division errors should print out as &#8220;N/A.&#8221;</li>
+<li><tt class="docutils literal"><span class="pre">title</span></tt>: Converts a string into titlecase.</li>
+</ul>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">Employees Affected</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">intcomma</span>
+  <span class="l-Scalar-Plain">Company Name</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">title</span>
+  <span class="l-Scalar-Plain">Title</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">link</span>
+    <span class="l-Scalar-Plain">argument</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">url</span>
+</pre></div>
+</div>
+<p>If you&#8217;d like to add a new filter of your own, open the <tt class="docutils literal"><span class="pre">table_fu/formatting.py</span></tt> file and add it there. Formatting filters are simple functions that accept a value and return the transformed value we&#8217;d like to present.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a string into titlecase.</span>
+
+<span class="sd">    Lifted from Django.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot;([a-z])&#39;([A-Z])&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">value</span><span class="o">.</span><span class="n">title</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot;\d([A-Z])&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After you&#8217;ve written a new filter, add it to the DEFAULT_FORMATTERS dictionary in that same file and you should now be available for use in YAML configuration files.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">DEFAULT_FORMATTERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;link&#39;</span><span class="p">:</span> <span class="n">link</span><span class="p">,</span>
+    <span class="s">&#39;intcomma&#39;</span><span class="p">:</span> <span class="n">intcomma</span><span class="p">,</span>
+    <span class="s">&#39;dollars&#39;</span><span class="p">:</span> <span class="n">dollars</span><span class="p">,</span>
+    <span class="s">&#39;percentage&#39;</span><span class="p">:</span> <span class="n">percentage</span><span class="p">,</span>
+    <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="per_page">
+<tt class="descname">per_page</tt><a class="headerlink" href="#per_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>How many records should appear in each page of the data table. 20 by default. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">per_page</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">50</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="show_download_links">
+<tt class="descname">show_download_links</tt><a class="headerlink" href="#show_download_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether download links for CSV, XLS and JSON data should be made available on the table detail page. The default is true, so you only need to include it when you want to turn downloads off.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">show_download_links</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<hr></div>
+</div>
+<div class="section" id="management-commands">
+<h1>Management commands<a class="headerlink" href="#management-commands" title="Permalink to this headline">¶</a></h1>
+<p>Interactions with the Table Stacker database are handled using custom <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/">Django management commands</a> that allow you to create, update and delete tables.</p>
+<p>Like other Django commands, they are run by interacting with the <tt class="docutils literal"><span class="pre">manage.py</span></tt> file in your project&#8217;s root directory.</p>
+<dl class="attribute">
+<dt>
+<tt class="descname">deletealltables &lt;config_file_name&gt; [options]</tt></dt>
+<dd><p>Deletes all tables in the database</p>
+<dl class="cmdoption">
+<dt id="cmdoption--host">
+<tt class="descname">--host</tt><tt class="descclassname">=&lt;host_address&gt;</tt><a class="headerlink" href="#cmdoption--host" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c"># Clear the database in your live site</span>
+<span class="nv">$ </span>python2.5 manage.py deletealltables
+<span class="c"># Or for a test site running on your local machine</span>
+<span class="nv">$ </span>python2.5 manage.py deletealltables --host<span class="o">=</span>localhost:8000
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">deletetable &lt;config_file_name&gt; [options]</tt></dt>
+<dd><p>Delete the table outlined in the configuration file provided by the first argument.</p>
+<dl class="cmdoption">
+<dt id="cmdoption--host">
+<tt class="descname">--host</tt><tt class="descclassname">=&lt;host_address&gt;</tt><a class="headerlink" href="#cmdoption--host" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py deletetable config-file-name --host<span class="o">=</span>localhost:8000
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">listtables [options]</tt></dt>
+<dd><p>List all of the configuration files.</p>
+<dl class="cmdoption">
+<dt id="cmdoption--host">
+<tt class="descname">--host</tt><tt class="descclassname">=&lt;host_address&gt;</tt><a class="headerlink" href="#cmdoption--host" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py listtables --host<span class="o">=</span>localhost:8000
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">loadalltables [options]</tt></dt>
+<dd><p>Create or update all tables outlined in the directory of configuration file.</p>
+<dl class="cmdoption">
+<dt id="cmdoption--host">
+<tt class="descname">--host</tt><tt class="descclassname">=&lt;host_address&gt;</tt><a class="headerlink" href="#cmdoption--host" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py loadalltables --host<span class="o">=</span>localhost:8000
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">loadtable &lt;config_file_name&gt; [options]</tt></dt>
+<dd><p>Create or update the table outlined in the configuration file provided by the first argument.</p>
+<dl class="cmdoption">
+<dt id="cmdoption--host">
+<tt class="descname">--host</tt><tt class="descclassname">=&lt;host_address&gt;</tt><a class="headerlink" href="#cmdoption--host" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
+<div class="highlight-bash"><div class="highlight"><pre>python2.5 manage.py loadtable config-file-name --host<span class="o">=</span>localhost:8000
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="runserver">
+<tt class="descname">runserver</tt><a class="headerlink" href="#runserver" title="Permalink to this definition">¶</a></dt>
+<dd><p>The built-in command for firing up the Django test server. You can read more about it in <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port">the official Django docs</a>.</p>
+<div class="highlight-bash"><div class="highlight"><pre>python2.5 manage.py runserver
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="update">
+<tt class="descname">update</tt><a class="headerlink" href="#update" title="Permalink to this definition">¶</a></dt>
+<dd><p>A custom command design for Google App Engine that deploys the code base to the web. Read more about it in the <a class="reference external" href="http://code.google.com/p/google-app-engine-django/source/browse/trunk/README">google-app-engine-helper</a> documentation.</p>
+<div class="highlight-bash"><div class="highlight"><pre>python2.5 manage.py update
+</pre></div>
+</div>
+</dd></dl>
+
+<hr></div>
+<div class="section" id="customization">
+<h1>Customization<a class="headerlink" href="#customization" title="Permalink to this headline">¶</a></h1>
+<p>Table Stacker is published with <a class="reference external" href="http://table-stacker.appspot.com/">minimal styling</a>. If you want to adapt it for your site, you&#8217;ll probably want to change the appearance and layout. The CSS styles that regulate the appearance of Table Stacker are stored in the <tt class="docutils literal"><span class="pre">/media/css</span></tt> directory. Change them and you&#8217;ll change the appearance of the site. Table Stacker&#8217;s layout is managed using <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/templates/">Django&#8217;s templating system</a> and configured through a series of files in the <tt class="docutils literal"><span class="pre">templates</span></tt> directory. Change them and you&#8217;ll change the layout of the site.</p>
+<hr></div>
+<div class="section" id="id9">
+<h1>Credits<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h1>
+<p>This project would not be possible without the generous work of people like:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.propublica.org/nerds">ProPublica&#8217;s News Application Desk</a>, and particularly <a class="reference external" href="https://github.com/thejefflarson">Jeff Larson</a>, who developed the Ruby libraries <a class="reference external" href="https://github.com/propublica/table-fu">table-fu</a> and <a class="reference external" href="https://github.com/propublica/table-setter">table-setter</a>.</li>
+<li><a class="reference external" href="https://github.com/eyeseast">Chris Amico</a>, who did the noble work of porting table-fu to <a class="reference external" href="https://github.com/eyeseast/python-tablefu">Python</a>.</li>
+<li>Christian Bach, the man who gave us <a class="reference external" href="http://tablesorter.com/docs/">tablesorter</a>.</li>
+<li>The army of people who make something like <a class="reference external" href="http://code.google.com/p/google-app-engine-django/">google-app-engine-django</a> possible.</li>
+</ul>
 </div>
 
 
@@ -138,19 +493,20 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Table Stacker Documentation</a><ul>
-<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#">Features</a></li>
 <li><a class="reference internal" href="#resources">Resources</a></li>
-<li><a class="reference internal" href="#table-of-contents">Table of Contents</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#metadata-options">Metadata Options</a></li>
+<li><a class="reference internal" href="#column-options">Column Options</a></li>
 </ul>
 </li>
-</ul>
-</li>
+<li><a class="reference internal" href="#management-commands">Management commands</a></li>
+<li><a class="reference internal" href="#customization">Customization</a></li>
+<li><a class="reference internal" href="#id9">Credits</a></li>
 </ul>
 
-  <h4>Next topic</h4>
-  <p class="topless"><a href="gettingstarted.html"
-                        title="next chapter">Getting started</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -163,31 +519,36 @@
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
+    <div style="height:20px; clear:both;"></div>
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="gettingstarted.html" title="Getting started"
-             >next</a> |</li>
-        <li><a href="#">Table Stacker v0.1 documentation</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, Los Angeles Times.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+        <div class="smalllogo"><a href="http://www.latimes.com"><img src="_static/logo.png" alt="latimes.com"></a></div>
+        <div class="credits">
+            &copy; Copyright 2011, Los Angeles Times.
+          Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+        </div>     
     </div>
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-24991388-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
   </body>
 </html>
