@@ -316,10 +316,31 @@
 <dl class="attribute">
 <dt id="formatting">
 <tt class="descname">formatting</tt><a class="headerlink" href="#formatting" title="Permalink to this definition">¶</a></dt>
-<dd><p>A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column&#8217;s name, followed by a dictionary requesting a particular method and, if necessary, identifing other columns to be passed in arguments. Optional.</p>
-<p>Available methods:</p>
+<dd><p>A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column&#8217;s name,
+followed by a dictionary requesting a particular method and, if necessary, customization options and other columns to be passed in as arguments. Optional.</p>
+<dl class="method">
+<dt>
+<tt class="descname">ap_state(value):</tt></dt>
+<dd><p>Converts a state&#8217;s name, FIPS code or postal abbreviation to A.P. style. Returns the submitted string if a conversion cannot be made.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ap_state</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="dollars">
+<tt class="descname">dollars</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#dollars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an number to a string containing commas every three digits with a dollar sign at the front.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">dollars</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">dollars</span></tt>: Converts an number to a string containing commas every three digits with a dollar sign at the front.</li>
 <li><tt class="docutils literal"><span class="pre">intcomma</span></tt>: Converts an integer to a string containing commas every three digits.</li>
 <li><tt class="docutils literal"><span class="pre">link</span></tt>: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.</li>
 <li><tt class="docutils literal"><span class="pre">percentage</span></tt>: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.</li>

@@ -314,11 +314,30 @@ The following YAML configuration options specify how to present the columns in t
 
 .. attribute:: formatting
 
-    A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column's name, followed by a dictionary requesting a particular method and, if necessary, identifing other columns to be passed in arguments. Optional.
+    A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column's name, 
+    followed by a dictionary requesting a particular method and, if necessary, customization options and other columns to be passed in as arguments. Optional.
+    
+    .. method:: ap_state(value):
+       
+        Converts a state's name, FIPS code or postal abbreviation to A.P. style. Returns the submitted string if a conversion cannot be made.
+        
+        .. code-block:: yaml
+            
+            formatting:
+              ColumnName:
+                method: ap_state
+    
+    .. method:: dollars(value)
+    
+        Converts an number to a string containing commas every three digits with a dollar sign at the front.
+    
+        .. code-block:: yaml
+            
+            formatting:
+              ColumnName:
+                method: dollars
 
-    Available methods:
-
-    * ``dollars``: Converts an number to a string containing commas every three digits with a dollar sign at the front.
+    
     * ``intcomma``: Converts an integer to a string containing commas every three digits.
     * ``link``: Wraps a string in an HTML hyperlink. The URL from another column passed as an argument.
     * ``percentage``: Multiplies a float by 100, converts it to a string and follows it with a percentage sign. Defaults to one decimal place.
