@@ -227,6 +227,30 @@ The following YAML configuration options detail how to present a number of attri
 
         description: <p>A list of the largest coal-producing U.S. mines for the year 2009.</p>
 
+.. attribute:: kicker
+
+    A brief string to run above the headline in all capital letters. "SPREADSHEET" by default. Optional.
+
+    .. code-block:: yaml
+
+        kicker: data table
+
+.. attribute:: legend
+
+    A slot above the table where you can stick an HTML block containing a legend. Empty be default. Optional.
+    
+    .. code-block:: yaml
+    
+        legend: "<img src='http://example.com/legend.png'>"
+
+.. attribute:: footer
+
+    A slot below the table where you can stick and HTML block containing footnotes, corrections or other extra information. Optional.
+    
+    .. code-block:: yaml
+    
+        footer: "<p>We regret the error.</p>"
+
 .. attribute:: is_published
 
     A boolean ``true`` or ``false`` that indicates whether the table should be published. If set to ``false``, the table will be loaded in the database but will not appear on the site. Required.
@@ -272,6 +296,32 @@ The following YAML configuration options detail how to present a number of attri
             - Energy
             - Mines
             - Business
+
+
+.. attribute:: per_page
+
+    How many records should appear in each page of the data table. 20 by default. Optional.
+
+    .. code-block:: yaml
+
+        per_page: 50
+
+.. attribute:: show_download_links
+
+    Whether download links for CSV, XLS and JSON data should be made available on the table detail page. The default is true, so you only need to include it when you want to turn downloads off.
+
+    .. code-block:: yaml
+
+        show_download_links: false
+
+.. attribute:: show_in_feeds
+
+    Whether the table will show in the sitemap, RSS feeds and public-facing list pages. The default is true, so you only need to include it when you want to set it to false.
+    
+    .. code-block:: yaml
+    
+        show_in_feeds: false
+
 
 Column Options
 --------------
@@ -601,22 +651,6 @@ The following YAML configuration options specify how to present the columns in t
                   yes_vote: "<img src='http://example.com/yes.png'>"
                   no_vote: "<img src='http://example.com/no.png'>"
                   did_not_vote: "<img src='http://example.com/didnotvote.png'>"
-
-.. attribute:: per_page
-
-    How many records should appear in each page of the data table. 20 by default. Optional.
-
-    .. code-block:: yaml
-
-        per_page: 50
-
-.. attribute:: show_download_links
-
-    Whether download links for CSV, XLS and JSON data should be made available on the table detail page. The default is true, so you only need to include it when you want to turn downloads off.
-
-    .. code-block:: yaml
-
-        show_download_links: false
 
 .. raw:: html
 

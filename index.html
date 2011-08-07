@@ -222,6 +222,33 @@
 </dd></dl>
 
 <dl class="attribute">
+<dt id="kicker">
+<tt class="descname">kicker</tt><a class="headerlink" href="#kicker" title="Permalink to this definition">¶</a></dt>
+<dd><p>A brief string to run above the headline in all capital letters. &#8220;SPREADSHEET&#8221; by default. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">kicker</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">data table</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="legend">
+<tt class="descname">legend</tt><a class="headerlink" href="#legend" title="Permalink to this definition">¶</a></dt>
+<dd><p>A slot above the table where you can stick an HTML block containing a legend. Empty be default. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">legend</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;img</span><span class="nv"> </span><span class="s">src=&#39;http://example.com/legend.png&#39;&gt;&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="footer">
+<tt class="descname">footer</tt><a class="headerlink" href="#footer" title="Permalink to this definition">¶</a></dt>
+<dd><p>A slot below the table where you can stick and HTML block containing footnotes, corrections or other extra information. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">footer</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;p&gt;We</span><span class="nv"> </span><span class="s">regret</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">error.&lt;/p&gt;&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="is_published">
 <tt class="descname">is_published</tt><a class="headerlink" href="#is_published" title="Permalink to this definition">¶</a></dt>
 <dd><p>A boolean <tt class="docutils literal"><span class="pre">true</span></tt> or <tt class="docutils literal"><span class="pre">false</span></tt> that indicates whether the table should be published. If set to <tt class="docutils literal"><span class="pre">false</span></tt>, the table will be loaded in the database but will not appear on the site. Required.</p>
@@ -268,6 +295,33 @@
   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Energy</span>
   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Mines</span>
   <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">Business</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="per_page">
+<tt class="descname">per_page</tt><a class="headerlink" href="#per_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>How many records should appear in each page of the data table. 20 by default. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">per_page</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">50</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="show_download_links">
+<tt class="descname">show_download_links</tt><a class="headerlink" href="#show_download_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether download links for CSV, XLS and JSON data should be made available on the table detail page. The default is true, so you only need to include it when you want to turn downloads off.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">show_download_links</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="show_in_feeds">
+<tt class="descname">show_in_feeds</tt><a class="headerlink" href="#show_in_feeds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the table will show in the sitemap, RSS feeds and public-facing list pages. The default is true, so you only need to include it when you want to set it to false.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">show_in_feeds</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -597,24 +651,6 @@ you might need to specifiy the date format using <a class="reference external" h
 </div>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="attribute">
-<dt id="per_page">
-<tt class="descname">per_page</tt><a class="headerlink" href="#per_page" title="Permalink to this definition">¶</a></dt>
-<dd><p>How many records should appear in each page of the data table. 20 by default. Optional.</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">per_page</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">50</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="show_download_links">
-<tt class="descname">show_download_links</tt><a class="headerlink" href="#show_download_links" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether download links for CSV, XLS and JSON data should be made available on the table detail page. The default is true, so you only need to include it when you want to turn downloads off.</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">show_download_links</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <hr></div>
