@@ -179,19 +179,6 @@ def percent_change(value, decimal_places=1, multiply=True):
         return s + '%'
 
 
-def ratio(value, precision=0):
-    """
-    Converts a floating point value a X:1 ratio.
-    
-    Number of decimal places set by the `precision` kwarg. Default is one.
-    """
-    try:
-        f = float(value)
-    except ValueError:
-        return 'N/A'
-    return _saferound(f, decimal_places) + ':1'
-
-
 def short_ap_date(value, date_format=None):
     """
     Reformats a date string as in an abbreviated AP format.
@@ -332,7 +319,6 @@ DEFAULT_FORMATTERS = {
     'intcomma': intcomma,
     'percentage': percentage,
     'percent_change': percent_change,
-    'ratio': ratio,
     'short_ap_date': short_ap_date,
     'simple_bullet_graph': simple_bullet_graph,
     'title': title,
