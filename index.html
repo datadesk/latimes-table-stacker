@@ -487,8 +487,27 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 </div>
 </dd></dl>
 
+<dl class="method">
+<dt id="percent_change">
+<tt class="descname">percent_change</tt><big>(</big><em>value</em>, <em>decimal_places=1</em>, <em>multiply=True</em><big>)</big><a class="headerlink" href="#percent_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. &#8220;N/A&#8221; is returned if the input cannot be converted to a float.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">percent_change</span>
+</pre></div>
+</div>
+<p>The number of decimal places set by the <tt class="docutils literal"><span class="pre">decimal_places</span></tt> option. The default is one. Also by default the number is multiplied by 100. You can prevent it from doing that by setting the <tt class="docutils literal"><span class="pre">multiply</span></tt> option to False.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">percent_change</span>
+    <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">decimal_places</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+      <span class="l-Scalar-Plain">multiply</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">percent_change</span></tt>: Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. Defauls to one decimal place. Zero division errors should print out as &#8220;N/A.&#8221;</li>
 <li><tt class="docutils literal"><span class="pre">title</span></tt>: Converts a string into titlecase.</li>
 </ul>
 </dd></dl>

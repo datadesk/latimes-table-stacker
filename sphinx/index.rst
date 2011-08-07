@@ -491,8 +491,28 @@ The following YAML configuration options specify how to present the columns in t
                 options:
                   decimal_places: 0
                   multiply: false
+    
+    .. method:: percent_change(value, decimal_places=1, multiply=True)
+        
+        Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. "N/A" is returned if the input cannot be converted to a float.
+        
+        .. code-block:: yaml
+            
+            formatting:
+              ColumnName:
+                method: percent_change
+        
+        The number of decimal places set by the ``decimal_places`` option. The default is one. Also by default the number is multiplied by 100. You can prevent it from doing that by setting the ``multiply`` option to False.
+    
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: percent_change
+                options:
+                  decimal_places: 0
+                  multiply: false
 
-    * ``percent_change``: Converts a float into a percentage value with a + or - on the front and a percentage sign on the back. Defauls to one decimal place. Zero division errors should print out as "N/A."
     * ``title``: Converts a string into titlecase.
 
 .. attribute:: per_page
