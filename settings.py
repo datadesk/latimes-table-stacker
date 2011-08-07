@@ -17,7 +17,7 @@
 import os
 import yaml
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
