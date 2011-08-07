@@ -19,7 +19,8 @@ In the wild
 ===========
 
 * `White-label deployment <http://table-stacker.appspot.com>`_
-* `spreadsheets.latimes.com <http://spreadsheets.latimes.com/>`_
+* `Everything at spreadsheets.latimes.com <http://spreadsheets.latimes.com/>`_
+* `Census data <http://www.starledger.com/str/indexpage/project/2010-Census-populations-by-town.htm>`_ from The New Jersey Star Ledger
 
 .. raw:: html
 
