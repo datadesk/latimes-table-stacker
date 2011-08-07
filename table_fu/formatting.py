@@ -120,8 +120,23 @@ def intcomma(value):
         return intcomma(new)
 
 
+def image(value, width='', height=''):
+    """
+    Accepts a URL and returns an HTML image tag ready to be displayed.
+    
+    Optionally, you can set the height and width with keyword arguments.
+    """
+    style = ""
+    if width:
+        style += "width:%s" % width
+    if height:
+        style += "height:%s" % height
+    data_dict = dict(src=value, style=style)
+    return '<img src="%(src)s" style="%(style)s">' % data_dict
+
+
 def link(title, url):
-    return u'<a target="_blank" href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
+    return '<a target="_blank" href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
 
 
 def percentage(value, decimal_places=1, multiply=True):
@@ -291,6 +306,7 @@ DEFAULT_FORMATTERS = {
     'dollar_signs': dollar_signs,
     'dollars': dollars,
     'link': link,
+    'image': image,
     'intcomma': intcomma,
     'percentage': percentage,
     'percent_change': percent_change,
