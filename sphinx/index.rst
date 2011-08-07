@@ -6,7 +6,7 @@ Features
 ========
 
 * Convert a CSV file into an interactive HTML table that sorts, filters and paginates.
-* Quickly publish interactives tables to Google App Engine and serve them on the web for free.
+* Quickly publish interactives tables to Google App Engine and serve them on the web.
 * Instantly syndicate data as CSV, XLS and JSON.
 * Post an RSS feed and sitemap that promote the latest data.
 * Link similar datasets together with blog-style tagging.
