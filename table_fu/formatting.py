@@ -62,10 +62,12 @@ def checkbox(value,
     no_icon='<img class="vote" src="/media/img/checkbox_no.png">',
     ):
     """
-    Returns one of three icons:
+    Returns one of two icons:
     
         - Yes (checked box)
         - No (empty box)
+    
+    Or, if a match can't be made, an empty string.
     
     The first letter of each type is what should be provided, i.e. Y, N, anything else.
     """
@@ -96,6 +98,9 @@ def dollar_signs(value):
 def dollars(value, decimal_places=2):
     """
     Converts a number in a dollar figure, with commas after ever three digits.
+    
+    The number of decimal places can be configured via the keyword argument. 
+    The default is 2.
     """
     if not value:
         value = 0
@@ -158,13 +163,13 @@ def percent_change(value, decimal_places=1, multiply=True):
     """
     Converts a floating point value into a percentage change value.
     
-    Number of decimal places set by the `precision` kwarg. Default is one.
-    
-    Non-floats are assumed to be zero division errors and are presented as
-    'N/A' in the output.
+    Number of decimal places set by the `decimal_places` kwarg. Default is one.
     
     By default the number is multiplied by 100. You can prevent it from doing
     that by setting the `multiply` keyword argument to False.
+    
+    Non-floats are assumed to be zero division errors and are presented as
+    'N/A' in the output.
     """
     try:
         f = float(value)
@@ -187,7 +192,9 @@ def short_ap_date(value, date_format=None):
         
              >> short_ap_date('2010-04-03')
             'Apr. 2, 2011'
-        
+    
+    If the date format cannot be automatically detected, you can specify it
+    with the keyword argument.
     """
     # Split any date ranges and create a list
     value = value.replace("&ndash;", "-")
@@ -254,9 +261,7 @@ def simple_bullet_graph(actual, target, width='95%', max=None):
 
 def title(value):
     """
-    Converts a string into titlecase.
-    
-    Lifted from Django.
+    Converts a string into titlecase. Lifted from Django.
     """
     value = value.lower()
     t = re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
