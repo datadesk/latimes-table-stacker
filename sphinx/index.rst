@@ -61,6 +61,7 @@ Once you have virtualenv installed, make it happen by navigating to wherever you
 Now jump into the directory it creates.
 
 .. code-block:: bash
+
     $ cd table-stacker
 
 Activate the private environment with virtualenv's custom command.
@@ -125,7 +126,7 @@ You'll run the same ``loadtable`` command from step five, but drop the host opti
 
 .. code-block:: bash
 
-    $ python2.5 manage.py loadtable major-us-coal-mines-2009
+    $ python2.5 manage.py loadtable major-us-coal-mines-2009 
 
 **09. Check it out**
 
