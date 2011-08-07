@@ -19,7 +19,7 @@ In the wild
 ===========
 
 * `White-label deployment <http://table-stacker.appspot.com>`_
-* `http://spreadsheets.latimes.com/ <http://spreadsheets.latimes.com/>`_
+* `spreadsheets.latimes.com <http://spreadsheets.latimes.com/>`_
 
 .. raw:: html
 
