@@ -18,7 +18,7 @@ h2. Features
 
 h2. Resources
 
-* Full documentation at "http://datadesk.github.com/latimes-table-stacker":http://datadesk.github.com/latimes-table-stacker
+* Documentation at "http://datadesk.github.com/latimes-table-stacker":http://datadesk.github.com/latimes-table-stacker
 * Working demonstration at "http://table-stacker.appspot.com":http://table-stacker.appspot.com
 
 
