@@ -63,6 +63,7 @@ class TableFu(object):
         self.totals = {}
         self.formatting = options.get('formatting', {})
         self.style = options.get('style', {})
+        self.header_style = options.get("header_style", {})
         self.tags = options.get('tags', [])
         self.per_page = options.get("per_page", 20)
         self.options = options
@@ -400,9 +401,18 @@ class Header(object):
         return self.name.encode('utf-8')
     
     def _get_style(self):
+        style = ""
         try:
-            return self.table.style[self.name]
+            style += self.table.style[self.name]
         except KeyError:
+            pass
+        try:
+            style += self.table.header_style[self.name]
+        except KeyError:
+            pass
+        if style:
+            return style
+        else:
             return None
     style = property(_get_style)
     

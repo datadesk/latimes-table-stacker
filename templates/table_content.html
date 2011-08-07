@@ -50,7 +50,9 @@
         <thead>
             <tr>
             {% for header in table.headers %}
-              <th style="{{ header.style }}">{{ header }}</th>
+              <th style="cursor: pointer; {% if header.style %}{{ header.style }}{% endif %}">
+                {{ header }}
+              </th>
             {% endfor %}
             </tr>
         </thead>
