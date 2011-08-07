@@ -133,7 +133,7 @@ You should now see your starter site up and running at `http://my-table-stacker.
 
 **10. Publish you own data table**
 
-Before you can publish your own data table, you'll need to learn about our YAML-based configuration system. But don't worry, it's not that hard. You can read about it in the :doc:`configuration <configuration>` section or school yourself by mimicking the examples files in the project's ``yaml`` subdirectory folder.
+Before you can publish your own data table, you'll need to learn about our YAML-based configuration system. But don't worry, it's not that hard. You can read about it in the configuration section or school yourself by mimicking the examples files in the project's ``yaml`` subdirectory folder.
 
 .. raw:: html
 
