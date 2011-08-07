@@ -31,19 +31,26 @@ def get_table_page(request, page):
     # Pull the data
     qs = Table.all()
     object_list = qs.filter("is_published =", True).filter("show_in_feeds =", True).order("-publication_date")
-    paginator = Paginator(object_list, 10)
-    # Limit it to thise page
+    total = object_list.count()
+    page_size = 10
     try:
-        page = paginator.page(page)
-    except (EmptyPage, InvalidPage):
+        offset = (page_size*(int(page)-1))
+        object_list = object_list.fetch(limit=page_size, offset=offset)
+    except:
         raise Http404
+    if offset + page_size >= total:
+        has_next = False
+        next_page_number = None
+    else:
+        has_next = True
+        next_page_number = int(page) + 1
     # Create a response and pass it back
     context = {
         'headline': 'Latest spreadsheets',
-        'object_list': page.object_list,
-        'page_number': page.number,
-        'has_next': page.has_next(),
-        'next_page_number': page.next_page_number(),
+        'object_list': object_list,
+        'page_number': int(page),
+        'has_next': has_next,
+        'next_page_number': next_page_number,
     }
     return direct_to_template(request, 'table_list.html', context)
 
@@ -99,19 +106,26 @@ def tag_page(request, tag, page):
     if not tag:
         raise Http404
     object_list = Table.all().filter("is_published =", True).filter("show_in_feeds =", True).filter('tags =', tag.key())
-    paginator = Paginator(object_list, 10)
-    # Limit it to thise page
+    total = object_list.count()
+    page_size = 10
     try:
-        page = paginator.page(page)
-    except (EmptyPage, InvalidPage):
+        offset = (page_size*(int(page)-1))
+        object_list = object_list.fetch(limit=page_size, offset=offset)
+    except:
         raise Http404
+    if offset + page_size >= total:
+        has_next = False
+        next_page_number = None
+    else:
+        has_next = True
+        next_page_number = int(page) + 1
     # Create a response and pass it back
     context = {
         'headline': 'Spreadsheets tagged &lsquo;%s&rsquo;' % tag.title,
-        'object_list': page.object_list,
-        'page_number': page.number,
-        'has_next': page.has_next(),
-        'next_page_number': page.next_page_number(),
+        'object_list': object_list,
+        'page_number': int(page),
+        'has_next': has_next,
+        'next_page_number': next_page_number,
     }
     return direct_to_template(request, 'table_list.html', context)
 
