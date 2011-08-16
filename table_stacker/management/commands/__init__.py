@@ -84,7 +84,7 @@ class GAECommand(BaseCommand):
         else:
             host = '%s.appspot.com' % app_id
         # Connect
-        remote_api_stub.ConfigureRemoteDatastore(app_id, '/remote_api', self.login, host)
+        remote_api_stub.ConfigureRemoteDatastore(None, '/remote_api', self.login, host)
     
     def get_app_id(self):
         """
