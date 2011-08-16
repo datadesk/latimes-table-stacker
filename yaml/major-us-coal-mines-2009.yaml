@@ -18,6 +18,8 @@ table:
         method: ap_state
       Production (Short tons):
         method: intcomma
+    sorters:
+      Mine: false
   is_published: true
   publication_date: 2011-01-12
   sources: <a href="http://www.eia.doe.gov/cneaf/coal/page/acr/acr_sum.html">U.S. Energy Information Administration</a>

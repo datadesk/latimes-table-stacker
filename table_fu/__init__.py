@@ -63,6 +63,8 @@ class TableFu(object):
         self.totals = {}
         self.formatting = options.get('formatting', {})
         self.style = options.get('style', {})
+        self.header_style = options.get("header_style", {})
+        self.sorters = options.get('sorters', {})
         self.tags = options.get('tags', [])
         self.per_page = options.get("per_page", 20)
         self.options = options
@@ -227,6 +229,17 @@ class TableFu(object):
             sort_direction = 0
         # Then nest that in a list to the tablesorter standard
         return [[column_index, sort_direction]]
+    
+    def get_sorter_config(self):
+        """
+        Prepare the parser config for usage in tablesorter's initilization.
+        """
+        col_list = self.columns
+        js_dict = {}
+        for key, value in self.sorters.items():
+            js_dict[col_list.index(key)] = value
+        return js_dict
+    sorter_config = property(get_sorter_config)
     
     @property
     def total_pages(self):
@@ -400,11 +413,44 @@ class Header(object):
         return self.name.encode('utf-8')
     
     def _get_style(self):
+        style = ""
         try:
-            return self.table.style[self.name]
+            style += self.table.style[self.name]
         except KeyError:
+            pass
+        try:
+            style += self.table.header_style[self.name]
+        except KeyError:
+            pass
+        if style:
+            return style
+        else:
             return None
     style = property(_get_style)
+    
+    def get_sorter(self):
+        """
+        Returns the sorter to be used in tablesorter initialization.
+        """
+        try:
+            self.table.sorters[self.name]
+        except:
+            return None
+    sorter = property(get_sorter)
+    
+    def sortable(self):
+        """
+        Indicates whether it is allowed to sort. Returns True or False.
+        """
+        try:
+            parser = self.table.sorters[self.name]
+            if parser == False:
+                return False
+            else:
+                return True
+        except KeyError:
+            return True
+    sortable = property(sortable)
     
     def as_th(self):
         return '<th class="header" style="%s">%s</th>' % (self.style or '', self.__str__())

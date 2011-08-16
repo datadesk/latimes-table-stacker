@@ -62,10 +62,12 @@ def checkbox(value,
     no_icon='<img class="vote" src="/media/img/checkbox_no.png">',
     ):
     """
-    Returns one of three icons:
+    Returns one of two icons:
     
         - Yes (checked box)
         - No (empty box)
+    
+    Or, if a match can't be made, an empty string.
     
     The first letter of each type is what should be provided, i.e. Y, N, anything else.
     """
@@ -96,6 +98,9 @@ def dollar_signs(value):
 def dollars(value, decimal_places=2):
     """
     Converts a number in a dollar figure, with commas after ever three digits.
+    
+    The number of decimal places can be configured via the keyword argument. 
+    The default is 2.
     """
     if not value:
         value = 0
@@ -120,8 +125,23 @@ def intcomma(value):
         return intcomma(new)
 
 
+def image(value, width='', height=''):
+    """
+    Accepts a URL and returns an HTML image tag ready to be displayed.
+    
+    Optionally, you can set the height and width with keyword arguments.
+    """
+    style = ""
+    if width:
+        style += "width:%s" % width
+    if height:
+        style += "height:%s" % height
+    data_dict = dict(src=value, style=style)
+    return '<img src="%(src)s" style="%(style)s">' % data_dict
+
+
 def link(title, url):
-    return u'<a target="_blank" href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
+    return '<a target="_blank" href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
 
 
 def percentage(value, decimal_places=1, multiply=True):
@@ -143,13 +163,13 @@ def percent_change(value, decimal_places=1, multiply=True):
     """
     Converts a floating point value into a percentage change value.
     
-    Number of decimal places set by the `precision` kwarg. Default is one.
-    
-    Non-floats are assumed to be zero division errors and are presented as
-    'N/A' in the output.
+    Number of decimal places set by the `decimal_places` kwarg. Default is one.
     
     By default the number is multiplied by 100. You can prevent it from doing
     that by setting the `multiply` keyword argument to False.
+    
+    Non-floats are assumed to be zero division errors and are presented as
+    'N/A' in the output.
     """
     try:
         f = float(value)
@@ -164,19 +184,6 @@ def percent_change(value, decimal_places=1, multiply=True):
         return s + '%'
 
 
-def ratio(value, precision=0):
-    """
-    Converts a floating point value a X:1 ratio.
-    
-    Number of decimal places set by the `precision` kwarg. Default is one.
-    """
-    try:
-        f = float(value)
-    except ValueError:
-        return 'N/A'
-    return _saferound(f, decimal_places) + ':1'
-
-
 def short_ap_date(value, date_format=None):
     """
     Reformats a date string as in an abbreviated AP format.
@@ -185,7 +192,9 @@ def short_ap_date(value, date_format=None):
         
              >> short_ap_date('2010-04-03')
             'Apr. 2, 2011'
-        
+    
+    If the date format cannot be automatically detected, you can specify it
+    with the keyword argument.
     """
     # Split any date ranges and create a list
     value = value.replace("&ndash;", "-")
@@ -252,9 +261,7 @@ def simple_bullet_graph(actual, target, width='95%', max=None):
 
 def title(value):
     """
-    Converts a string into titlecase.
-    
-    Lifted from Django.
+    Converts a string into titlecase. Lifted from Django.
     """
     value = value.lower()
     t = re.sub("([a-z])'([A-Z])", lambda m: m.group(0).lower(), value.title())
@@ -284,6 +291,28 @@ def tribubble(value, yes_icon='/media/img/tribubble_yes.png',
         return empty
 
 
+def vote(value,
+    yes_vote='<img class="vote" src="/media/img/thumb_up.png">',
+    no_vote='<img class="vote" src="/media/img/thumb_down.png">',
+    did_not_vote="<b style='font-size:130%;'>&mdash;</b>"
+    ):
+    """
+    Returns one of three icons:
+    
+        - Yes (Thumbs up)
+        - Partly (Thumbs down)
+        - No (Bolded em dash)
+    
+    The first letter of each type is what should be provided, i.e. Y, N, anything else.
+    """
+    if value.lower() == 'y':
+        return yes_vote
+    elif value.lower() == 'n':
+        return no_vote
+    else:
+        return did_not_vote
+
+
 DEFAULT_FORMATTERS = {
     'ap_state': ap_state,
     'bubble': bubble,
@@ -291,14 +320,15 @@ DEFAULT_FORMATTERS = {
     'dollar_signs': dollar_signs,
     'dollars': dollars,
     'link': link,
+    'image': image,
     'intcomma': intcomma,
     'percentage': percentage,
     'percent_change': percent_change,
-    'ratio': ratio,
     'short_ap_date': short_ap_date,
     'simple_bullet_graph': simple_bullet_graph,
     'title': title,
     'tribubble': tribubble,
+    'vote': vote,
 }
 
 class Formatter(object):

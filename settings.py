@@ -17,7 +17,7 @@
 import os
 import yaml
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -91,6 +91,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',  # 0.97 only.
+    'toolbox.context_processors.metadata',
 #    'django.core.context_processors.request',
 )
 
@@ -105,7 +106,7 @@ CSV_DIR = os.path.join(ROOT_PATH, 'csv')
 CONFIG_PATH = os.path.join(ROOT_PATH, "app.yaml")
 CONFIG_DATA = yaml.load(open(CONFIG_PATH, "r"))
 APP_VERSION = CONFIG_DATA.get("version")
-
+SITE_NAME = 'TableStacker Demonstration'
 
 INSTALLED_APPS = (
      'django.contrib.humanize',

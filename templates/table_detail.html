@@ -6,6 +6,16 @@
     {% block description %}{{ object.description|striptags|safe }}{% endblock %}
 {% endif %}
 
+{% block facebook %}
+    {{ block.super }}
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="{{ object.title|safe }}"/>
+    <meta property="og:url" content="{{ object.get_absolute_url }}"/>
+    {% if object.description %}
+    <meta property="og:description" content="{{ object.description|striptags|safe }}"/>
+    {% endif %}
+{% endblock %}
+
 {% if object.tag_list %}
     {% block keywords %}{{ object.get_keywords_list }}, {{ block.super }}{% endblock %}
 {% endif %}
@@ -14,14 +24,18 @@
     <script src='{{ MEDIA_URL }}js/jquery.tablesorter.js' type='text/javascript'></script>
     <script src='{{ MEDIA_URL }}js/jquery.tablesorter.pager.js' type='text/javascript'></script>
     <script src='{{ MEDIA_URL }}js/jquery.tablesorter.multipagefilter.js' type='text/javascript'></script>
-    <script type='text/javascript'>
-        $(document).ready(function(){
-          var fu = $('#table_fu');
-          var table = window.table = $('#data', fu)
-            .tablesorter({ widgets: ['columnHighlight'], sortList: sortOrder })
-            .tablesorterPager({ container: $("#pager", fu), size: perPage, positionFixed: false })
-            .tablesorterMultiPageFilter({ filterSelector: $("#filter input", fu) });
-        });
+    <script type="text/javascript">
+        /* For picking out bits from the query string */
+        var getParameterByName = function(name) {
+          name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+          var regexS = "[\\?&]" + name + "=([^&#]*)";
+          var regex = new RegExp(regexS);
+          var results = regex.exec(window.location.href);
+          if(results == null)
+            return "";
+          else
+            return decodeURIComponent(results[1].replace(/\+/g, " "));
+        };
     </script>
     <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
 {% endblock %}

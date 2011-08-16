@@ -10,8 +10,10 @@ from optparse import make_option
 from django.utils import simplejson
 from google.appengine.ext import db
 from toolbox.slugify import slugify
+from google.appengine.api import memcache
 from toolbox.FileIterator import FileIterator
 from table_stacker.models import Table, Tag
+from table_stacker.views import get_cache_key
 from google.appengine.api.labs import taskqueue
 from google.appengine.ext.remote_api import remote_api_stub
 from django.core.management.base import BaseCommand, CommandError
@@ -194,6 +196,13 @@ def update_or_create_table(yaml_data):
         params=dict(key=obj.key()),
         method='GET'
     )
+    # Killed any cached versions that might exist
+    cache_key = get_cache_key('table_detail:%s' % obj.slug)
+    if memcache.get(cache_key):
+        memcache.delete(cache_key)
+    cache_key = get_cache_key('table_index')
+    if memcache.get(cache_key):
+        memcache.delete(cache_key)
     return obj, created
 
 #

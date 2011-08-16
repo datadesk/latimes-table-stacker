@@ -2,8 +2,8 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>{% block title %}All Tables{% endblock %}</title>
-    <meta name="keywords" content="{% block keywords %}{% endblock %}" >
+    <title>{% block title %}{% if site_name %}{{ site_name }}{% else %}All Tables{% endif %}{% endblock %}</title>
+    <meta name="keywords" content="{% block keywords %}tablstacker{% endblock %}" >
     <meta name="description" content="{% block description %}{% endblock %}" >
     
     <link href='/media/css/blueprint/screen.css' rel='stylesheet' type='text/css' media='all' />
@@ -22,6 +22,12 @@
     {% block extra-head %}
         <link rel="alternate" href="/feeds/latest/" type="application/rss+xml" title="Latest spreadsheets" id="latest" />
     {% endblock %}
+    
+    {% block facebook %}
+        {% if site_name %}<meta property="og:site_name" content="{{ site_name }}"/>{% endif %}
+        {% if facebook_admins %}<meta property="fb:admins" content="{{ facebook_admins }}"/>{% endif %}
+    {% endblock %}
+    
   </head>
   <body>
     <div class="container">
