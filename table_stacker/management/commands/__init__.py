@@ -4,22 +4,14 @@ Utilities shared by multiple custom management commands.
 import os
 import csv
 import yaml
-import getpass
 from django.conf import settings
-from optparse import make_option
 from django.utils import simplejson
-from google.appengine.ext import db
 from toolbox.slugify import slugify
-from google.appengine.api import memcache
 from toolbox.FileIterator import FileIterator
 from table_stacker.models import Table, Tag
-from table_stacker.views import get_cache_key
-from google.appengine.api.labs import taskqueue
-from google.appengine.ext.remote_api import remote_api_stub
 from django.core.management.base import BaseCommand, CommandError
 from django.test import Client
 from django.core.handlers.wsgi import WSGIRequest
-from google.appengine.ext.remote_api import remote_api_stub
 from django.core.management.base import BaseCommand, CommandError
 
 
@@ -97,54 +89,6 @@ class InvalidYAMLError(Exception):
         return repr(self.parameter)
 
 #
-# Custom management command
-#
-
-class GAECommand(BaseCommand):
-    """
-    A Django custom management command tailored for our way of using Google
-    App engine.
-    """
-    custom_options = (
-        make_option(
-            "--host",
-            action="store",
-            dest="host",
-            default=None,
-            help="specify the host to update, defaults to <app_id>.appspot.com"
-        ),
-    )
-    option_list = BaseCommand.option_list + custom_options
-    
-    def authorize(self, options):
-        """
-        Setup all the GAE remote API bizness.
-        """
-        # Pull the app id
-        app_id = self.get_app_id()
-        # Figure out the URL to hit
-        if options.get('host'):
-            host = options.get('host')
-        else:
-            host = '%s.appspot.com' % app_id
-        # Connect
-        remote_api_stub.ConfigureRemoteDatastore(None, '/remote_api', self.login, host)
-    
-    def get_app_id(self):
-        """
-        Retrieves the id of the current app.
-        """
-        path = os.path.join(settings.ROOT_PATH, 'app.yaml')
-        yaml_data = yaml.load(open(path))
-        return yaml_data['application']
-    
-    def login(self):
-        """
-        Quickie method for logging in to the remote api. From GAE docs.
-        """
-        return raw_input('Email:'), getpass.getpass('Password:')
-
-#
 # YAML
 #
 
@@ -185,11 +129,13 @@ def update_or_create_table(yaml_data):
     Returns a tuple with the object first, and then a boolean that is True
     when the object was created.
     """
-    obj = Table.get_by_key_name(yaml_data.get("slug", yaml_data['yaml_name']))
-    
+    try:
+        obj = Table.objects.get(slug=yaml_data.get("slug", yaml_data['yaml_name']))
+    except Table.DoesNotExist:
+        obj = None
+
     if obj:
         obj.csv_name=yaml_data['file']
-        obj.csv_data=prep_csv_for_db(yaml_data['file'])
         obj.yaml_name=yaml_data['yaml_name']
         obj.yaml_data=str(yaml_data)
         obj.title=yaml_data['title']
@@ -202,17 +148,17 @@ def update_or_create_table(yaml_data):
         obj.footer=yaml_data.get('footer', '')
         obj.sources=yaml_data.get('sources', '')
         obj.credits=yaml_data.get('credits', '')
-        obj.tags=get_tag_keys(yaml_data.get('tags', []))
         obj.is_published=yaml_data.get('is_published', False)
         obj.show_download_links=yaml_data.get("show_download_links", True)
         obj.show_in_feeds=yaml_data.get("show_in_feeds", True)
-        obj.put()
+        obj.tags.clear()
+        [obj.tags.add(i) for i in get_tag_list(yaml_data.get('tags', []))]
+        obj.save()
+        obj.save()
         created = False
     else:
         obj = Table(
-            key_name=yaml_data.get("slug", yaml_data['yaml_name']),
             csv_name=yaml_data['file'],
-            csv_data=prep_csv_for_db(yaml_data['file']),
             yaml_name=yaml_data['yaml_name'],
             yaml_data=str(yaml_data),
             title=yaml_data['title'],
@@ -225,26 +171,14 @@ def update_or_create_table(yaml_data):
             footer=yaml_data.get('footer', ''),
             sources=yaml_data.get('sources', ''),
             credits=yaml_data.get('credits', ''),
-            tags=get_tag_keys(yaml_data.get('tags', [])),
             is_published=yaml_data.get('is_published', False),
             show_download_links=yaml_data.get("show_download_links", True),
             show_in_feeds=yaml_data.get("show_in_feeds", True),
         )
-        obj.put()
+        obj.save()
+        [obj.tags.add(i) for i in get_tag_list(yaml_data.get('tags', []))]
+        obj.save()
         created = True
-    # Update the similarity lists of tables with the same tags
-    taskqueue.add(
-        url='/_/table/update-similar/',
-        params=dict(key=obj.key()),
-        method='GET'
-    )
-    # Killed any cached versions that might exist
-    cache_key = get_cache_key('table_detail:%s' % obj.slug)
-    if memcache.get(cache_key):
-        memcache.delete(cache_key)
-    cache_key = get_cache_key('table_index')
-    if memcache.get(cache_key):
-        memcache.delete(cache_key)
     return obj, created
 
 #
@@ -262,44 +196,30 @@ def get_csv(csv_name):
         raise CSVDoesNotExistError("CSV file could not be opened: %s" % csv_name)
     return csv_data
 
-
-def prep_csv_for_db(csv_name):
-    """
-    Retrieves the csv file with the provided name and returns a db.Text object
-    that is ready to be inserted into the database.
-    """
-    # Open up the CSV file
-    csv_data = get_csv(csv_name)
-    # Load it into the CSV module
-    csv_data = csv.reader(csv_data)
-    # Convert that to a list
-    csv_data = list(csv_data)
-    # Convert that to JSON
-    csv_data = simplejson.dumps(csv_data)
-    # Finish db preparation by loading it into GAE thingie
-    return db.Text(csv_data, encoding="utf-8")
-
 #
 # Tags
 #
 
-def get_tag_keys(tag_list):
+def get_tag_list(tag_list):
     """
     Accepts a list of humanized tag names and returns a list of the db.Key's
     for the corresponding Tag model entries.
     """
     if not tag_list:
         return []
-    key_list = []
+    obj_list = []
     for tag_name in tag_list:
-        obj = Tag.get_by_key_name(slugify(tag_name))
+        try:
+            obj = Tag.objects.get(slug=slugify(tag_name))
+        except Tag.DoesNotExist:
+            obj = None
         if obj:
-            key_list.append(obj.key())
+            obj_list.append(obj)
         else:
             slug = slugify(tag_name)
-            obj = Tag(title=tag_name, slug=slug, key_name=slug)
-            obj.put()
-            key_list.append(obj.key())
-    return key_list
+            obj = Tag(title=tag_name, slug=slug)
+            obj.save()
+            obj_list.append(obj)
+    return obj_list
 
 

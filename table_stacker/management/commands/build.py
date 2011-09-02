@@ -9,9 +9,10 @@ from table_stacker.management.commands import *
 from django.contrib.syndication.views import feed
 from django.views.generic.simple import direct_to_template
 from table_stacker.feeds import LatestTables
+from django.core.management.base import BaseCommand
 
 
-class Command(GAECommand):
+class Command(BaseCommand):
     help = 'Bake out the entire site as flat files in the build directory'
     
     def write(self, path, data):
@@ -48,7 +49,7 @@ class Command(GAECommand):
         
         # Build table list pagination
         os.makedirs(os.path.join(settings.BUILD_DIR, 'page'))
-        pages = int(math.ceil(Table.all().count() / 10.0))
+        pages = int(math.ceil(Table.objects.all().count() / 10.0))
         for page in range(1, pages+1):
             response = views.table_page(rf.get("/pages/%s/" % page), page)
             path = os.path.join(settings.BUILD_DIR, 'page', str(page))
@@ -57,7 +58,7 @@ class Command(GAECommand):
 
         # Build table detail pages
         print "Building table detail pages"
-        for table in Table.all():
+        for table in Table.objects.all():
             try:
                 response = views.table_detail(rf.get("/%s/" % table.slug), table.slug)
             except Http404:
@@ -70,7 +71,7 @@ class Command(GAECommand):
         print "Building API dumps"
         path = os.path.join(settings.BUILD_DIR, "api")
         os.makedirs(path)
-        for table in Table.all():
+        for table in Table.objects.all():
             # JSON
             try:
                 response = views.table_json(rf.get("/%s/" % table.slug), table.slug)
@@ -90,8 +91,8 @@ class Command(GAECommand):
         # Tag pages
         print "Building tag pages"
         os.makedirs(os.path.join(settings.BUILD_DIR, 'tag'))
-        for tag in Tag.all():
-            table_set = Table.all().filter('tags =', tag.key()).filter("show_in_feeds =", True).filter("is_published =", True)
+        for tag in Tag.objects.all():
+            table_set = tag.table_set.filter(is_published=True, show_in_feeds=True)
             pages = int(math.ceil(table_set.count() / 10.0))
             for page in range(1, pages+1):
                 response = views.tag_page(rf.get("/tag/%s/page/%s/" % (tag.slug, page)), tag.slug, page)
