@@ -17,6 +17,19 @@
 import os
 import yaml
 
+ROOT_PATH = os.path.dirname(__file__)
+TEMPLATE_DIRS = (
+    os.path.join(ROOT_PATH, 'templates'),
+)
+YAML_DIR = os.path.join(ROOT_PATH, 'yaml')
+CSV_DIR = os.path.join(ROOT_PATH, 'csv')
+BUILD_DIR = os.path.join(ROOT_PATH, 'build')
+CONFIG_PATH = os.path.join(ROOT_PATH, "app.yaml")
+CONFIG_DATA = yaml.load(open(CONFIG_PATH, "r"))
+APP_VERSION = CONFIG_DATA.get("version")
+SITE_NAME = 'TableStacker Demonstration'
+AWS_BUCKET_NAME = 'table-stacker'
+
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
@@ -52,7 +65,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(ROOT_PATH, "media")
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -62,7 +75,7 @@ MEDIA_URL = '/media/'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/admin/media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'hvhxfm5u=^*v&doo#oq8x*eg8+1&9sxbye@=umutgn^t_sg_nx'
@@ -96,17 +109,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 ROOT_URLCONF = 'urls'
-
-ROOT_PATH = os.path.dirname(__file__)
-TEMPLATE_DIRS = (
-    os.path.join(ROOT_PATH, 'templates'),
-)
-YAML_DIR = os.path.join(ROOT_PATH, 'yaml')
-CSV_DIR = os.path.join(ROOT_PATH, 'csv')
-CONFIG_PATH = os.path.join(ROOT_PATH, "app.yaml")
-CONFIG_DATA = yaml.load(open(CONFIG_PATH, "r"))
-APP_VERSION = CONFIG_DATA.get("version")
-SITE_NAME = 'TableStacker Demonstration'
 
 INSTALLED_APPS = (
      'django.contrib.humanize',

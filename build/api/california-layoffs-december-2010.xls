@@ -1,0 +1,952 @@
+<table>
+    
+      <tr>
+        
+           <td>Layoff Date</td>
+        
+           <td>Company Name</td>
+        
+           <td>Location</td>
+        
+           <td>Employees Affected</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/1/10</td>
+        
+           <td>LIFE TECHNOLOGIES</td>
+        
+           <td>CAMARILLO</td>
+        
+           <td>2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/1/10</td>
+        
+           <td>NOVEN PHARMACEUTICALS, INC.</td>
+        
+           <td>CARLSBAD</td>
+        
+           <td>3</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/1/10</td>
+        
+           <td>SONY PICTURES ENTERTAINMENT INC.</td>
+        
+           <td>LOS ANGELES</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/2/10</td>
+        
+           <td>ABBOTT LABORATORIES</td>
+        
+           <td>MONROVIA</td>
+        
+           <td>7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/2/10</td>
+        
+           <td>RAYTHEON COMPANY SPACE & AIRBORNE SYSTEMS</td>
+        
+           <td>EL SEGUNDO</td>
+        
+           <td>130</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/2/10</td>
+        
+           <td>SEAWORLD LLC</td>
+        
+           <td>SAN DIEGO</td>
+        
+           <td>80</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/3/10</td>
+        
+           <td>PRECISION DYNAMICS CORPORATION</td>
+        
+           <td>SAN FERNANDO</td>
+        
+           <td>11</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/3/10</td>
+        
+           <td>SYSTRON DONNER</td>
+        
+           <td>CONCORD</td>
+        
+           <td>29</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/3/10</td>
+        
+           <td>YOUBET.COM,LLC</td>
+        
+           <td>WOODLAND HILLS</td>
+        
+           <td>36</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/5/10</td>
+        
+           <td>HSBC PROCESSING SERVICES INC & HSBC PAY SERVICES I</td>
+        
+           <td>PONOMA</td>
+        
+           <td>100</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/5/10</td>
+        
+           <td>WELLS FARGO</td>
+        
+           <td>RANCHO CORDOVA</td>
+        
+           <td>101</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/5/10</td>
+        
+           <td>WELLS FARGO HOME MORTGAGE</td>
+        
+           <td>RANCHO CORDOVA</td>
+        
+           <td>101</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/6/10</td>
+        
+           <td>HINES NURSERIES, LLC.</td>
+        
+           <td>FALLBROOK</td>
+        
+           <td>119</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/6/10</td>
+        
+           <td>SETON MEDICAL CENTER</td>
+        
+           <td>SAN FRANCISCO</td>
+        
+           <td>56</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/7/10</td>
+        
+           <td>CAREFUSION RESOURCES, LLC AND MEDEGEN, LLC.</td>
+        
+           <td>SAN DIEGO</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/7/10</td>
+        
+           <td>CAREFUSION RESOURCES, LLC. AND MEDEGEN, LLC.</td>
+        
+           <td>ONTARIO</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/7/10</td>
+        
+           <td>CAREFUSION RESOURCES, LLC. AND MEDEGEN, LLC.</td>
+        
+           <td>PALM SPRINGS</td>
+        
+           <td>40</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/7/10</td>
+        
+           <td>CAREFUSION RESOURCES, LLC. AND MEDEGEN, LLC.</td>
+        
+           <td>YORBA LINDA</td>
+        
+           <td>2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/9/10</td>
+        
+           <td>CABO YACHTS</td>
+        
+           <td>ADELANTO</td>
+        
+           <td>8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/10/10</td>
+        
+           <td>PRINCIPAL FINANCEAL GROUP</td>
+        
+           <td>GLENDALE</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/10/10</td>
+        
+           <td>SYSTRON DONNER</td>
+        
+           <td>CONCORD</td>
+        
+           <td>17</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/10/10</td>
+        
+           <td>VERISIGN</td>
+        
+           <td>MOUNTAIN VIEW</td>
+        
+           <td>3</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/11/10</td>
+        
+           <td>CLAIM JUMPER</td>
+        
+           <td>CITY OF INDUSTRY</td>
+        
+           <td>73</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/11/10</td>
+        
+           <td>CLAIM JUMPER</td>
+        
+           <td>IRVINE</td>
+        
+           <td>67</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/11/10</td>
+        
+           <td>CLAIM JUMPER</td>
+        
+           <td>TORRANCE</td>
+        
+           <td>85</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/12/10</td>
+        
+           <td>SUNDANCE SPAS, INC.</td>
+        
+           <td>CHINO</td>
+        
+           <td>83</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/13/10</td>
+        
+           <td>ACE PARKING</td>
+        
+           <td>SAN DIEGO</td>
+        
+           <td>67</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/13/10</td>
+        
+           <td>CRYSTAL STAIRS, INC.</td>
+        
+           <td>LOS ANGELES</td>
+        
+           <td>259</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/13/10</td>
+        
+           <td>SAN DIEGO MARRIOTT HOTEL AND MARINA</td>
+        
+           <td>SAN DIEGO</td>
+        
+           <td>802</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/14/10</td>
+        
+           <td>BD MEDICAL</td>
+        
+           <td>OCEANSIDE</td>
+        
+           <td>27</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/15/10</td>
+        
+           <td>BUBBA GUMP SHRIMP CO. RESTAURANTS, INC.</td>
+        
+           <td>SAN CLEMENTE</td>
+        
+           <td>45</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/15/10</td>
+        
+           <td>HEALTH CARE GROUP</td>
+        
+           <td>ESCONDIDO</td>
+        
+           <td>208</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/15/10</td>
+        
+           <td>JET PROPULSION LABORATORY</td>
+        
+           <td>PASADENA</td>
+        
+           <td>11</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/16/10</td>
+        
+           <td>CABO YACHTS</td>
+        
+           <td>ADELANTO</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/17/10</td>
+        
+           <td>LIFE TECHNOLOGIES</td>
+        
+           <td>FOSTER CITY</td>
+        
+           <td>60</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/17/10</td>
+        
+           <td>SYSTRON DONNER</td>
+        
+           <td>CONCORD</td>
+        
+           <td>20</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/17/10</td>
+        
+           <td>THE BOEING COMPANY</td>
+        
+           <td>LONG BEACH</td>
+        
+           <td>32</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/17/10</td>
+        
+           <td>UNTIED SPIRAL PIPE, LLC.</td>
+        
+           <td>PITTSBURG</td>
+        
+           <td>108</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/18/10</td>
+        
+           <td>CLAIM JUMPER</td>
+        
+           <td>FRESNO</td>
+        
+           <td>89</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/20/10</td>
+        
+           <td>NOLL MANUFACTURING CO.</td>
+        
+           <td>STOCKTON</td>
+        
+           <td>104</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/21/10</td>
+        
+           <td>PACE (2WIRE)</td>
+        
+           <td>SAN JOSE</td>
+        
+           <td>33</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/23/10</td>
+        
+           <td>CABO YACHTS</td>
+        
+           <td>ADELANTO</td>
+        
+           <td>13</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/24/10</td>
+        
+           <td>DI-PRO, INC.</td>
+        
+           <td>FRESNO</td>
+        
+           <td>19</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/24/10</td>
+        
+           <td>WEST MARINE PRODUCTS, INC.</td>
+        
+           <td>WATSONVILLE</td>
+        
+           <td>420</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/26/10</td>
+        
+           <td>CHAMINADE RESORT & SPA</td>
+        
+           <td>SANTA CRUZ</td>
+        
+           <td>170</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/27/10</td>
+        
+           <td>CLAIM JUMPER RESTAURANTS, LLC.</td>
+        
+           <td>THOUSAND OAKS</td>
+        
+           <td>86</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/27/10</td>
+        
+           <td>DC ENTERTAINMENT</td>
+        
+           <td>LA JOLLA</td>
+        
+           <td>33</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/28/10</td>
+        
+           <td>GENERAL CHEMICAL WEST LLC</td>
+        
+           <td>PITTSBURG</td>
+        
+           <td>19</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/30/10</td>
+        
+           <td>CABO YACHTS</td>
+        
+           <td>ADELANTO</td>
+        
+           <td>7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>BEKAERT PROGRESSIVE COMPOSITES, LLC, VISTA PLANT</td>
+        
+           <td>VISTA</td>
+        
+           <td>45</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>BFI WASTE SYSTEMS OF NORTH AMERICA, LLC.</td>
+        
+           <td>SAN CARLOS</td>
+        
+           <td>349</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>CABO YACHTS</td>
+        
+           <td>ADELANTO</td>
+        
+           <td>2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>DEL MAR THOROUGHBRED CLUB</td>
+        
+           <td>DEL MAR</td>
+        
+           <td>935</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>DELAWARE NORTH COMPANIES TRAVEL HOSPITALITY SERVIC</td>
+        
+           <td>LOS ANGELES</td>
+        
+           <td>137</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>DOCTORS MEDICAL CENTER</td>
+        
+           <td>YOSEMITE NATIONAL PARK</td>
+        
+           <td>34</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>EXEL, INC.</td>
+        
+           <td>BLOOMINGTON</td>
+        
+           <td>71</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>GLAXOSMITHKLINE (STIEFEL LABORATORIES, INC.)</td>
+        
+           <td>PALO ALTO</td>
+        
+           <td>51</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>GOLDEN STATE MUTUAL LIFE INSURANCE COMPANY</td>
+        
+           <td>LOS ANGELES</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>HENKEL CORPORATION</td>
+        
+           <td>CITY OF INDUSTRY</td>
+        
+           <td>19</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>HILTON WORLDWIDE SUPPLY MANAGEMENT DEPARTMENT</td>
+        
+           <td>BEVERLY HILLS</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>HMSHOST</td>
+        
+           <td>LOS ANGELES</td>
+        
+           <td>895</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>JAL TRANS, INC.</td>
+        
+           <td>LOS ANGELES</td>
+        
+           <td>78</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>JOHNSON CONTROLS, INC.</td>
+        
+           <td>LIVERMORE</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>LENNOX HEARTH PRODUCTS, INC.</td>
+        
+           <td>ORANGE</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>LIFE TECHNOLOGIES</td>
+        
+           <td>CAMARILLO</td>
+        
+           <td>44</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>NAVITOR, INC.</td>
+        
+           <td>VISALIA</td>
+        
+           <td>18</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>NORTHROP GRUMMAN</td>
+        
+           <td>REDONDO BEACH</td>
+        
+           <td>300</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>NORTHROP GRUMMAN INFORMATION SYSTEMS</td>
+        
+           <td>LOS ANGELES</td>
+        
+           <td>79</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>NORTHRUP GRUMMAN</td>
+        
+           <td>EL SEGUNDO</td>
+        
+           <td>200</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>OWENS CORNING SANTA CLARA PLANT</td>
+        
+           <td>SANTA CLARA</td>
+        
+           <td>50</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>PACE (2WIRE)</td>
+        
+           <td>SAN JOSE</td>
+        
+           <td>23</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>PHYSICIAN MANAGEMENT GROUP</td>
+        
+           <td>SAN DIEGO</td>
+        
+           <td>178</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>PRATT & WHITNEY ROCKETDYNE</td>
+        
+           <td>CANOGA PARK</td>
+        
+           <td>72</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>PRATT & WHITNEY ROCKETDYNE</td>
+        
+           <td>CANOGA PARK</td>
+        
+           <td>8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>SIEMENS HEALTHCARE DIAGNOSTICS </td>
+        
+           <td>LOS ANGELES</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>SYSTRON DONNER</td>
+        
+           <td>CONCORD</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>TASQ TECHNOLOGY INC'S</td>
+        
+           <td>ROCKLIN</td>
+        
+           <td>2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>12/31/10</td>
+        
+           <td>YOUBET.COM, LLC</td>
+        
+           <td>WOODLAND HILLS</td>
+        
+           <td>23</td>
+        
+      </tr>
+    
+</table>
+

@@ -1,0 +1,2044 @@
+<table>
+    
+      <tr>
+        
+           <td>Urban Area</td>
+        
+           <td>Population</td>
+        
+           <td>Population Rank</td>
+        
+           <td>2009 Hours Delay Per Driver</td>
+        
+           <td>2009 Rank</td>
+        
+           <td>1999 Hours Delay Per Driver</td>
+        
+           <td>1999 Rank</td>
+        
+           <td>Change</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Akron OH</td>
+        
+           <td>620000</td>
+        
+           <td>65</td>
+        
+           <td>16</td>
+        
+           <td>81</td>
+        
+           <td>23</td>
+        
+           <td>54</td>
+        
+           <td>-7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Albany-Schenectady NY</td>
+        
+           <td>612000</td>
+        
+           <td>68</td>
+        
+           <td>18</td>
+        
+           <td>75</td>
+        
+           <td>13</td>
+        
+           <td>87</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Albuquerque NM</td>
+        
+           <td>613000</td>
+        
+           <td>67</td>
+        
+           <td>26</td>
+        
+           <td>41</td>
+        
+           <td>34</td>
+        
+           <td>25</td>
+        
+           <td>-8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Allentown-Bethlehem PA-NJ</td>
+        
+           <td>628000</td>
+        
+           <td>63</td>
+        
+           <td>22</td>
+        
+           <td>56</td>
+        
+           <td>23</td>
+        
+           <td>54</td>
+        
+           <td>-1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Anchorage AK</td>
+        
+           <td>297000</td>
+        
+           <td>95</td>
+        
+           <td>14</td>
+        
+           <td>87</td>
+        
+           <td>20</td>
+        
+           <td>62</td>
+        
+           <td>-6</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Atlanta GA</td>
+        
+           <td>4200000</td>
+        
+           <td>9</td>
+        
+           <td>44</td>
+        
+           <td>10</td>
+        
+           <td>49</td>
+        
+           <td>6</td>
+        
+           <td>-5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Austin TX</td>
+        
+           <td>1250000</td>
+        
+           <td>36</td>
+        
+           <td>39</td>
+        
+           <td>15</td>
+        
+           <td>35</td>
+        
+           <td>24</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Bakersfield CA</td>
+        
+           <td>527000</td>
+        
+           <td>76</td>
+        
+           <td>11</td>
+        
+           <td>95</td>
+        
+           <td>4</td>
+        
+           <td>100</td>
+        
+           <td>7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Baltimore MD</td>
+        
+           <td>2500000</td>
+        
+           <td>17</td>
+        
+           <td>50</td>
+        
+           <td>5</td>
+        
+           <td>37</td>
+        
+           <td>18</td>
+        
+           <td>13</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Baton Rouge LA</td>
+        
+           <td>600000</td>
+        
+           <td>70</td>
+        
+           <td>37</td>
+        
+           <td>18</td>
+        
+           <td>31</td>
+        
+           <td>32</td>
+        
+           <td>6</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Beaumont TX</td>
+        
+           <td>241000</td>
+        
+           <td>97</td>
+        
+           <td>21</td>
+        
+           <td>58</td>
+        
+           <td>16</td>
+        
+           <td>77</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Birmingham AL</td>
+        
+           <td>850000</td>
+        
+           <td>52</td>
+        
+           <td>28</td>
+        
+           <td>38</td>
+        
+           <td>29</td>
+        
+           <td>35</td>
+        
+           <td>-1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Boise ID</td>
+        
+           <td>304000</td>
+        
+           <td>94</td>
+        
+           <td>21</td>
+        
+           <td>58</td>
+        
+           <td>19</td>
+        
+           <td>65</td>
+        
+           <td>2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Boston MA-NH-RI</td>
+        
+           <td>4252000</td>
+        
+           <td>8</td>
+        
+           <td>48</td>
+        
+           <td>7</td>
+        
+           <td>41</td>
+        
+           <td>14</td>
+        
+           <td>7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Boulder CO</td>
+        
+           <td>146000</td>
+        
+           <td>101</td>
+        
+           <td>15</td>
+        
+           <td>84</td>
+        
+           <td>27</td>
+        
+           <td>38</td>
+        
+           <td>-12</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Bridgeport-Stamford CT-NY</td>
+        
+           <td>925000</td>
+        
+           <td>50</td>
+        
+           <td>35</td>
+        
+           <td>22</td>
+        
+           <td>41</td>
+        
+           <td>14</td>
+        
+           <td>-6</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Brownsville TX</td>
+        
+           <td>204000</td>
+        
+           <td>100</td>
+        
+           <td>14</td>
+        
+           <td>87</td>
+        
+           <td>6</td>
+        
+           <td>97</td>
+        
+           <td>8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Buffalo NY</td>
+        
+           <td>1050000</td>
+        
+           <td>43</td>
+        
+           <td>17</td>
+        
+           <td>78</td>
+        
+           <td>14</td>
+        
+           <td>84</td>
+        
+           <td>3</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Cape Coral FL</td>
+        
+           <td>464000</td>
+        
+           <td>82</td>
+        
+           <td>23</td>
+        
+           <td>54</td>
+        
+           <td>24</td>
+        
+           <td>51</td>
+        
+           <td>-1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Charleston-North Charleston SC</td>
+        
+           <td>510000</td>
+        
+           <td>78</td>
+        
+           <td>27</td>
+        
+           <td>40</td>
+        
+           <td>25</td>
+        
+           <td>45</td>
+        
+           <td>2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Charlotte NC-SC</td>
+        
+           <td>1005000</td>
+        
+           <td>46</td>
+        
+           <td>26</td>
+        
+           <td>41</td>
+        
+           <td>17</td>
+        
+           <td>73</td>
+        
+           <td>9</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Chicago IL-IN</td>
+        
+           <td>8519000</td>
+        
+           <td>3</td>
+        
+           <td>70</td>
+        
+           <td>1</td>
+        
+           <td>55</td>
+        
+           <td>3</td>
+        
+           <td>15</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Cincinnati OH-KY-IN</td>
+        
+           <td>1700000</td>
+        
+           <td>28</td>
+        
+           <td>19</td>
+        
+           <td>66</td>
+        
+           <td>27</td>
+        
+           <td>38</td>
+        
+           <td>-8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Cleveland OH</td>
+        
+           <td>1710000</td>
+        
+           <td>27</td>
+        
+           <td>19</td>
+        
+           <td>66</td>
+        
+           <td>20</td>
+        
+           <td>62</td>
+        
+           <td>-1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Colorado Springs CO</td>
+        
+           <td>540000</td>
+        
+           <td>75</td>
+        
+           <td>31</td>
+        
+           <td>31</td>
+        
+           <td>39</td>
+        
+           <td>16</td>
+        
+           <td>-8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Columbia SC</td>
+        
+           <td>473000</td>
+        
+           <td>81</td>
+        
+           <td>25</td>
+        
+           <td>44</td>
+        
+           <td>15</td>
+        
+           <td>80</td>
+        
+           <td>10</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Columbus OH</td>
+        
+           <td>1255000</td>
+        
+           <td>35</td>
+        
+           <td>17</td>
+        
+           <td>78</td>
+        
+           <td>16</td>
+        
+           <td>77</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Corpus Christi TX</td>
+        
+           <td>332000</td>
+        
+           <td>93</td>
+        
+           <td>10</td>
+        
+           <td>98</td>
+        
+           <td>9</td>
+        
+           <td>94</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Dallas-Fort Worth-Arlington TX</td>
+        
+           <td>5013000</td>
+        
+           <td>6</td>
+        
+           <td>48</td>
+        
+           <td>7</td>
+        
+           <td>39</td>
+        
+           <td>16</td>
+        
+           <td>9</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Dayton OH</td>
+        
+           <td>744000</td>
+        
+           <td>54</td>
+        
+           <td>15</td>
+        
+           <td>84</td>
+        
+           <td>20</td>
+        
+           <td>62</td>
+        
+           <td>-5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Denver-Aurora CO</td>
+        
+           <td>2256000</td>
+        
+           <td>21</td>
+        
+           <td>47</td>
+        
+           <td>9</td>
+        
+           <td>45</td>
+        
+           <td>10</td>
+        
+           <td>2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Detroit MI</td>
+        
+           <td>3900000</td>
+        
+           <td>12</td>
+        
+           <td>33</td>
+        
+           <td>26</td>
+        
+           <td>36</td>
+        
+           <td>21</td>
+        
+           <td>-3</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>El Paso TX-NM</td>
+        
+           <td>712000</td>
+        
+           <td>55</td>
+        
+           <td>21</td>
+        
+           <td>58</td>
+        
+           <td>17</td>
+        
+           <td>73</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Eugene OR</td>
+        
+           <td>252000</td>
+        
+           <td>96</td>
+        
+           <td>9</td>
+        
+           <td>99</td>
+        
+           <td>12</td>
+        
+           <td>89</td>
+        
+           <td>-3</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Fresno CA</td>
+        
+           <td>669000</td>
+        
+           <td>61</td>
+        
+           <td>14</td>
+        
+           <td>87</td>
+        
+           <td>17</td>
+        
+           <td>73</td>
+        
+           <td>-3</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Grand Rapids MI</td>
+        
+           <td>606000</td>
+        
+           <td>69</td>
+        
+           <td>19</td>
+        
+           <td>66</td>
+        
+           <td>19</td>
+        
+           <td>65</td>
+        
+           <td>0</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Greensboro NC</td>
+        
+           <td>339000</td>
+        
+           <td>92</td>
+        
+           <td>15</td>
+        
+           <td>84</td>
+        
+           <td>23</td>
+        
+           <td>54</td>
+        
+           <td>-8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Hartford CT</td>
+        
+           <td>899000</td>
+        
+           <td>51</td>
+        
+           <td>24</td>
+        
+           <td>49</td>
+        
+           <td>25</td>
+        
+           <td>45</td>
+        
+           <td>-1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Honolulu HI</td>
+        
+           <td>709000</td>
+        
+           <td>56</td>
+        
+           <td>31</td>
+        
+           <td>31</td>
+        
+           <td>27</td>
+        
+           <td>38</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Houston TX</td>
+        
+           <td>3921000</td>
+        
+           <td>11</td>
+        
+           <td>58</td>
+        
+           <td>4</td>
+        
+           <td>42</td>
+        
+           <td>13</td>
+        
+           <td>16</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Indianapolis IN</td>
+        
+           <td>1200000</td>
+        
+           <td>38</td>
+        
+           <td>25</td>
+        
+           <td>44</td>
+        
+           <td>30</td>
+        
+           <td>34</td>
+        
+           <td>-5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Indio-Cathedral City-Palm Springs CA</td>
+        
+           <td>572000</td>
+        
+           <td>72</td>
+        
+           <td>14</td>
+        
+           <td>87</td>
+        
+           <td>16</td>
+        
+           <td>77</td>
+        
+           <td>-2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Jackson MS</td>
+        
+           <td>418000</td>
+        
+           <td>86</td>
+        
+           <td>19</td>
+        
+           <td>66</td>
+        
+           <td>12</td>
+        
+           <td>89</td>
+        
+           <td>7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Jacksonville FL</td>
+        
+           <td>1059000</td>
+        
+           <td>42</td>
+        
+           <td>26</td>
+        
+           <td>41</td>
+        
+           <td>26</td>
+        
+           <td>42</td>
+        
+           <td>0</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Kansas City MO-KS</td>
+        
+           <td>1547000</td>
+        
+           <td>30</td>
+        
+           <td>21</td>
+        
+           <td>58</td>
+        
+           <td>36</td>
+        
+           <td>21</td>
+        
+           <td>-15</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Knoxville TN</td>
+        
+           <td>495000</td>
+        
+           <td>80</td>
+        
+           <td>21</td>
+        
+           <td>58</td>
+        
+           <td>28</td>
+        
+           <td>36</td>
+        
+           <td>-7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Lancaster-Palmdale CA</td>
+        
+           <td>600000</td>
+        
+           <td>70</td>
+        
+           <td>18</td>
+        
+           <td>75</td>
+        
+           <td>11</td>
+        
+           <td>92</td>
+        
+           <td>7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Laredo TX</td>
+        
+           <td>225000</td>
+        
+           <td>99</td>
+        
+           <td>12</td>
+        
+           <td>92</td>
+        
+           <td>1</td>
+        
+           <td>101</td>
+        
+           <td>11</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Las Vegas NV</td>
+        
+           <td>1400000</td>
+        
+           <td>34</td>
+        
+           <td>32</td>
+        
+           <td>29</td>
+        
+           <td>24</td>
+        
+           <td>51</td>
+        
+           <td>8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Little Rock AR</td>
+        
+           <td>450000</td>
+        
+           <td>84</td>
+        
+           <td>24</td>
+        
+           <td>49</td>
+        
+           <td>19</td>
+        
+           <td>65</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Los Angeles-Long Beach-Santa Ana CA</td>
+        
+           <td>13033000</td>
+        
+           <td>2</td>
+        
+           <td>63</td>
+        
+           <td>3</td>
+        
+           <td>76</td>
+        
+           <td>1</td>
+        
+           <td>-13</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Louisville KY-IN</td>
+        
+           <td>1065000</td>
+        
+           <td>41</td>
+        
+           <td>22</td>
+        
+           <td>56</td>
+        
+           <td>25</td>
+        
+           <td>45</td>
+        
+           <td>-3</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Madison WI</td>
+        
+           <td>390000</td>
+        
+           <td>88</td>
+        
+           <td>11</td>
+        
+           <td>95</td>
+        
+           <td>6</td>
+        
+           <td>97</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>McAllen TX</td>
+        
+           <td>545000</td>
+        
+           <td>73</td>
+        
+           <td>7</td>
+        
+           <td>101</td>
+        
+           <td>5</td>
+        
+           <td>99</td>
+        
+           <td>2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Memphis TN-MS-AR</td>
+        
+           <td>1045000</td>
+        
+           <td>44</td>
+        
+           <td>24</td>
+        
+           <td>49</td>
+        
+           <td>22</td>
+        
+           <td>59</td>
+        
+           <td>2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Miami FL</td>
+        
+           <td>5350000</td>
+        
+           <td>4</td>
+        
+           <td>39</td>
+        
+           <td>15</td>
+        
+           <td>33</td>
+        
+           <td>28</td>
+        
+           <td>6</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Milwaukee WI</td>
+        
+           <td>1485000</td>
+        
+           <td>32</td>
+        
+           <td>25</td>
+        
+           <td>44</td>
+        
+           <td>32</td>
+        
+           <td>30</td>
+        
+           <td>-7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Minneapolis-St. Paul MN</td>
+        
+           <td>2697000</td>
+        
+           <td>16</td>
+        
+           <td>43</td>
+        
+           <td>12</td>
+        
+           <td>47</td>
+        
+           <td>8</td>
+        
+           <td>-4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Nashville-Davidson TN</td>
+        
+           <td>1100000</td>
+        
+           <td>39</td>
+        
+           <td>35</td>
+        
+           <td>22</td>
+        
+           <td>34</td>
+        
+           <td>25</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>New Haven CT</td>
+        
+           <td>615000</td>
+        
+           <td>66</td>
+        
+           <td>29</td>
+        
+           <td>37</td>
+        
+           <td>34</td>
+        
+           <td>25</td>
+        
+           <td>-5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>New Orleans LA</td>
+        
+           <td>1010000</td>
+        
+           <td>45</td>
+        
+           <td>31</td>
+        
+           <td>31</td>
+        
+           <td>26</td>
+        
+           <td>42</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>New York-Newark NY-NJ-CT</td>
+        
+           <td>18768000</td>
+        
+           <td>1</td>
+        
+           <td>42</td>
+        
+           <td>13</td>
+        
+           <td>36</td>
+        
+           <td>21</td>
+        
+           <td>6</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Oklahoma City OK</td>
+        
+           <td>950000</td>
+        
+           <td>49</td>
+        
+           <td>25</td>
+        
+           <td>44</td>
+        
+           <td>25</td>
+        
+           <td>45</td>
+        
+           <td>0</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Omaha NE-IA</td>
+        
+           <td>630000</td>
+        
+           <td>62</td>
+        
+           <td>20</td>
+        
+           <td>63</td>
+        
+           <td>14</td>
+        
+           <td>84</td>
+        
+           <td>6</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Orlando FL</td>
+        
+           <td>1429000</td>
+        
+           <td>33</td>
+        
+           <td>41</td>
+        
+           <td>14</td>
+        
+           <td>46</td>
+        
+           <td>9</td>
+        
+           <td>-5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Oxnard-Ventura CA</td>
+        
+           <td>697000</td>
+        
+           <td>59</td>
+        
+           <td>19</td>
+        
+           <td>66</td>
+        
+           <td>15</td>
+        
+           <td>80</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Pensacola FL-AL</td>
+        
+           <td>356000</td>
+        
+           <td>91</td>
+        
+           <td>19</td>
+        
+           <td>66</td>
+        
+           <td>15</td>
+        
+           <td>80</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Philadelphia PA-NJ-DE-MD</td>
+        
+           <td>5337000</td>
+        
+           <td>5</td>
+        
+           <td>39</td>
+        
+           <td>15</td>
+        
+           <td>31</td>
+        
+           <td>32</td>
+        
+           <td>8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Phoenix AZ</td>
+        
+           <td>3538000</td>
+        
+           <td>13</td>
+        
+           <td>36</td>
+        
+           <td>20</td>
+        
+           <td>32</td>
+        
+           <td>30</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Pittsburgh PA</td>
+        
+           <td>1760000</td>
+        
+           <td>26</td>
+        
+           <td>33</td>
+        
+           <td>26</td>
+        
+           <td>37</td>
+        
+           <td>18</td>
+        
+           <td>-4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Portland OR-WA</td>
+        
+           <td>1861000</td>
+        
+           <td>23</td>
+        
+           <td>36</td>
+        
+           <td>20</td>
+        
+           <td>37</td>
+        
+           <td>18</td>
+        
+           <td>-1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Poughkeepsie-Newburgh NY</td>
+        
+           <td>544000</td>
+        
+           <td>74</td>
+        
+           <td>11</td>
+        
+           <td>95</td>
+        
+           <td>8</td>
+        
+           <td>95</td>
+        
+           <td>3</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Providence RI-MA</td>
+        
+           <td>1236000</td>
+        
+           <td>37</td>
+        
+           <td>19</td>
+        
+           <td>66</td>
+        
+           <td>18</td>
+        
+           <td>70</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Provo UT</td>
+        
+           <td>453000</td>
+        
+           <td>83</td>
+        
+           <td>14</td>
+        
+           <td>87</td>
+        
+           <td>11</td>
+        
+           <td>92</td>
+        
+           <td>3</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Raleigh-Durham NC</td>
+        
+           <td>1094000</td>
+        
+           <td>40</td>
+        
+           <td>25</td>
+        
+           <td>44</td>
+        
+           <td>25</td>
+        
+           <td>45</td>
+        
+           <td>0</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Richmond VA</td>
+        
+           <td>954000</td>
+        
+           <td>48</td>
+        
+           <td>19</td>
+        
+           <td>66</td>
+        
+           <td>15</td>
+        
+           <td>80</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Riverside-San Bernardino CA</td>
+        
+           <td>1950000</td>
+        
+           <td>22</td>
+        
+           <td>30</td>
+        
+           <td>35</td>
+        
+           <td>22</td>
+        
+           <td>59</td>
+        
+           <td>8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Rochester NY</td>
+        
+           <td>746000</td>
+        
+           <td>53</td>
+        
+           <td>12</td>
+        
+           <td>92</td>
+        
+           <td>12</td>
+        
+           <td>89</td>
+        
+           <td>0</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Sacramento CA</td>
+        
+           <td>1850000</td>
+        
+           <td>24</td>
+        
+           <td>24</td>
+        
+           <td>49</td>
+        
+           <td>26</td>
+        
+           <td>42</td>
+        
+           <td>-2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Salem OR</td>
+        
+           <td>238000</td>
+        
+           <td>98</td>
+        
+           <td>24</td>
+        
+           <td>49</td>
+        
+           <td>28</td>
+        
+           <td>36</td>
+        
+           <td>-4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Salt Lake City UT</td>
+        
+           <td>992000</td>
+        
+           <td>47</td>
+        
+           <td>28</td>
+        
+           <td>38</td>
+        
+           <td>24</td>
+        
+           <td>51</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>San Antonio TX</td>
+        
+           <td>1528000</td>
+        
+           <td>31</td>
+        
+           <td>30</td>
+        
+           <td>35</td>
+        
+           <td>25</td>
+        
+           <td>45</td>
+        
+           <td>5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>San Diego CA</td>
+        
+           <td>3048000</td>
+        
+           <td>15</td>
+        
+           <td>37</td>
+        
+           <td>18</td>
+        
+           <td>33</td>
+        
+           <td>28</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>San Francisco-Oakland CA</td>
+        
+           <td>4000000</td>
+        
+           <td>10</td>
+        
+           <td>49</td>
+        
+           <td>6</td>
+        
+           <td>54</td>
+        
+           <td>4</td>
+        
+           <td>-5</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>San Jose CA</td>
+        
+           <td>1783000</td>
+        
+           <td>25</td>
+        
+           <td>35</td>
+        
+           <td>22</td>
+        
+           <td>49</td>
+        
+           <td>6</td>
+        
+           <td>-14</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>San Juan PR</td>
+        
+           <td>2305000</td>
+        
+           <td>20</td>
+        
+           <td>33</td>
+        
+           <td>26</td>
+        
+           <td>23</td>
+        
+           <td>54</td>
+        
+           <td>10</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Sarasota-Bradenton FL</td>
+        
+           <td>678000</td>
+        
+           <td>60</td>
+        
+           <td>17</td>
+        
+           <td>78</td>
+        
+           <td>19</td>
+        
+           <td>65</td>
+        
+           <td>-2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Seattle WA</td>
+        
+           <td>3187000</td>
+        
+           <td>14</td>
+        
+           <td>44</td>
+        
+           <td>10</td>
+        
+           <td>52</td>
+        
+           <td>5</td>
+        
+           <td>-8</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Spokane WA</td>
+        
+           <td>375000</td>
+        
+           <td>90</td>
+        
+           <td>16</td>
+        
+           <td>81</td>
+        
+           <td>23</td>
+        
+           <td>54</td>
+        
+           <td>-7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Springfield MA-CT</td>
+        
+           <td>625000</td>
+        
+           <td>64</td>
+        
+           <td>19</td>
+        
+           <td>66</td>
+        
+           <td>18</td>
+        
+           <td>70</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>St. Louis MO-IL</td>
+        
+           <td>2330000</td>
+        
+           <td>19</td>
+        
+           <td>31</td>
+        
+           <td>31</td>
+        
+           <td>44</td>
+        
+           <td>11</td>
+        
+           <td>-13</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Stockton CA</td>
+        
+           <td>399000</td>
+        
+           <td>87</td>
+        
+           <td>9</td>
+        
+           <td>99</td>
+        
+           <td>7</td>
+        
+           <td>96</td>
+        
+           <td>2</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Tampa-St. Petersburg FL</td>
+        
+           <td>2344000</td>
+        
+           <td>18</td>
+        
+           <td>34</td>
+        
+           <td>25</td>
+        
+           <td>27</td>
+        
+           <td>38</td>
+        
+           <td>7</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Toledo OH-MI</td>
+        
+           <td>519000</td>
+        
+           <td>77</td>
+        
+           <td>12</td>
+        
+           <td>92</td>
+        
+           <td>18</td>
+        
+           <td>70</td>
+        
+           <td>-6</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Tucson AZ</td>
+        
+           <td>700000</td>
+        
+           <td>57</td>
+        
+           <td>23</td>
+        
+           <td>54</td>
+        
+           <td>17</td>
+        
+           <td>73</td>
+        
+           <td>6</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Tulsa OK</td>
+        
+           <td>700000</td>
+        
+           <td>57</td>
+        
+           <td>18</td>
+        
+           <td>75</td>
+        
+           <td>14</td>
+        
+           <td>84</td>
+        
+           <td>4</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Virginia Beach VA</td>
+        
+           <td>1550000</td>
+        
+           <td>29</td>
+        
+           <td>32</td>
+        
+           <td>29</td>
+        
+           <td>43</td>
+        
+           <td>12</td>
+        
+           <td>-11</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Washington DC-VA-MD</td>
+        
+           <td>4454000</td>
+        
+           <td>7</td>
+        
+           <td>70</td>
+        
+           <td>1</td>
+        
+           <td>70</td>
+        
+           <td>2</td>
+        
+           <td>0</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Wichita KS</td>
+        
+           <td>500000</td>
+        
+           <td>79</td>
+        
+           <td>20</td>
+        
+           <td>63</td>
+        
+           <td>19</td>
+        
+           <td>65</td>
+        
+           <td>1</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Winston-Salem NC</td>
+        
+           <td>379000</td>
+        
+           <td>89</td>
+        
+           <td>16</td>
+        
+           <td>81</td>
+        
+           <td>13</td>
+        
+           <td>87</td>
+        
+           <td>3</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Worcester MA</td>
+        
+           <td>442000</td>
+        
+           <td>85</td>
+        
+           <td>20</td>
+        
+           <td>63</td>
+        
+           <td>21</td>
+        
+           <td>61</td>
+        
+           <td>-1</td>
+        
+      </tr>
+    
+</table>
+

@@ -1,3 +1,4 @@
+build/*
 settings_private.py
 *.pyc
 *.swp

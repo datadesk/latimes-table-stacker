@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Cubs Home Run Tracker, Aug. 2, 2011</title>
+    <meta name="keywords" content="baseball, chicago cubs, sports, tablstacker" >
+    <meta name="description" content="The number of home runs hit so far this year by Chicago Cubs position players compared against each player's career high." >
+    
+    <link href='/media/css/blueprint/screen.css' rel='stylesheet' type='text/css' media='all' />
+    <link href='/media/css/blueprint/typography.css' rel='stylesheet' type='text/css' media='all' />
+    <link href='/media/css/style.css' rel='stylesheet' type='text/css' media='all' />
+    
+    
+    
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("jquery", "1", {uncompressed:true})
+    </script>
+    
+    <script src='/media/js/jquery.tablesorter.js' type='text/javascript'></script>
+    <script src='/media/js/jquery.tablesorter.pager.js' type='text/javascript'></script>
+    <script src='/media/js/jquery.tablesorter.multipagefilter.js' type='text/javascript'></script>
+    <script type="text/javascript">
+        /* For picking out bits from the query string */
+        var getParameterByName = function(name) {
+          name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+          var regexS = "[\\?&]" + name + "=([^&#]*)";
+          var regex = new RegExp(regexS);
+          var results = regex.exec(window.location.href);
+          if(results == null)
+            return "";
+          else
+            return decodeURIComponent(results[1].replace(/\+/g, " "));
+        };
+    </script>
+    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+
+    
+    
+        <link rel="alternate" href="/feeds/latest.xml" type="application/rss+xml" title="Latest spreadsheets" id="latest" />
+    
+    
+    
+    
+        <meta property="og:site_name" content="TableStacker Demonstration"/>
+        
+    
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="Cubs Home Run Tracker, Aug. 2, 2011"/>
+    <meta property="og:url" content="/cubs-home-run-tracker/"/>
+    
+    <meta property="og:description" content="The number of home runs hit so far this year by Chicago Cubs position players compared against each player's career high."/>
+    
+
+    
+  </head>
+  <body>
+    <div class="container">
+        <div id="header" class="span-24 last">  
+              
+    <div id="share">
+        <ul>
+            <li>
+                <a data-text="" href="http://twitter.com/share" class="twitter-share-button"
+                    data-count="horizontal">Tweet</a>
+                <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+            </li>
+            <li>
+                <g:plusone size="medium"></g:plusone>
+            </li>
+            <li>
+                <iframe src="http://www.facebook.com/plugins/like.php?app_id=167409373327708&amp;href&amp;send=false&amp;layout=button_count&amp;width=90&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=arial&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px; height:21px;" allowTransparency="true"></iframe>
+            </li>
+        </ul>
+    </div>
+    <h4 id="kicker">Spreadsheet</h4>
+    <h1 id="title">Cubs Home Run Tracker, Aug. 2, 2011</h1>
+
+        </div>
+        <hr style="margin:0;" />
+        <div id="content" class="span-24">
+          
+    <div id="table_fu">
+        
+                <div class="clear"></div>
+    
+    
+    
+    
+        <div id="description" ><p>The number of home runs hit so far this year by Chicago Cubs position players compared against each player's career high.</p></div>
+    
+    
+    <div class="clear"></div>
+    
+    
+    
+    <div id="ribbon">
+    
+        <div id="download">
+            Published: <div id="pubdate">Aug. 2, 2011</div>&nbsp;&nbsp;
+             
+            Download:
+            <a href="/api/cubs-home-run-tracker.csv">CSV</a> |
+            <a href="/api/cubs-home-run-tracker.xls">XLS</a> |
+            <a target="_blank" href="/api/cubs-home-run-tracker.json">JSON</a>
+            
+        </div>
+        
+        <div id="controls">
+            <div id="filter">Search: <input type="text"></div>
+            <div id="pager" class="pager">
+              <form style="display:none !important;">
+                <img src="/media/img/first.png" class="first">
+                <img src="/media/img/prev.png" class="prev">
+                <span class="pagedisplay"/>1/1</span>
+                <img src="/media/img/next.png" class="next">
+                <img src="/media/img/last.png" class="last">
+                <select class="pagesize">
+                    
+                    <option selected="selected" value="20">20</option>
+                    
+                </select> per page
+              </form>
+            </div>
+        </div>
+    
+    </div>
+    <div class="clear"></div>
+    <table id="data" class="tabular">
+        <thead>
+            <tr>
+            
+              <th style="cursor: pointer; cursor: pointer; text-align:left; width:60px;">
+                Position
+              </th>
+            
+              <th style="cursor: pointer; cursor: pointer; text-align: left;">
+                Player
+              </th>
+            
+              <th style="cursor: pointer; cursor: pointer; text-align:right;">
+                At bats
+              </th>
+            
+              <th style="cursor: pointer; cursor: pointer; text-align:right;">
+                Home runs
+              </th>
+            
+              <th style="cursor: pointer; cursor: pointer; text-align:right;">
+                Career high
+              </th>
+            
+              <th style="cursor: pointer; cursor: pointer; width:250px; padding-top:5px;">
+                Comparison
+              </th>
+            
+            </tr>
+        </thead>
+        <tbody>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">C</td>
+            
+                <td style="text-align: left;">Geovany Soto</td>
+            
+                <td style="text-align:right;">277</td>
+            
+                <td style="text-align:right;">9</td>
+            
+                <td style="text-align:right;">23</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.391304347826" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 38.3333333333%;"></div>
+            <div class="bullet-graph-actual" style="width: 15.0%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">CF</td>
+            
+                <td style="text-align: left;">Marlon Byrd</td>
+            
+                <td style="text-align:right;">268</td>
+            
+                <td style="text-align:right;">5</td>
+            
+                <td style="text-align:right;">20</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.25" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 33.3333333333%;"></div>
+            <div class="bullet-graph-actual" style="width: 8.33333333333%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">OF</td>
+            
+                <td style="text-align: left;">Reed Johnson</td>
+            
+                <td style="text-align:right;">146</td>
+            
+                <td style="text-align:right;">4</td>
+            
+                <td style="text-align:right;">12</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.333333333333" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 20.0%;"></div>
+            <div class="bullet-graph-actual" style="width: 6.66666666667%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">SS</td>
+            
+                <td style="text-align: left;">Starlin Castro</td>
+            
+                <td style="text-align:right;">450</td>
+            
+                <td style="text-align:right;">3</td>
+            
+                <td style="text-align:right;">3</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="1.0" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 5.0%;"></div>
+            <div class="bullet-graph-actual" style="width: 5.0%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">1B</td>
+            
+                <td style="text-align: left;">Carlos Pena</td>
+            
+                <td style="text-align:right;">337</td>
+            
+                <td style="text-align:right;">20</td>
+            
+                <td style="text-align:right;">46</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.434782608696" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 76.6666666667%;"></div>
+            <div class="bullet-graph-actual" style="width: 33.3333333333%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">UT</td>
+            
+                <td style="text-align: left;">Blake DeWitt</td>
+            
+                <td style="text-align:right;">169</td>
+            
+                <td style="text-align:right;">2</td>
+            
+                <td style="text-align:right;">9</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.222222222222" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 15.0%;"></div>
+            <div class="bullet-graph-actual" style="width: 3.33333333333%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">UT</td>
+            
+                <td style="text-align: left;">Jeff Baker</td>
+            
+                <td style="text-align:right;">152</td>
+            
+                <td style="text-align:right;">2</td>
+            
+                <td style="text-align:right;">12</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.166666666667" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 20.0%;"></div>
+            <div class="bullet-graph-actual" style="width: 3.33333333333%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">UT</td>
+            
+                <td style="text-align: left;">Tyler Colvin</td>
+            
+                <td style="text-align:right;">103</td>
+            
+                <td style="text-align:right;">2</td>
+            
+                <td style="text-align:right;">20</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.1" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 33.3333333333%;"></div>
+            <div class="bullet-graph-actual" style="width: 3.33333333333%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">C</td>
+            
+                <td style="text-align: left;">Koyie Hill</td>
+            
+                <td style="text-align:right;">95</td>
+            
+                <td style="text-align:right;">2</td>
+            
+                <td style="text-align:right;">2</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="1.0" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 3.33333333333%;"></div>
+            <div class="bullet-graph-actual" style="width: 3.33333333333%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">3B</td>
+            
+                <td style="text-align: left;">Aramis Ramirez</td>
+            
+                <td style="text-align:right;">392</td>
+            
+                <td style="text-align:right;">19</td>
+            
+                <td style="text-align:right;">38</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.5" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 63.3333333333%;"></div>
+            <div class="bullet-graph-actual" style="width: 31.6666666667%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">LF</td>
+            
+                <td style="text-align: left;">Alfonso Soriano</td>
+            
+                <td style="text-align:right;">316</td>
+            
+                <td style="text-align:right;">17</td>
+            
+                <td style="text-align:right;">46</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.369565217391" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 76.6666666667%;"></div>
+            <div class="bullet-graph-actual" style="width: 28.3333333333%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">2B</td>
+            
+                <td style="text-align: left;">Darwin Barney</td>
+            
+                <td style="text-align:right;">349</td>
+            
+                <td style="text-align:right;">1</td>
+            
+                <td style="text-align:right;">0</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.0" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 0.0%;"></div>
+            <div class="bullet-graph-actual" style="width: 1.66666666667%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">OF</td>
+            
+                <td style="text-align: left;">Luis Montanez</td>
+            
+                <td style="text-align:right;">46</td>
+            
+                <td style="text-align:right;">1</td>
+            
+                <td style="text-align:right;">3</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.333333333333" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 5.0%;"></div>
+            <div class="bullet-graph-actual" style="width: 1.66666666667%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">CF</td>
+            
+                <td style="text-align: left;">Tony Campana</td>
+            
+                <td style="text-align:right;">87</td>
+            
+                <td style="text-align:right;">0</td>
+            
+                <td style="text-align:right;">0</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.0" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 0.0%;"></div>
+            <div class="bullet-graph-actual" style="width: 0.0%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+          <tr>
+            
+                <td style="text-align:left; width:60px;">IF</td>
+            
+                <td style="text-align: left;">D.J. LeMahieu</td>
+            
+                <td style="text-align:right;">37</td>
+            
+                <td style="text-align:right;">0</td>
+            
+                <td style="text-align:right;">0</td>
+            
+                <td style="width:250px; padding-top:5px;">
+        <div class="bullet-graph-wrap" style="width:95%; margin: 6px auto;">
+            <div class="bullet-graph-box2" style="left:0; width:95%;"></div>
+            <div data="0.0" class="bullet-graph-sort" style="display:none;"></div>
+            <div class="bullet-graph-target" style="left: 0.0%;"></div>
+            <div class="bullet-graph-actual" style="width: 0.0%"></div>
+        </div>
+    </td>
+            
+          </tr>
+        
+        </tbody>
+    <tfoot></tfoot>
+    </table>
+    
+    <div id="tags">Tags: <a href="/tag/baseball/page/1/">Baseball</a>, <a href="/tag/chicago-cubs/page/1/">Chicago Cubs</a> and <a href="/tag/sports/page/1/">Sports</a></div>
+    <div id="sources">Sources: Baseball Reference</div>
+    <div id="credits">Credits: Ben Welsh</div>
+    
+    <script type='text/javascript'>
+        var sortOrder = [[3, 1]];
+        var perPage = 20;
+        $(document).ready(function(){
+            var fu = $('#table_fu');
+            var table = window.table = $('#data', fu)
+              .tablesorter({
+                widgets: ['columnHighlight'],
+                sortList: sortOrder
+               })
+              .tablesorterPager({ container: $("#pager", fu), size: perPage, positionFixed: false })
+              .tablesorterMultiPageFilter({ filterSelector: $("#filter input", fu) });
+            var urlSortColumn = getParameterByName("sortColumn");
+            var urlSortOrder = getParameterByName("sortOrder");
+            if (urlSortColumn && urlSortOrder) {
+                urlSortColumn  = parseInt(urlSortColumn);
+                urlSortOrder  = parseInt(urlSortOrder);
+                newSort = [[urlSortColumn, urlSortOrder]];
+                $("table").trigger("sorton", [newSort]); 
+            };
+        });
+    </script>
+
+
+        
+    </div>
+
+        </div>
+        <div id="footer" class="span-24 last" style="padding:10px 0; font-size:12px;">  
+              
+              <center>This is Table Stacker. It publishes spreadsheets. You can build your own in minutes. <a target="_blank" href="https://github.com/datadesk/latimes-table-stacker">Here's how</a>.</center>
+              
+        </div>
+    </div>
+  </body>
+</html>

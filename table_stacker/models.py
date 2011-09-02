@@ -52,19 +52,19 @@ class Table(db.Model):
         return u'/%s/' % self.slug
     
     def get_csv_url(self):
-        return u'/csv/%s' % self.csv_name
+        return u'/api/%s.csv' % self.slug
     
     def get_xls_url(self):
-        return u'/xls/%s' % self.slug
+        return u'/api/%s.xls' % self.slug
     
     def get_json_url(self):
-        return u'/json/%s' % self.slug
+        return u'/api/%s.json' % self.slug
     
     def get_share_url(self):
         """
         The link we can use for share buttons.
         """
-        return 'http://spreadsheets.latimes.com%s' % self.get_absolute_url()
+        return self.get_absolute_url()
     
     def get_tablefu_opts(self):
         return yaml.load(self.yaml_data).get('column_options', {})

@@ -1,0 +1,676 @@
+<table>
+    
+      <tr>
+        
+           <td>Mine</td>
+        
+           <td>Company</td>
+        
+           <td>Type</td>
+        
+           <td>State</td>
+        
+           <td>Production (Short tons)</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>North Antelope Rochelle Mine</td>
+        
+           <td>Powder River Coal LLC</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>98279377</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Black Thunder</td>
+        
+           <td>Thunder Basin Coal Company LLC</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>81079043</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Cordero Mine</td>
+        
+           <td>Cordero Mining LLC</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>39380964</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Antelope Coal Mine</td>
+        
+           <td>Antelope Coal LLC</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>33975524</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Jacobs Ranch Mine</td>
+        
+           <td>Jacobs Ranch Coal LLC</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>29021485</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Belle Ayr Mine</td>
+        
+           <td>Alpha Coal West, Inc.</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>28395952</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Buckskin Mine</td>
+        
+           <td>Kiewit Mining Group</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>25411798</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Caballo Mine</td>
+        
+           <td>Caballo Coal Company</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>23252475</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Eagle Butte Mine</td>
+        
+           <td>Alpha Coal West. Inc.</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>21479183</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Spring Creek Coal Company</td>
+        
+           <td>Spring Creek Coal LLC</td>
+        
+           <td>Surface</td>
+        
+           <td>Montana</td>
+        
+           <td>17608969</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Rawhide Mine</td>
+        
+           <td>Caballo Coal Company</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>15842274</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Freedom Mine</td>
+        
+           <td>The Coteau Properties Company</td>
+        
+           <td>Surface</td>
+        
+           <td>North Dakota</td>
+        
+           <td>15046737</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Enlow Fork Mine</td>
+        
+           <td>Consol Pennsylvania</td>
+        
+           <td>Underground</td>
+        
+           <td>Pennsylvania</td>
+        
+           <td>11092684</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Rosebud Mine&Crusher</td>
+        
+           <td>Conveyor/Western Energy Company</td>
+        
+           <td>Surface</td>
+        
+           <td>Montana</td>
+        
+           <td>10331684</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Bailey Mine</td>
+        
+           <td>Consol Pennsylvania Coal Company</td>
+        
+           <td>Underground</td>
+        
+           <td>Pennsylvania</td>
+        
+           <td>10232360</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Mcelroy Mine</td>
+        
+           <td>Mcelroy Coal Company</td>
+        
+           <td>Underground</td>
+        
+           <td>West Virginia</td>
+        
+           <td>9863588</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Coal Creek Mine</td>
+        
+           <td>Thunder Basin Coal Company LLC</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>9766852</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Navajo Mine</td>
+        
+           <td>Bhp Navajo Coal Company</td>
+        
+           <td>Surface</td>
+        
+           <td>New Mexico</td>
+        
+           <td>8418245</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Falkirk Mine</td>
+        
+           <td>Falkirk Mining Company</td>
+        
+           <td>Surface</td>
+        
+           <td>North Dakota</td>
+        
+           <td>8071246</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Foidel Creek Mine</td>
+        
+           <td>Twentymile Coal Company</td>
+        
+           <td>Underground</td>
+        
+           <td>Colorado</td>
+        
+           <td>7827079</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Kayenta Mine</td>
+        
+           <td>Peabody Western Coal Company</td>
+        
+           <td>Surface</td>
+        
+           <td>Arizona</td>
+        
+           <td>7474029</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Cumberland Mine</td>
+        
+           <td>Cumberland Coal Resources LP</td>
+        
+           <td>Underground</td>
+        
+           <td>Pennsylvania</td>
+        
+           <td>6818681</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Sufco</td>
+        
+           <td>Canyon Fuel Company LLC</td>
+        
+           <td>Underground</td>
+        
+           <td>Utah</td>
+        
+           <td>6748311</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Powhatan No. 6 Mine</td>
+        
+           <td>The Ohio Valley Coal Company</td>
+        
+           <td>Underground</td>
+        
+           <td>Ohio</td>
+        
+           <td>6732699</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>San Juan Mine 1</td>
+        
+           <td>San Juan Coal Company</td>
+        
+           <td>Underground</td>
+        
+           <td>New Mexico</td>
+        
+           <td>6499195</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Cardinal</td>
+        
+           <td>Warrior Coal LLC</td>
+        
+           <td>Underground</td>
+        
+           <td>Kentucky</td>
+        
+           <td>6316496</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Galatia Mine</td>
+        
+           <td> American Coal Company</td>
+        
+           <td>Underground</td>
+        
+           <td>Illinois</td>
+        
+           <td>6267253</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Century Mine</td>
+        
+           <td>American Energy Corporation</td>
+        
+           <td>Underground</td>
+        
+           <td>Ohio</td>
+        
+           <td>6033455</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Wyodak Mine</td>
+        
+           <td>Wyodak Resources Development Corporation</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>6016063</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Loveridge No 22</td>
+        
+           <td>Consolidation Coal Company</td>
+        
+           <td>Underground</td>
+        
+           <td>West Virginia</td>
+        
+           <td>6004124</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Mach #1 Mine</td>
+        
+           <td>Mach Mining LLC</td>
+        
+           <td>Underground</td>
+        
+           <td>Illinois</td>
+        
+           <td>5921151</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Absaloka Mine</td>
+        
+           <td>Westmoreland Resources Inc.</td>
+        
+           <td>Surface</td>
+        
+           <td>Montana</td>
+        
+           <td>5911673</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Elk Creek Mine</td>
+        
+           <td>Oxbow Mining, LLC</td>
+        
+           <td>Underground</td>
+        
+           <td>Colorado</td>
+        
+           <td>5702875</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Emerald Mine No 1</td>
+        
+           <td>Emerald Coal Resources Lp</td>
+        
+           <td>Underground</td>
+        
+           <td>Pennsylvania</td>
+        
+           <td>5558640</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Robinson Run No 95</td>
+        
+           <td>Consolidation Coal Company</td>
+        
+           <td>Underground</td>
+        
+           <td>West Virginia</td>
+        
+           <td>5544554</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>El Segundo</td>
+        
+           <td>Lee Ranch Coal Co. (Peabody)</td>
+        
+           <td>Surface</td>
+        
+           <td>New Mexico</td>
+        
+           <td>5445200</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Dry Fork Mine</td>
+        
+           <td>Western Fuels-Wyoming Inc</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>5233980</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Jewett Mine</td>
+        
+           <td>Texas Westmoreland Coal Co.</td>
+        
+           <td>Surface</td>
+        
+           <td>Texas</td>
+        
+           <td>5092532</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Twilight Mtr Surface Mine</td>
+        
+           <td>Progress Coal</td>
+        
+           <td>Surface</td>
+        
+           <td>West Virginia</td>
+        
+           <td>4953903</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Three Oaks</td>
+        
+           <td>Luminant Mining Company LLC</td>
+        
+           <td>Surface</td>
+        
+           <td>Texas</td>
+        
+           <td>4887765</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Beckville Strip</td>
+        
+           <td>Luminant Mining Company LLC</td>
+        
+           <td>Surface</td>
+        
+           <td>Texas</td>
+        
+           <td>4515620</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Decker Mine</td>
+        
+           <td>Decker Coal Company</td>
+        
+           <td>Surface</td>
+        
+           <td>Montana</td>
+        
+           <td>4515393</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>West Elk Mine</td>
+        
+           <td>Mountain Coal Company, LLC</td>
+        
+           <td>Underground</td>
+        
+           <td>Colorado</td>
+        
+           <td>4475344</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Kemmerer Mine</td>
+        
+           <td>Chevron Mining Inc</td>
+        
+           <td>Surface</td>
+        
+           <td>Wyoming</td>
+        
+           <td>4460896</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Center Mine</td>
+        
+           <td>BNI Coal Ltd</td>
+        
+           <td>Surface</td>
+        
+           <td>North Dakota</td>
+        
+           <td>4239963</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Oak Hill Strip</td>
+        
+           <td>Luminant Mining Company LLC</td>
+        
+           <td>Surface</td>
+        
+           <td>Texas</td>
+        
+           <td>4225852</td>
+        
+      </tr>
+    
+      <tr>
+        
+           <td>Dotiki Mine</td>
+        
+           <td>Webster County Coal LLC</td>
+        
+           <td>Underground</td>
+        
+           <td>Kentucky</td>
+        
+           <td>4200121</td>
+        
+      </tr>
+    
+</table>
+
