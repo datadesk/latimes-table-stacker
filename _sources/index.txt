@@ -58,7 +58,7 @@ Now jump into the directory it creates.
 
 .. code-block:: bash
 
-    $ cd table-stacker
+    $ cd my-table-stacker
 
 Activate the private environment with virtualenv's custom command.
 
