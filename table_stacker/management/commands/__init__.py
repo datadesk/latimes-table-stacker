@@ -78,68 +78,6 @@ def get_all_yaml():
     yaml_list = [i for i in file_list if i.endswith('.yaml')]
     return [get_yaml(i) for i in yaml_list]
 
-
-def update_or_create_table(yaml_data):
-    """
-    If the Table outlined by the provided YAML file exists, it's updated.
-    
-    If it doesn't, it's created.
-
-    Returns a tuple with the object first, and then a boolean that is True
-    when the object was created.
-    """
-    try:
-        obj = Table.objects.get(slug=yaml_data.get("slug", yaml_data['yaml_name']))
-    except Table.DoesNotExist:
-        obj = None
-
-    if obj:
-        obj.csv_name=yaml_data['file']
-        obj.yaml_name=yaml_data['yaml_name']
-        obj.yaml_data=str(yaml_data)
-        obj.title=yaml_data['title']
-        obj.slug=yaml_data.get("slug", yaml_data['yaml_name'])
-        obj.kicker=yaml_data.get('kicker', '')
-        obj.byline=yaml_data.get("byline", '')
-        obj.publication_date=yaml_data['publication_date']
-        obj.legend=yaml_data.get('legend', '')
-        obj.description=yaml_data.get('description', '')
-        obj.footer=yaml_data.get('footer', '')
-        obj.sources=yaml_data.get('sources', '')
-        obj.credits=yaml_data.get('credits', '')
-        obj.is_published=yaml_data.get('is_published', False)
-        obj.show_download_links=yaml_data.get("show_download_links", True)
-        obj.show_in_feeds=yaml_data.get("show_in_feeds", True)
-        obj.tags.clear()
-        [obj.tags.add(i) for i in get_tag_list(yaml_data.get('tags', []))]
-        obj.save()
-        obj.save()
-        created = False
-    else:
-        obj = Table(
-            csv_name=yaml_data['file'],
-            yaml_name=yaml_data['yaml_name'],
-            yaml_data=str(yaml_data),
-            title=yaml_data['title'],
-            slug=yaml_data.get("slug", yaml_data['yaml_name']),
-            kicker=yaml_data.get("kicker", ""),
-            byline=yaml_data.get("byline", ""),
-            publication_date=yaml_data['publication_date'],
-            legend=yaml_data.get('legend', ''),
-            description=yaml_data.get('description', ''),
-            footer=yaml_data.get('footer', ''),
-            sources=yaml_data.get('sources', ''),
-            credits=yaml_data.get('credits', ''),
-            is_published=yaml_data.get('is_published', False),
-            show_download_links=yaml_data.get("show_download_links", True),
-            show_in_feeds=yaml_data.get("show_in_feeds", True),
-        )
-        obj.save()
-        [obj.tags.add(i) for i in get_tag_list(yaml_data.get('tags', []))]
-        obj.save()
-        created = True
-    return obj, created
-
 #
 # CSV
 #
@@ -155,30 +93,5 @@ def get_csv(csv_name):
         raise CSVDoesNotExistError("CSV file could not be opened: %s" % csv_name)
     return csv_data
 
-#
-# Tags
-#
-
-def get_tag_list(tag_list):
-    """
-    Accepts a list of humanized tag names and returns a list of the db.Key's
-    for the corresponding Tag model entries.
-    """
-    if not tag_list:
-        return []
-    obj_list = []
-    for tag_name in tag_list:
-        try:
-            obj = Tag.objects.get(slug=slugify(tag_name))
-        except Tag.DoesNotExist:
-            obj = None
-        if obj:
-            obj_list.append(obj)
-        else:
-            slug = slugify(tag_name)
-            obj = Tag(title=tag_name, slug=slug)
-            obj.save()
-            obj_list.append(obj)
-    return obj_list
 
 

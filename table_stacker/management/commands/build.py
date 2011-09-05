@@ -38,7 +38,7 @@ class Command(BaseCommand):
         
         # Load all YAML files into the local database
         self.stdout.write("Building database\n")
-        [update_or_create_table(i) for i in get_all_yaml()]
+        [Table.objects.update_or_create(i) for i in get_all_yaml()]
         
         # Create a fake request we can use to fire up the pages
         rf = RequestFactory()

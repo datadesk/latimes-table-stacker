@@ -2,7 +2,7 @@
 import yaml
 from table_fu import TableFu
 from django.db import models
-from managers import TableLiveManager, TableManager
+from managers import TableLiveManager, TableManager, TagManager
 
 
 class Table(models.Model):
@@ -110,6 +110,7 @@ class Tag(models.Model):
     """
     title = models.CharField(max_length=100)
     slug = models.SlugField()
+    objects = TagManager()
     
     def __unicode__(self):
         return self.title
