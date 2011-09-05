@@ -44,17 +44,21 @@ class Table(models.Model):
     def __unicode__(self):
         return self.title
     
+    @models.permalink
     def get_absolute_url(self):
-        return u'/%s/' % self.slug
+        return ('table-detail', [self.slug,])
     
+    @models.permalink
     def get_csv_url(self):
-        return u'/api/%s.csv' % self.slug
+        return ('table-csv', [self.slug,])
     
+    @models.permalink
     def get_xls_url(self):
-        return u'/api/%s.xls' % self.slug
+        return ('table-xls', [self.slug,])
     
+    @models.permalink
     def get_json_url(self):
-        return u'/api/%s.json' % self.slug
+        return ('table-json', [self.slug,])
     
     def get_share_url(self):
         """
@@ -117,6 +121,9 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.title
     
+    @models.permalink
     def get_absolute_url(self):
-        return u'/tag/%s/page/1/' % self.slug
+        return ('tag-page', [self.slug, 1])
+    
+
 
