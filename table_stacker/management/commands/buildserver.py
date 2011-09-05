@@ -5,6 +5,7 @@ from django.core.management.commands import runserver
 
 
 class Command(runserver.Command):
+    help = "Starts a variation of Django's runserver designed to serve the static files you've built."
     
     def handle(self, *args, **kwds):
         """
