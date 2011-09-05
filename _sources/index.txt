@@ -687,7 +687,7 @@ Interactions with the Table Stacker database are handled using custom `Django ma
 
 Like other Django commands, they are run by interacting with the ``manage.py`` file in your project's root directory.
 
-.. attribute:: build
+.. attribute:: build [options]
     
     Builds a static site with all the tables okayed for publication
     
@@ -712,7 +712,23 @@ Like other Django commands, they are run by interacting with the ``manage.py`` f
     .. code-block:: bash
     
         $ python manage.py publish
-        
+
+.. attribute:: unbuild [options]
+    
+    Empties the build directory
+    
+    .. code-block:: bash
+    
+        $ python manage.py unbuild
+
+.. attribute:: unpublish [options]
+    
+   Empties the Amazon S3 bucket defined in settings.py
+    
+    .. code-block:: bash
+    
+        $ python manage.py unpublish
+
 .. raw:: html
 
    <hr>

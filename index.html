@@ -681,8 +681,8 @@ you might need to specifiy the date format using <a class="reference external" h
 <p>Interactions with the Table Stacker database are handled using custom <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/">Django management commands</a> that allow you to create, update and delete tables.</p>
 <p>Like other Django commands, they are run by interacting with the <tt class="docutils literal"><span class="pre">manage.py</span></tt> file in your project&#8217;s root directory.</p>
 <dl class="attribute">
-<dt id="build">
-<tt class="descname">build</tt><a class="headerlink" href="#build" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">build [options]</tt></dt>
 <dd><p>Builds a static site with all the tables okayed for publication</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
 </pre></div>
@@ -707,6 +707,26 @@ you might need to specifiy the date format using <a class="reference external" h
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py publish
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">unbuild [options]</tt></dt>
+<dd><p>Empties the build directory</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py unbuild
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">unpublish [options]</tt></dt>
+<dd><p>Empties the Amazon S3 bucket defined in settings.py</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py unpublish
+</pre></div>
+</div>
+</div></blockquote>
 </dd></dl>
 
 <hr></div>
