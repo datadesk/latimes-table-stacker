@@ -98,6 +98,22 @@ def table_detail(request, slug):
     return render(request, 'table_detail.html', context)
 
 
+def table_csv(request, slug):
+    """
+    A table, in CSV format.
+    """
+    # Get the csv data
+    obj = get_object_or_404(Table, slug=slug)
+    if not obj.is_published:
+        raise Http404
+    csv_path = os.path.join(settings.CSV_DIR, obj.csv_name)
+    csv_data = open(csv_path, 'r').read()
+    # Prep response
+    response = HttpResponse(unicode(csv_data), mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % slug
+    return response
+
+
 def table_xls(request, slug):
     """
     A table, in Excel format.

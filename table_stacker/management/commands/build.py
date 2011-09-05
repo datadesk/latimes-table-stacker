@@ -123,20 +123,23 @@ class Command(BaseCommand):
         for table in Table.objects.all():
             # JSON
             try:
-                response = views.table_json(rf.get("/%s/" % table.slug), table.slug)
+                response = views.table_json(rf.get("/api/%s.json" % table.slug), table.slug)
             except Http404:
                 continue
             self.write(os.path.join(path, '%s.json' % table.slug), response.content)
             # XLS
             try:
-                response = views.table_xls(rf.get("/%s/" % table.slug), table.slug)
+                response = views.table_xls(rf.get("/api/%s.xls" % table.slug), table.slug)
             except Http404:
                 continue
             self.write(os.path.join(path, '%s.xls' % table.slug), response.content)
             # CSV
-            data = open(os.path.join(settings.CSV_DIR, table.csv_name), "r").read()
-            self.write(os.path.join(path, '%s.csv' % table.slug), data)
-        
+            try:
+                response = views.table_csv(rf.get("/api/%s.csv" % table.slug), table.slug)
+            except Http404:
+                continue
+            self.write(os.path.join(path, '%s.csv' % table.slug), response.content)
+
         # Tag pages
         self.stdout.write("Building tag pages\n")
         os.makedirs(os.path.join(settings.BUILD_DIR, 'tag'))
