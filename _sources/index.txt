@@ -84,6 +84,12 @@ Install our app's Python dependencies.
 
     $ pip install -r requirements.txt
 
+Create the project's database
+
+.. code-block:: bash
+
+    $ python manage.py syncdb
+
 **02. Build the example tables**
 
 You'll learn how to layout your own data later, but for now we'll work with the example files. Jump back to your first terminal shell and drop the following line, which instructs our ``build`` management command to bake out a static site using the instructions in ``settings.py`` and the table recipes in the ``yaml`` directory.
@@ -445,7 +451,7 @@ The following YAML configuration options specify how to present the columns in t
                   yes_icon: "http://example.com/yes.png"
                   no_icon: "http://example.com/no.png"
     
-    .. method:: checkbox(value, yes_icon='<img class="vote" src="/media/img/checkbox_yes.png">',  no_icon='<img class="vote" src="/media/img/checkbox_no.png">')
+    .. method:: checkbox(value, yes_icon='/media/img/checkbox_yes.png',  no_icon='/media/img/checkbox_no.png')
         
         Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.
         
@@ -648,7 +654,7 @@ The following YAML configuration options specify how to present the columns in t
                   no_icon: "http://example.com/no.png"
                   partly_icon: "http://example.com/partly.png"
     
-    .. method:: vote(value, yes_vote='<img class="vote" src="/media/img/thumb_up.png">', no_vote='<img class="vote" src="/media/img/thumb_down.png">', did_not_vote="<b style='font-size:130%;'>&mdash;</b>")
+    .. method:: vote(value, yes_vote='/media/img/thumb_up.png', no_vote='/media/img/thumb_down.png', did_not_vote="<b style='font-size:130%;'>&mdash;</b>")
     
         Returns one of three icons representing the outcome a vote: Yes (thumbs up); No (thumbs down); Did not vote (Bolded emdash). The first letter of each type is what should be provided, i.e. Y, N, anything else.
         

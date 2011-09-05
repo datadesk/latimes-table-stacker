@@ -102,6 +102,10 @@
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install -r requirements.txt
 </pre></div>
 </div>
+<p>Create the project&#8217;s database</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py syncdb
+</pre></div>
+</div>
 <p><strong>02. Build the example tables</strong></p>
 <p>You&#8217;ll learn how to layout your own data later, but for now we&#8217;ll work with the example files. Jump back to your first terminal shell and drop the following line, which instructs our <tt class="docutils literal"><span class="pre">build</span></tt> management command to bake out a static site using the instructions in <tt class="docutils literal"><span class="pre">settings.py</span></tt> and the table recipes in the <tt class="docutils literal"><span class="pre">yaml</span></tt> directory.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
@@ -446,7 +450,7 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 
 <dl class="method">
 <dt id="checkbox">
-<tt class="descname">checkbox</tt><big>(</big><em>value</em>, <em>yes_icon='&lt;img class=&quot;vote&quot; src=&quot;/media/img/checkbox_yes.png&quot;&gt;'</em>, <em>no_icon='&lt;img class=&quot;vote&quot; src=&quot;/media/img/checkbox_no.png&quot;&gt;'</em><big>)</big><a class="headerlink" href="#checkbox" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">checkbox</tt><big>(</big><em>value</em>, <em>yes_icon='/media/img/checkbox_yes.png'</em>, <em>no_icon='/media/img/checkbox_no.png'</em><big>)</big><a class="headerlink" href="#checkbox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
@@ -649,7 +653,7 @@ you might need to specifiy the date format using <a class="reference external" h
 
 <dl class="method">
 <dt id="vote">
-<tt class="descname">vote</tt><big>(</big><em>value</em>, <em>yes_vote='&lt;img class=&quot;vote&quot; src=&quot;/media/img/thumb_up.png&quot;&gt;'</em>, <em>no_vote='&lt;img class=&quot;vote&quot; src=&quot;/media/img/thumb_down.png&quot;&gt;'</em>, <em>did_not_vote=&quot;&lt;b style='font-size:130%;'&gt;&amp;mdash;&lt;/b&gt;&quot;</em><big>)</big><a class="headerlink" href="#vote" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">vote</tt><big>(</big><em>value</em>, <em>yes_vote='/media/img/thumb_up.png'</em>, <em>no_vote='/media/img/thumb_down.png'</em>, <em>did_not_vote=&quot;&lt;b style='font-size:130%;'&gt;&amp;mdash;&lt;/b&gt;&quot;</em><big>)</big><a class="headerlink" href="#vote" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns one of three icons representing the outcome a vote: Yes (thumbs up); No (thumbs down); Did not vote (Bolded emdash). The first letter of each type is what should be provided, i.e. Y, N, anything else.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
