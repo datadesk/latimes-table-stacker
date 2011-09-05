@@ -5,6 +5,7 @@ import shutil
 from table_stacker import views
 from django.http import Http404
 from django.conf import settings
+from django.shortcuts import render
 from table_stacker.models import Table, Tag
 from table_stacker.feeds import LatestTables
 from toolbox.FileIterator import FileIterator
@@ -159,7 +160,7 @@ class Command(BaseCommand):
         
         # Build 404 page
         self.stdout.write("Building 404 page\n")
-        response = views.table_index(rf.get("/404.html"))
+        response = render(rf.get("/404.html"), '404.html', {})
         self.write('404.html', response.content)
         
         # RSS feeds
