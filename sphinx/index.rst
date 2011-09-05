@@ -729,6 +729,5 @@ This project would not be possible without the generous work of people like:
 * `Chris Amico <https://github.com/eyeseast>`_, who did the noble work of porting table-fu to `Python <https://github.com/eyeseast/python-tablefu>`_.
 * Christian Bach, the man who gave us `tablesorter <http://tablesorter.com/docs/>`_.
 * Thomas Suh Lauder, who has suggested many style improvements and formatting options.
-* The army of people who make something like `google-app-engine-django <http://code.google.com/p/google-app-engine-django/>`_ possible.
 
 
