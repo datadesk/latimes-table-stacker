@@ -1,18 +1,11 @@
-# Response helpers
 import os
 import csv
 from django.shortcuts import render, get_object_or_404
 from django.utils import simplejson
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-
-# Models
 from table_stacker.models import Table, Tag
-
-# Pagination
 from django.core.paginator import Paginator
 from django.core.paginator import  InvalidPage, EmptyPage
-
-# Cache
 from django.conf import settings
 
 

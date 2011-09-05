@@ -94,11 +94,11 @@
             <div id="filter">Search: <input type="text"></div>
             <div id="pager" class="pager">
               <form {% ifequal table.total_pages 1 %}style="display:none !important;"{% endifequal %}>
-                <img src="/media/img/first.png" class="first">
-                <img src="/media/img/prev.png" class="prev">
+                <img src="{{ MEDIA_URL }}img/first.png" class="first">
+                <img src="{{ MEDIA_URL }}img/prev.png" class="prev">
                 <span class="pagedisplay"/>1/{{ table.total_pages }}</span>
-                <img src="/media/img/next.png" class="next">
-                <img src="/media/img/last.png" class="last">
+                <img src="{{ MEDIA_URL }}img/next.png" class="next">
+                <img src="{{ MEDIA_URL }}img/last.png" class="last">
                 <select class="pagesize">
                     {% for page_size in table.page_size_list %}
                     <option {% if forloop.first %}selected="selected"{% endif %} value="{{ page_size }}">{{ page_size }}</option>

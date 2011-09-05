@@ -118,6 +118,9 @@ class Tag(models.Model):
     slug = models.SlugField()
     objects = TagManager()
     
+    class Meta:
+        ordering = ('title',)
+    
     def __unicode__(self):
         return self.title
     

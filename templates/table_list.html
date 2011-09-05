@@ -24,7 +24,7 @@
     </table>
     <div class="clear pad10vert"></div>
     {% if has_next %}
-        <a href="/page/{{ next_page_number }}/">
+        <a href="{% url table-page next_page_number %}">
             More Spreadsheets
         </a>
         <div class="clear pad5vert"></div>

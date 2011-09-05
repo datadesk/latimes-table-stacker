@@ -6,9 +6,9 @@
     <meta name="keywords" content="{% block keywords %}tablstacker{% endblock %}" >
     <meta name="description" content="{% block description %}{% endblock %}" >
     
-    <link href='/media/css/blueprint/screen.css' rel='stylesheet' type='text/css' media='all' />
-    <link href='/media/css/blueprint/typography.css' rel='stylesheet' type='text/css' media='all' />
-    <link href='/media/css/style.css' rel='stylesheet' type='text/css' media='all' />
+    <link href='{{ MEDIA_URL }}css/blueprint/screen.css' rel='stylesheet' type='text/css' media='all' />
+    <link href='{{ MEDIA_URL }}css/blueprint/typography.css' rel='stylesheet' type='text/css' media='all' />
+    <link href='{{ MEDIA_URL }}css/style.css' rel='stylesheet' type='text/css' media='all' />
     {% block extra-css %}
     {% endblock %}
     
@@ -20,7 +20,7 @@
     {% endblock %}
     
     {% block extra-head %}
-        <link rel="alternate" href="/feeds/latest.xml" type="application/rss+xml" title="Latest spreadsheets" id="latest" />
+        <link rel="alternate" href="{% url feeds 'latest' %}" type="application/rss+xml" title="Latest spreadsheets" id="latest" />
     {% endblock %}
     
     {% block facebook %}
