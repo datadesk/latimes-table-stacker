@@ -11,7 +11,8 @@ Publish spreadsheets as interactive tables. And do it on deadline.
 h2. Features
 
 * Convert a CSV file into an interactive HTML table that sorts, filters and paginates.
-* Quickly publish interactives tables to Google App Engine and serve them on the web.
+* Quickly publish as static files to serve on the web.
+* Sync static files against published data on Amazon S3.
 * Instantly syndicate data as CSV, XLS and JSON.
 * Post an RSS feed and sitemap that promote the latest data.
 * Link similar datasets together with blog-style tagging.
