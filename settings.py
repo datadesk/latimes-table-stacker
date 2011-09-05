@@ -10,6 +10,7 @@ YAML_DIR = os.path.join(ROOT_PATH, 'yaml')
 CSV_DIR = os.path.join(ROOT_PATH, 'csv')
 BUILD_DIR = os.path.join(ROOT_PATH, 'build')
 SITE_NAME = 'TableStacker Demonstration'
+FACEBOOK_ADMINS = ['foo','bar']
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -115,6 +116,16 @@ ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     os.path.join(ROOT_PATH, 'templates'),
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.contrib.messages.context_processors.messages",
+    'toolbox.context_processors.metadata',
 )
 
 INSTALLED_APPS = (
