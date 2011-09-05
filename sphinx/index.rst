@@ -149,7 +149,9 @@ Finally, now that everything is set up, publishing your files to s3 is as simple
 
 .. code-block:: bash
 
-    $ python manage.py update
+    $ python manage.py publish
+
+Once you do that, your site should appear at the the link provided in your AWS console. If you want to bind that to a subdomain of your site, say, www.tablestacker.com, you need to create a new CNAME record in your domain's DNS registration. You also need the name of your bucket to line up with the subdomain. Don't take it from me. Read the `detailed instructions provided by Amazon <http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?WebsiteHosting.html>`_.
 
 **06. Publish you own data table**
 
