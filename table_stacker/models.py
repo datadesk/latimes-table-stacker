@@ -1,8 +1,8 @@
 # Table biz
 import yaml
-import cStringIO
 from table_fu import TableFu
 from django.db import models
+from managers import TableLiveManager, TableManager
 
 
 class Table(models.Model):
@@ -30,10 +30,12 @@ class Table(models.Model):
     tags = models.ManyToManyField('Tag', blank=True)
     is_published = models.BooleanField()
     show_in_feeds = models.BooleanField(default=True)
+    objects = TableManager()
+    live = TableLiveManager()
     
     class Meta:
         ordering = ("-publication_date",)
-
+    
     def __unicode__(self):
         return self.title
     

@@ -25,7 +25,7 @@ def get_table_page(request, page):
     Creates a page of tables for our index and pagination system.
     """
     # Pull the data
-    qs = Table.objects.filter(is_published=True, show_in_feeds=True).order_by("-publication_date")
+    qs = Table.live.all()
     paginator = Paginator(qs, 10)
     try:
         page = paginator.page(page)
@@ -64,7 +64,7 @@ def tag_page(request, tag, page):
     Lists tables with a certain tag.
     """
     tag = get_object_or_404(Tag, slug=tag)
-    object_list = tag.table_set.filter(is_published=True, show_in_feeds=True)
+    object_list = tag.table_set.live()
     paginator = Paginator(object_list, 10)
     # Limit it to thise page
     try:
@@ -144,7 +144,7 @@ def sitemap(request):
     """
     Create a sitemap.xml file for Google and other search engines.
     """
-    table_list = Table.objects.filter(is_published=True, show_in_feeds=True)
+    table_list = Table.live.all()
     tag_list = Tag.objects.all()
     context = {
         'tag_list': tag_list,
