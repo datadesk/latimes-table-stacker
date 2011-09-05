@@ -80,7 +80,7 @@ And jump in and get ready to work.
 
 Install our app's Python dependencies.
 
-.. code-block: bash
+.. code-block:: bash
 
     $ pip install -r requirements.txt
 

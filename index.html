@@ -99,6 +99,9 @@
 </pre></div>
 </div>
 <p>Install our app&#8217;s Python dependencies.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install -r requirements.txt
+</pre></div>
+</div>
 <p><strong>02. Build the example tables</strong></p>
 <p>You&#8217;ll learn how to layout your own data later, but for now we&#8217;ll work with the example files. Jump back to your first terminal shell and drop the following line, which instructs our <tt class="docutils literal"><span class="pre">build</span></tt> management command to bake out a static site using the instructions in <tt class="docutils literal"><span class="pre">settings.py</span></tt> and the table recipes in the <tt class="docutils literal"><span class="pre">yaml</span></tt> directory.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
@@ -768,20 +771,5 @@ you might need to specifiy the date format using <a class="reference external" h
           Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
         </div>     
     </div>
-
-    <script type="text/javascript">
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-24991388-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-
-    </script>
-
   </body>
 </html>
