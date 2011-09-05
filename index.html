@@ -147,7 +147,15 @@ In the Index Document Suffix text box, add the required index document name (ind
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py publish
 </pre></div>
 </div>
-<p>Once you do that, your site should appear at the the link provided in your AWS console. If you want to bind that to a subdomain of your site, say, www.tablestacker.com, you need to create a new CNAME record in your domain&#8217;s DNS registration. You also need the name of your bucket to line up with the subdomain. Don&#8217;t take it from me. Read the <a class="reference external" href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?WebsiteHosting.html">detailed instructions provided by Amazon</a>.</p>
+<p>Once you do that, your site should appear at the the link provided in your AWS console. If you want to bind that to a subdomain of your site, say, www.tablestacker.com, you need to create a new CNAME record in your domain&#8217;s DNS registration. You also need the name of your bucket to line up with the subdomain. Don&#8217;t take it from me. Read the detailed instructions provided by Amazon.</p>
+<div class="highlight-text"><div class="highlight"><pre>For example, if you have registered domain, www.example-bucket.com, you
+could create a bucket www.example-bucket.com, and add a DNS CNAME entry
+pointing to www.example-bucket.com.s3-website-&lt;region&gt;.amazonaws.com.
+All requests to http://www.example-bucket.com will be routed to
+www.example-bucket.com.s3-website-&lt;region&gt;.amazonaws.com.
+</pre></div>
+</div>
+<p>More documentation on that is available <a class="reference external" href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?WebsiteHosting.html">here</a>.</p>
 <p><strong>06. Publish you own data table</strong></p>
 <p>Before you can publish your own data table, you&#8217;ll need to learn about our YAML-based configuration system. But don&#8217;t worry, it&#8217;s not that hard. You can read about it in the configuration section or school yourself by mimicking the examples files in the project&#8217;s <tt class="docutils literal"><span class="pre">yaml</span></tt> subdirectory folder. Then, doing the following:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
@@ -750,8 +758,8 @@ you might need to specifiy the date format using <a class="reference external" h
 
 <hr></div>
 </div>
-<div class="section" id="id2">
-<h1>Credits<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id3">
+<h1>Credits<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
 <p>This project would not be possible without the generous work of people like:</p>
 <ul class="simple">
 <li><a class="reference external" href="http://www.propublica.org/nerds">ProPublica&#8217;s News Application Desk</a>, and particularly <a class="reference external" href="https://github.com/thejefflarson">Jeff Larson</a>, who developed the Ruby libraries <a class="reference external" href="https://github.com/propublica/table-fu">table-fu</a> and <a class="reference external" href="https://github.com/propublica/table-setter">table-setter</a>.</li>
@@ -783,7 +791,7 @@ you might need to specifiy the date format using <a class="reference external" h
 <li><a class="reference internal" href="#global-settings">Global settings</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id2">Credits</a></li>
+<li><a class="reference internal" href="#id3">Credits</a></li>
 </ul>
 
   <h3>This Page</h3>
