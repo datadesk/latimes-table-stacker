@@ -1,7 +1,12 @@
 # Table biz
+import os
+import csv
 import yaml
 from table_fu import TableFu
 from django.db import models
+from django.conf import settings
+from django.utils import simplejson
+from django.contrib.sites.models import Site
 from managers import TableLiveManager, TableManager, TagManager
 
 
@@ -55,7 +60,8 @@ class Table(models.Model):
         """
         The link we can use for share buttons.
         """
-        return self.get_absolute_url()
+        site = Site.objects.get_current()
+        return 'http://%s%s' % (site.domain, self.get_absolute_url())
     
     def get_tablefu_opts(self):
         return yaml.load(self.yaml_data).get('column_options', {})
@@ -64,10 +70,6 @@ class Table(models.Model):
         """
         Trick the data out with TableFu.
         """
-        import os
-        import csv
-        from django.conf import settings
-        from django.utils import simplejson
         path = os.path.join(settings.CSV_DIR, self.csv_name)
         data = open(path, 'r')
         return TableFu(data, **self.get_tablefu_opts())
