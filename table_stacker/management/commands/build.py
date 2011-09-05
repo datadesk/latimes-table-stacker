@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         
-        print "Creating build directory"
+        self.stdout.write("Creating build directory\n")
         
         # Destroy the build directory, if it exists
         if os.path.exists(settings.BUILD_DIR):
@@ -33,18 +33,18 @@ class Command(BaseCommand):
         os.makedirs(settings.BUILD_DIR)
         
         # Copy the media directory
-        print "Building media directory"
+        self.stdout.write("Building media directory\n")
         shutil.copytree(settings.MEDIA_ROOT, os.path.join( settings.BUILD_DIR, 'media'))
         
         # Load all YAML files into the local database
-        print "Filling database"
+        self.stdout.write("Building database\n")
         [update_or_create_table(i) for i in get_all_yaml()]
-
+        
         # Create a fake request we can use to fire up the pages
         rf = RequestFactory()
-
+        
         # Build index page
-        print "Building table lists"
+        self.stdout.write("Building table lists\n")
         response = views.table_index(rf.get("/"))
         self.write('index.html', response.content)
         
@@ -56,9 +56,9 @@ class Command(BaseCommand):
             path = os.path.join(settings.BUILD_DIR, 'page', str(page))
             os.makedirs(path)
             self.write(os.path.join(path, 'index.html'), response.content)
-
+        
         # Build table detail pages
-        print "Building table detail pages"
+        self.stdout.write("Building table detail pages\n")
         for table in Table.objects.all():
             try:
                 response = views.table_detail(rf.get("/%s/" % table.slug), table.slug)
@@ -69,7 +69,7 @@ class Command(BaseCommand):
             self.write(os.path.join(path, 'index.html'), response.content)
         
         # JSON dumps of tables
-        print "Building API dumps"
+        self.stdout.write("Building API dumps\n")
         path = os.path.join(settings.BUILD_DIR, "api")
         os.makedirs(path)
         for table in Table.objects.all():
@@ -90,7 +90,7 @@ class Command(BaseCommand):
             self.write(os.path.join(path, '%s.csv' % table.slug), data)
         
         # Tag pages
-        print "Building tag pages"
+        self.stdout.write("Building tag pages\n")
         os.makedirs(os.path.join(settings.BUILD_DIR, 'tag'))
         for tag in Tag.objects.all():
             table_set = tag.table_set.filter(is_published=True, show_in_feeds=True)
@@ -102,12 +102,12 @@ class Command(BaseCommand):
                 self.write(os.path.join(path, 'index.html'), response.content)
         
         # Sitemap
-        print "Building sitemap"
+        self.stdout.write("Building sitemap\n")
         response = views.sitemap(rf.get("/sitemap.xml"))
         self.write('sitemap.xml', response.content)
         
         # RSS feeds
-        print "Building RSS feeds"
+        self.stdout.write("Building RSS feeds\n")
         os.makedirs(os.path.join(settings.BUILD_DIR, 'feeds'))
         response = feed(rf.get("/feeds/latest.xml"), url='latest',
             feed_dict=dict(latest=LatestTables))
