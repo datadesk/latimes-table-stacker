@@ -6,6 +6,7 @@ from django.conf import settings
 from table_stacker import views
 from table_stacker.models import Table, Tag
 from table_stacker.management.commands import *
+from django.test.client import RequestFactory
 from django.contrib.syndication.views import feed
 from django.views.generic.simple import direct_to_template
 from table_stacker.feeds import LatestTables
