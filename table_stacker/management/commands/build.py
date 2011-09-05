@@ -36,7 +36,7 @@ class InvalidYAMLError(Exception):
 
 
 class Command(BaseCommand):
-    help = 'Bake out the entire site as flat files in the build directory'
+    help = 'Bake out the entire site as static files in the build directory'
     
     def get_yaml(self, yaml_name):
         """
