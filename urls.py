@@ -1,18 +1,23 @@
 from django.conf.urls.defaults import patterns, include, url
 from table_stacker.feeds import LatestTables
+from django.conf import settings
 from django.contrib.syndication.views import feed
-from django.views.generic.simple import redirect_to
-from django.contrib.staticfiles.views import serve
-
 from django.contrib import admin
 admin.autodiscover()
 
 
-urlpatterns = patterns('table_stacker.views',
+urlpatterns = patterns('',
     # Admin
     (r'^admin/', include(admin.site.urls)),
-    url(r'^static/(?P<path>.*)$', serve),
-    
+    # Dev static files, like admin media
+    url(r'^static/(?P<path>.*)$', 'django.contrib.staticfiles.views.serve'),
+    # Prod static files, like css and js that power the public-facing pages
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+        'document_root': settings.MEDIA_ROOT,
+    }),
+)
+
+urlpatterns += patterns("table_stacker.views",
     # Homepage
     url(r'^$', 'table_index', name='table-index'),
     
