@@ -11,7 +11,7 @@ CSV_DIR = os.path.join(ROOT_PATH, 'csv')
 BUILD_DIR = os.path.join(ROOT_PATH, 'build')
 SITE_NAME = 'TableStacker Demonstration'
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

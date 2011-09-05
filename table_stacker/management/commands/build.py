@@ -154,6 +154,11 @@ class Command(BaseCommand):
         response = views.sitemap(rf.get("/sitemap.xml"))
         self.write('sitemap.xml', response.content)
         
+        # Build 404 page
+        self.stdout.write("Building 404 page\n")
+        response = views.table_index(rf.get("/404.html"))
+        self.write('404.html', response.content)
+        
         # RSS feeds
         self.stdout.write("Building RSS feeds\n")
         os.makedirs(os.path.join(settings.BUILD_DIR, 'feeds'))
