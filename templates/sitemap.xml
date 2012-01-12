@@ -5,11 +5,6 @@
     <loc>http://spreadsheets.latimes.com{{ obj.get_absolute_url }}</loc> 
   </url>
 {% endfor %}
-{% for obj in tag_list %}
-  <url> 
-    <loc>http://spreadsheets.latimes.com{{ obj.get_absolute_url }}</loc> 
-  </url>
-{% endfor %}
 </urlset>
 
 

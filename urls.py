@@ -23,7 +23,6 @@ urlpatterns += patterns("table_stacker.views",
     
     # Pagination
     url(r'^page/(?P<page>[0-9]+)/$', 'table_page', name='table-page'),
-    url(r'^tag/(?P<tag>.*)/page/(?P<page>[0-9]+)/$', 'tag_page', name='tag-page'),
     
     # Serialization
     url(r'^api/(?P<slug>[-\w]+).xls$', 'table_xls', name='table-xls'),

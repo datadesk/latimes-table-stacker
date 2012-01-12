@@ -7,7 +7,7 @@ from django.http import Http404
 from django.conf import settings
 from django.core import management
 from django.shortcuts import render
-from table_stacker.models import Table, Tag
+from table_stacker.models import Table
 from table_stacker.feeds import LatestTables
 from toolbox.FileIterator import FileIterator
 from django.test.client import RequestFactory
@@ -143,18 +143,6 @@ class Command(BaseCommand):
             except Http404:
                 continue
             self.write(os.path.join(path, '%s.csv' % table.slug), response.content)
-
-        # Tag pages
-        self.stdout.write("Building tag pages\n")
-        os.makedirs(os.path.join(settings.BUILD_DIR, 'tag'))
-        for tag in Tag.objects.all():
-            table_set = tag.table_set.filter(is_published=True, show_in_feeds=True)
-            pages = int(math.ceil(table_set.count() / 10.0))
-            for page in range(1, pages+1):
-                response = views.tag_page(rf.get("/tag/%s/page/%s/" % (tag.slug, page)), tag.slug, page)
-                path = os.path.join(settings.BUILD_DIR, 'tag', tag.slug, 'page', str(page))
-                os.makedirs(path)
-                self.write(os.path.join(path, 'index.html'), response.content)
         
         # Sitemap
         self.stdout.write("Building sitemap\n")

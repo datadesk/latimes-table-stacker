@@ -16,10 +16,6 @@
     {% endif %}
 {% endblock %}
 
-{% if object.tag_list %}
-    {% block keywords %}{{ object.get_keywords_list }}, {{ block.super }}{% endblock %}
-{% endif %}
-
 {% block extra-js %}
     <script src='{{ STATIC_URL }}js/jquery.tablesorter.js' type='text/javascript'></script>
     <script src='{{ STATIC_URL }}js/jquery.tablesorter.pager.js' type='text/javascript'></script>
@@ -128,7 +124,6 @@
     <tfoot></tfoot>
     </table>
     {% if object.footer %}<div id="footer">{{ object.footer|safe }}</div>{% endif %}
-    {% if object.tags %}<div id="tags">Tags: {{ object.get_html_tag_list|safe }}</div>{% endif %}
     {% if object.sources %}<div id="sources">Sources: {{ object.sources|safe }}</div>{% endif %}
     {% if object.credits %}<div id="credits">Credits: {{ object.credits|safe }}</div>{% endif %}
     

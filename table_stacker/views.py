@@ -3,7 +3,7 @@ import csv
 from django.shortcuts import render, get_object_or_404
 from django.utils import simplejson
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from table_stacker.models import Table, Tag
+from table_stacker.models import Table
 from django.core.paginator import Paginator
 from django.core.paginator import  InvalidPage, EmptyPage
 from django.conf import settings
@@ -50,30 +50,6 @@ def table_page(request, page):
     if page == '1':
         return HttpResponseRedirect('/')
     return get_table_page(request, page)
-
-
-def tag_page(request, tag, page):
-    """
-    Lists tables with a certain tag.
-    """
-    tag = get_object_or_404(Tag, slug=tag)
-    object_list = tag.table_set.live()
-    paginator = Paginator(object_list, 10)
-    # Limit it to thise page
-    try:
-        page = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        raise Http404
-    # Create a response and pass it back
-    context = {
-        'headline': 'Spreadsheets tagged &lsquo;%s&rsquo;' % tag.title,
-        'object_list': page.object_list,
-        'page_number': page.number,
-        'has_next': page.has_next(),
-        'next_page_number': page.next_page_number(),
-        'object': tag,
-    }
-    return render(request, 'table_list.html', context)
 
 
 def table_detail(request, slug):
@@ -154,9 +130,7 @@ def sitemap(request):
     Create a sitemap.xml file for Google and other search engines.
     """
     table_list = Table.live.all()
-    tag_list = Tag.objects.all()
     context = {
-        'tag_list': tag_list,
         'table_list': table_list,
     }
     response = render(request, 'sitemap.xml', context)

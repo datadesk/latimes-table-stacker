@@ -7,7 +7,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import simplejson
 from django.contrib.sites.models import Site
-from managers import TableLiveManager, TableManager, TagManager
+from managers import TableLiveManager, TableManager
 
 
 class Table(models.Model):
@@ -32,7 +32,6 @@ class Table(models.Model):
     credits = models.TextField(blank=True)
     show_download_links = models.BooleanField(default=True)
     # The meta
-    tags = models.ManyToManyField('Tag', blank=True)
     is_published = models.BooleanField()
     show_in_feeds = models.BooleanField(default=True)
     objects = TableManager()
@@ -77,56 +76,4 @@ class Table(models.Model):
         path = os.path.join(settings.CSV_DIR, self.csv_name)
         data = open(path, 'r')
         return TableFu(data, **self.get_tablefu_opts())
-    
-    def get_rendered_tag_list(self, html=True, conjunction='and'):
-        """
-        Return a rendered list of tags.
-        
-        By default a HTML link list that's ready for the table detail page.
-        """
-        from django.utils.text import get_text_list
-        tag_list = list(self.tags.all())
-        tag_list.sort(key=lambda x: x.title)
-        if html:
-            tag_list = ['<a href="%s">%s</a>' % (i.get_absolute_url(), i.title)
-                for i in tag_list]
-        else:
-            tag_list = [i.title for i in tag_list]
-        return get_text_list(tag_list, conjunction)
-    
-    def get_html_tag_list(self):
-        """
-        Returns an HTML link list that's ready for the table detail page.
-        """
-        return self.get_rendered_tag_list(html=True, conjunction='and')
-    
-    def get_keywords_list(self):
-        """
-        Returns a list of tags that ready for the META keywords tag on
-        the table_detail page.
-        """
-        tag_list = list(self.tags.all())
-        tag_list.sort(key=lambda x: x.title)
-        return ", ".join([i.title.lower() for i in tag_list])
-
-
-class Tag(models.Model):
-    """
-    A descriptive label connected to a table.
-    """
-    title = models.CharField(max_length=100)
-    slug = models.SlugField()
-    objects = TagManager()
-    
-    class Meta:
-        ordering = ('title',)
-    
-    def __unicode__(self):
-        return self.title
-    
-    @models.permalink
-    def get_absolute_url(self):
-        return ('tag-page', [self.slug, 1])
-    
-
 
