@@ -2,11 +2,11 @@ import os
 import math
 import yaml
 import shutil
-from table_stacker import views
 from django.http import Http404
 from django.conf import settings
 from django.core import management
 from django.shortcuts import render
+from table_stacker import views, api
 from table_stacker.models import Table
 from table_stacker.feeds import LatestTables
 from toolbox.FileIterator import FileIterator
@@ -127,19 +127,19 @@ class Command(BaseCommand):
         for table in Table.objects.all():
             # JSON
             try:
-                response = views.table_json(rf.get("/api/%s.json" % table.slug), table.slug)
+                response = api.table_json(rf.get("/api/%s.json" % table.slug), table.slug)
             except Http404:
                 continue
             self.write(os.path.join(path, '%s.json' % table.slug), response.content)
             # XLS
             try:
-                response = views.table_xls(rf.get("/api/%s.xls" % table.slug), table.slug)
+                response = api.table_xls(rf.get("/api/%s.xls" % table.slug), table.slug)
             except Http404:
                 continue
             self.write(os.path.join(path, '%s.xls' % table.slug), response.content)
             # CSV
             try:
-                response = views.table_csv(rf.get("/api/%s.csv" % table.slug), table.slug)
+                response = api.table_csv(rf.get("/api/%s.csv" % table.slug), table.slug)
             except Http404:
                 continue
             self.write(os.path.join(path, '%s.csv' % table.slug), response.content)

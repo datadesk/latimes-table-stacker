@@ -17,24 +17,24 @@ urlpatterns = patterns('',
     }),
 )
 
-urlpatterns += patterns("table_stacker.views",
+urlpatterns += patterns("table_stacker",
     # Homepage
-    url(r'^$', 'table_index', name='table-index'),
+    url(r'^$', 'views.table_index', name='table-index'),
     
     # Pagination
-    url(r'^page/(?P<page>[0-9]+)/$', 'table_page', name='table-page'),
+    url(r'^page/(?P<page>[0-9]+)/$', 'views.table_page', name='table-page'),
     
     # Serialization
-    url(r'^api/(?P<slug>[-\w]+).xls$', 'table_xls', name='table-xls'),
-    url(r'^api/(?P<slug>[-\w]+).json$', 'table_json', name='table-json'),
-    url(r'^api/(?P<slug>[-\w]+).csv$', 'table_csv', name='table-csv'),
+    url(r'^api/(?P<slug>[-\w]+).xls$', 'api.table_xls', name='table-xls'),
+    url(r'^api/(?P<slug>[-\w]+).json$', 'api.table_json', name='table-json'),
+    url(r'^api/(?P<slug>[-\w]+).csv$', 'api.table_csv', name='table-csv'),
     
     # Extras
     url(r'^feeds/(?P<url>.*).xml$', feed,
         {'feed_dict': dict(latest=LatestTables)}, name='feeds'),
-    url(r'^sitemap.xml$', 'sitemap', name='sitemap'),
+    url(r'^sitemap.xml$', 'views.sitemap', name='sitemap'),
     
     # Table detail
-    url(r'^(?P<slug>[-\w]+)/$', 'table_detail', name='table-detail'),
+    url(r'^(?P<slug>[-\w]+)/$', 'views.table_detail', name='table-detail'),
 )
 
