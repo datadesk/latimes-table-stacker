@@ -109,6 +109,7 @@ def dollars(value, decimal_places=2):
     if not safevalue:
         return 'N/A'
     if float(value) < 0:
+        safevalue = safevalue.replace("-", "")
         format = u'($%s)'
     else:
         format = u'$%s'
