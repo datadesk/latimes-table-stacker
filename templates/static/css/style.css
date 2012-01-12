@@ -14,8 +14,8 @@ body {font-size:14px;}
 h4#kicker {letter-spacing: 0.03em; font-size:12px; text-transform:uppercase; color:black; display:block; margin:0 0 5px 0;}
 h1#title {margin:0 0 5px 0; font-size:28px;}
 #table_fu {width: 950px; font-size: 14px; line-height: 20px; color: #333;}
-#table_fu div#description p {margin-left:2px; margin-bottom: 10px; text-align: left; line-height: 140%;}
-#table_fu div{margin-bottom: 14px;}
+#table_fu div#description p {margin-left:2px; margin: 10px 0; text-align: left; line-height: 140%;}
+#table_fu div{}
 #table_fu div#similar h5 { text-transform:uppercase; font-size:13px; font-weight:normal; margin:0;}
 #table_fu div#similar {float:right; width:280px; border:1px solid #ddd; padding:10px; margin: 0 0 10px 20px;}
 #table_fu div#similar ul {margin-top:5px; margin-left:0; padding-left:3px; list-style-type:none;}
