@@ -66,7 +66,7 @@ class TableFu(object):
         self.header_style = options.get("header_style", {})
         self.sorters = options.get('sorters', {})
         self.tags = options.get('tags', [])
-        self.per_page = options.get("per_page", 20)
+        self.per_page = options.get("per_page", 50)
         self.options = options
         if options.has_key('sorted_by'):
             sort_opts = options.get("sorted_by")
