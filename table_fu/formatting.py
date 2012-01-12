@@ -104,10 +104,14 @@ def dollars(value, decimal_places=2):
     """
     if not value:
         value = 0
-    value = _saferound(value, decimal_places)
-    if not value:
+    safevalue = _saferound(value, decimal_places)
+    if not safevalue:
         return 'N/A'
-    return u'$%s'% intcomma(value)
+    if float(value) < 0:
+        format = u'($%s)'
+    else:
+        format = u'$%s'
+    return format % intcomma(safevalue)
 
 
 def intcomma(value):
