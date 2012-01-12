@@ -15,7 +15,6 @@ h2. Features
 * Sync static files against published data on Amazon S3.
 * Instantly syndicate data as CSV, XLS and JSON.
 * Post an RSS feed and sitemap that promote the latest data.
-* Link similar datasets together with blog-style tagging.
 
 h2. Resources
 
