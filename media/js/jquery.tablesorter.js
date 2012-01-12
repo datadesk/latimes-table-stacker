@@ -723,11 +723,11 @@
             return /^[£$€?.]/.test(s);
         },
         format: function(s) {
-            float = $.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.]/g),""));
+            var f = $.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.]/g),""));
             if (/\(/.test(s)) {
-                return float * -1.0;
+                return f * -1.0;
             } else {
-                return float;
+                return f;
             }
         },
         type: "numeric"
