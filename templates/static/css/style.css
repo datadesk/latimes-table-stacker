@@ -24,7 +24,7 @@ h1#title {margin:0 0 5px 0; font-size:28px;}
 #table_fu div#byline {text-align:right; margin-bottom:5px;}
 #table_fu div#legend {float:left; margin-bottom:10px; margin-top:-5px;}
 #table_fu div#ribbon {clear: both; display: block; overflow:visible;}
-#table_fu div#controls{width:50%; position:relative;}
+#table_fu div#controls{width:50%; position:relative; height:30px;}
 #table_fu div#pager{position:absolute; right:0; top: 0; margin-bottom:2px;}
 #table_fu div#pager img {display:inline; vertical-align:text-bottom;}
 #table_fu div#pager div.pagedisplay{display: inline;}
