@@ -94,8 +94,7 @@ def table_xls(request, slug):
     if not obj.is_published:
         raise Http404
     csv_path = os.path.join(settings.CSV_DIR, obj.csv_name)
-    csv_data = open(csv_path, 'r').read()
-    context = {'csv': unicode(csv_data)}
+    context = {'csv': csv.reader(open(csv_path, 'r'))}
     # Prep an XLS response
     response = render(request, "table.xls.txt", context)
     response['Content-Disposition'] = 'attachment; filename=%s.xls' % slug
