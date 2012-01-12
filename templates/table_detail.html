@@ -52,7 +52,7 @@
                 <g:plusone size="medium"></g:plusone>
             </li>
             <li>
-                <iframe src="http://www.facebook.com/plugins/like.php?app_id=167409373327708&amp;href&amp;send=false&amp;layout=button_count&amp;width=90&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=arial&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px; height:21px;" allowTransparency="true"></iframe>
+                <div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=161694630579757&amp;xfbml=1"></script><fb:like href="" send="false" layout="button_count" width="90" show_faces="false" font=""></fb:like>
             </li>
         </ul>
     </div>
@@ -62,11 +62,108 @@
 
 {% block content %}
     <div id="table_fu">
-        {% if not object.rendered_html or force %}
-            {{ object.get_rendered_html|safe }}
-        {% else %}
-            {{ object.rendered_html|safe }}
-        {% endif %}
+    <div class="clear"></div>
+    
+    {% if object.similar_tables %}
+        <div id="similar">{% include "similar_tables.html" %}</div>
+    {% endif %}
+    
+    {% if object.description %}
+        <div id="description" {% if object.similar_tables %}style="width:660px;"{% endif %}>{{ object.description|safe }}</div>
+    {% endif %}
+    
+    <div class="clear"></div>
+    
+    {% if object.legend %}
+        <div id="legend">{{ object.legend|safe }}</div>
+    {% endif %}
+    
+    <div id="ribbon">
+    
+        <div id="download">
+            Published: <div id="pubdate">{{ object.publication_date|date:"N j, Y" }}</div>&nbsp;&nbsp;
+             {% if object.show_download_links %}
+            Download:
+            <a href="{{ object.get_csv_url }}">CSV</a> |
+            <a href="{{ object.get_xls_url }}">XLS</a> |
+            <a target="_blank" href="{{ object.get_json_url }}">JSON</a>
+            {% endif %}
+        </div>
+        
+        <div id="controls">
+            <div id="filter">Search: <input type="text"></div>
+            <div id="pager" class="pager">
+              <form {% ifequal table.total_pages 1 %}style="display:none !important;"{% endifequal %}>
+                <img src="{{ MEDIA_URL }}img/first.png" class="first">
+                <img src="{{ MEDIA_URL }}img/prev.png" class="prev">
+                <span class="pagedisplay"/>1/{{ table.total_pages }}</span>
+                <img src="{{ MEDIA_URL }}img/next.png" class="next">
+                <img src="{{ MEDIA_URL }}img/last.png" class="last">
+                <select class="pagesize">
+                    {% for page_size in table.page_size_list %}
+                    <option {% if forloop.first %}selected="selected"{% endif %} value="{{ page_size }}">{{ page_size }}</option>
+                    {% endfor %}
+                </select> per page
+              </form>
+            </div>
+        </div>
+    
+    </div>
+    <div class="clear"></div>
+    <table id="data" class="tabular">
+        <thead>
+            <tr>
+            {% for header in table.headers %}
+              <th style="cursor: pointer; {% if header.style %}{% if header.sortable %}cursor: pointer;{% else %}cursor:default; background:none;{% endif %} {{ header.style }}{% endif %}">
+                {{ header }}
+              </th>
+            {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in table.rows %}
+          <tr>
+            {% for column in row.data %}
+                <td style="{{ column.style }}">{{ column|safe }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+    <tfoot></tfoot>
+    </table>
+    {% if object.footer %}<div id="footer">{{ object.footer|safe }}</div>{% endif %}
+    {% if object.tags %}<div id="tags">Tags: {{ object.get_html_tag_list|safe }}</div>{% endif %}
+    {% if object.sources %}<div id="sources">Sources: {{ object.sources|safe }}</div>{% endif %}
+    {% if object.credits %}<div id="credits">Credits: {{ object.credits|safe }}</div>{% endif %}
+    
+    <script type='text/javascript'>
+        var sortOrder = {{ table.sorted_by }};
+        var perPage = {{ table.per_page }};
+        $(document).ready(function(){
+            var fu = $('#table_fu');
+            var table = window.table = $('#data', fu)
+              .tablesorter({
+                widgets: ['columnHighlight'],
+                sortList: sortOrder{% if table.sorter_config %},
+                headers: {% for key, value in table.sorter_config.items %}{ 
+                            {{ key }}: {
+                                sorter: {% if value %}'{{ value }}'{% else %}false{% endif %} 
+                            }{% if not forloop.last %},{% endif %}
+                        }{% endfor %}{% endif %}
+               })
+              .tablesorterPager({ container: $("#pager", fu), size: perPage, positionFixed: false })
+              .tablesorterMultiPageFilter({ filterSelector: $("#filter input", fu) });
+            var urlSortColumn = getParameterByName("sortColumn");
+            var urlSortOrder = getParameterByName("sortOrder");
+            if (urlSortColumn && urlSortOrder) {
+                urlSortColumn  = parseInt(urlSortColumn);
+                urlSortOrder  = parseInt(urlSortOrder);
+                newSort = [[urlSortColumn, urlSortOrder]];
+                $("table").trigger("sorton", [newSort]); 
+            };
+        });
+    </script>
+
     </div>
 {% endblock %}
 

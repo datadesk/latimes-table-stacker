@@ -11,10 +11,8 @@ class LatestTables(Feed):
     description_template = "feeds/table_description.html"
     
     def items(self):
-        qs = Table.all()
-        qs = qs.filter("is_published =", True)
-        qs = qs.filter("show_in_feeds =", True)
-        return qs.order("-publication_date")[:10]
+        qs = Table.objects.all().filter(is_published=True, show_in_feeds=True)
+        return qs.order_by("-publication_date")[:10]
     
     def item_pubdate(self, item):
         return datetime(*(item.publication_date.timetuple()[:6]))

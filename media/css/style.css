@@ -1,16 +1,18 @@
 body {font-size:14px;}
+.serif {font-family:Georgia, serif;}
+.sans {font-family:Arial, sans-serif;}
 .rss {position: absolute; right:0; top:45%;}
-#table_list h2 {margin:0; padding-top:15px; padding-bottom:1px; font-size:18px;}
+#table_list h2 {margin:0; padding-top:10px; padding-bottom:0; font-size:18px;}
 #table_list .byline {font-size:12px;}
 #table_list .pubdate {font-size:12px;}
-#table_list .description {margin-top:1px; margin-bottom:15px;}
+#table_list .description {margin-top:1px; margin-bottom:10px;}
 #table_list tbody tr:nth-child(even) td, tbody tr.even td {background-color:white;}
 #header {margin:15px 0 0 0;}
 #header div#share {float:right; position:relative;}
 #header div#share ul {margin-top:25px}
 #header div#share li {height: 22px; float: left; list-style: none; margin-right:2px;}
-h4#kicker {letter-spacing: 0.03em; font-size:13px; text-transform:uppercase; color:black; display:block; margin:0 0 5px 0;}
-h1#title {margin:0 0 5px 0; font-size:32px;}
+h4#kicker {letter-spacing: 0.03em; font-size:12px; text-transform:uppercase; color:black; display:block; margin:0 0 5px 0;}
+h1#title {margin:0 0 5px 0; font-size:28px;}
 #table_fu {width: 950px; font-size: 14px; line-height: 20px; color: #333;}
 #table_fu div#description p {margin-left:2px; margin-bottom: 10px; text-align: left; line-height: 140%;}
 #table_fu div{margin-bottom: 14px;}

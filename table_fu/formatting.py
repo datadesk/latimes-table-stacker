@@ -49,17 +49,17 @@ def bubble(value, yes_icon='/media/img/bubble_yes.png',
     The first letter of each type is what should be provided, i.e. Y, N.
     """
     img = "<img alt='%(name)s' title='%(name)s' class='bubble' src='%(icon)s'>"
-    if value == 'Y':
+    if value.lower() == 'y':
         return img % dict(name='Yes', icon=yes_icon)
-    elif value == 'N':
+    elif value.lower() == 'n':
         return img % dict(name='No', icon=no_icon)
     else:
         return empty
 
 
 def checkbox(value,
-    yes_icon='<img class="vote" src="/media/img/checkbox_yes.png">',
-    no_icon='<img class="vote" src="/media/img/checkbox_no.png">',
+    yes_icon='/media/img/checkbox_yes.png',
+    no_icon='/media/img/checkbox_no.png',
     ):
     """
     Returns one of two icons:
@@ -71,10 +71,11 @@ def checkbox(value,
     
     The first letter of each type is what should be provided, i.e. Y, N, anything else.
     """
+    img = "<img alt='%(name)s' title='%(name)s' class='vote' src='%(icon)s'>"
     if value.lower() == 'y':
-        return yes_icon
+        return img % dict(name='Yes', icon=yes_icon)
     elif value.lower() == 'n':
-        return no_icon
+        return img % dict(name='No', icon=no_icon)
     else:
         return ''
 
@@ -284,7 +285,7 @@ def tribubble(value, yes_icon='/media/img/tribubble_yes.png',
     
     The first letter of each type is what should be provided, i.e. Y, P, N.
     """
-    img = "<img class='bubble' src='%(icon)s'>"
+    img = "<img alt='%(name)s' title='%(name)s' class='bubble' src='%(icon)s'>"
     if value.lower() == 'y':
         return img % dict(name='Yes', icon=yes_icon)
     elif value.lower() == 'p':
@@ -296,8 +297,8 @@ def tribubble(value, yes_icon='/media/img/tribubble_yes.png',
 
 
 def vote(value,
-    yes_vote='<img class="vote" src="/media/img/thumb_up.png">',
-    no_vote='<img class="vote" src="/media/img/thumb_down.png">',
+    yes_vote='/media/img/thumb_up.png',
+    no_vote='/media/img/thumb_down.png',
     did_not_vote="<b style='font-size:130%;'>&mdash;</b>"
     ):
     """
@@ -309,10 +310,11 @@ def vote(value,
     
     The first letter of each type is what should be provided, i.e. Y, N, anything else.
     """
+    img = "<img alt='%(name)s' title='%(name)s' class='vote' src='%(icon)s'>"
     if value.lower() == 'y':
-        return yes_vote
+        return img % dict(name='Yes', icon=yes_icon)
     elif value.lower() == 'n':
-        return no_vote
+        return img % dict(name='No', icon=no_icon)
     else:
         return did_not_vote
 

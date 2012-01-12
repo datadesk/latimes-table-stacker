@@ -1,70 +1,71 @@
-# GAE biz
-import logging
-from google.appengine.ext import db
-from google.appengine.api import urlfetch
-
-# URLs
-import urllib
-
 # Table biz
+import os
+import csv
 import yaml
-import cStringIO
 from table_fu import TableFu
+from django.db import models
+from django.conf import settings
+from django.utils import simplejson
+from django.contrib.sites.models import Site
+from managers import TableLiveManager, TableManager, TagManager
 
 
-class Table(db.Model):
+class Table(models.Model):
     """
     Ready-to-serve CSV data.
     """
     # The source
-    csv_name = db.StringProperty(required=True)
-    csv_data = db.TextProperty(required=True)
+    csv_name = models.CharField(max_length=100)
     # The config
-    yaml_name = db.StringProperty(required=True)
-    yaml_data = db.TextProperty(required=True)
+    yaml_name = models.CharField(max_length=100)
+    yaml_data = models.TextField(blank=True)
     # The goodies
-    title = db.StringProperty(required=True)
-    slug = db.StringProperty(required=True)
-    kicker = db.StringProperty(required=False)
-    byline = db.StringProperty(required=False)
-    publication_date = db.DateProperty(required=True)
-    description = db.TextProperty(required=False)
-    legend = db.TextProperty(required=False)
-    footer = db.TextProperty(required=False)
-    sources = db.TextProperty(required=False)
-    credits = db.TextProperty(required=False)
-    show_download_links = db.BooleanProperty(required=True, default=True)
-    # The result
-    rendered_html = db.TextProperty(required=False)
+    title = models.CharField(max_length=500)
+    slug = models.SlugField()
+    kicker = models.CharField(max_length=500, blank=True)
+    byline = models.CharField(max_length=500, blank=True)
+    publication_date = models.DateField()
+    description = models.TextField(blank=True)
+    legend = models.CharField(max_length=500, blank=True)
+    footer = models.TextField(blank=True)
+    sources = models.TextField(blank=True)
+    credits = models.TextField(blank=True)
+    show_download_links = models.BooleanField(default=True)
     # The meta
-    similar_tables = db.ListProperty(db.Key, default=None)
-    tags = db.ListProperty(db.Key, default=None)
-    is_published = db.BooleanProperty(required=True)
-    show_in_feeds = db.BooleanProperty(required=True, default=True)
+    tags = models.ManyToManyField('Tag', blank=True)
+    is_published = models.BooleanField()
+    show_in_feeds = models.BooleanField(default=True)
+    objects = TableManager()
+    live = TableLiveManager()
+    
+    class Meta:
+        ordering = ("-publication_date",)
     
     def __unicode__(self):
         return self.title
     
-    def __repr__(self):
-        return '<Table: %s>' % self.title.encode("utf-8")
-    
+    @models.permalink
     def get_absolute_url(self):
-        return u'/%s/' % self.slug
+        return ('table-detail', [self.slug,])
     
+    @models.permalink
     def get_csv_url(self):
-        return u'/csv/%s' % self.csv_name
+        return ('table-csv', [self.slug,])
     
+    @models.permalink
     def get_xls_url(self):
-        return u'/xls/%s' % self.slug
+        return ('table-xls', [self.slug,])
     
+    @models.permalink
     def get_json_url(self):
-        return u'/json/%s' % self.slug
+        return ('table-json', [self.slug,])
     
     def get_share_url(self):
         """
         The link we can use for share buttons.
         """
-        return 'http://spreadsheets.latimes.com%s' % self.get_absolute_url()
+        site = Site.objects.get_current()
+        return 'http://%s%s' % (site.domain, self.get_absolute_url())
     
     def get_tablefu_opts(self):
         return yaml.load(self.yaml_data).get('column_options', {})
@@ -73,29 +74,9 @@ class Table(db.Model):
         """
         Trick the data out with TableFu.
         """
-        from django.utils import simplejson
-        csv = simplejson.loads(unicode(self.csv_data))
-        return TableFu(csv, **self.get_tablefu_opts())
-    
-    def get_rendered_html(self):
-        """
-        Create the rendered HTML for this table.
-        """
-        import os
-        this_dir = os.path.dirname(__file__)
-        template_path = os.path.join(this_dir, '../templates/table_content.html')
-        from google.appengine.ext.webapp import template
-        return template.render(template_path, { 
-            'object': self, 
-            'table': self.get_tablefu(),
-            'size_choices': [1,2,3,4],
-        })
-    
-    def get_tag_list(self):
-        """
-        Return all the Tag objects connected to this object.
-        """
-        return db.get(self.tags)
+        path = os.path.join(settings.CSV_DIR, self.csv_name)
+        data = open(path, 'r')
+        return TableFu(data, **self.get_tablefu_opts())
     
     def get_rendered_tag_list(self, html=True, conjunction='and'):
         """
@@ -104,7 +85,7 @@ class Table(db.Model):
         By default a HTML link list that's ready for the table detail page.
         """
         from django.utils.text import get_text_list
-        tag_list = self.get_tag_list()
+        tag_list = list(self.tags.all())
         tag_list.sort(key=lambda x: x.title)
         if html:
             tag_list = ['<a href="%s">%s</a>' % (i.get_absolute_url(), i.title)
@@ -124,58 +105,28 @@ class Table(db.Model):
         Returns a list of tags that ready for the META keywords tag on
         the table_detail page.
         """
-        tag_list = tag_list = self.get_tag_list()
+        tag_list = list(self.tags.all())
         tag_list.sort(key=lambda x: x.title)
         return ", ".join([i.title.lower() for i in tag_list])
-    
-    def get_similar_tables(self):
-        """
-        Returns a list of Keys for the tables that share tags with this object,
-        ordered by the number of similar tags.
-        """
-        self_key = self.key()
-        related_dict = {}
-        # Loop through all of the tags
-        for tag in self.get_tag_list():
-            # Get each table that shares this tag
-            table_set = Table.all().filter('tags =', tag.key())
-            # Exclude the current table
-            for table in table_set:
-                # Exclude this table from the list
-                this_key = table.key()
-                if this_key == self_key:
-                    continue
-                # If it's a different table, increase the related count by 1
-                try:
-                    related_dict[this_key] += 1
-                except KeyError:
-                    related_dict[this_key] = 1
-        # Sort it into a list ranked by the count
-        related_list = related_dict.items()
-        related_list.sort(key=lambda x: x[1], reverse=True)
-        # Return just the keys
-        return [i[0] for i in related_list]
-    
-    def get_similar_tables_list(self):
-        """
-        Get a list of the related table objects, not keys.
-        """
-        return db.get(self.similar_tables)
 
 
-class Tag(db.Model):
+class Tag(models.Model):
     """
     A descriptive label connected to a table.
     """
-    title = db.StringProperty(required=True)
-    slug = db.StringProperty(required=True)
+    title = models.CharField(max_length=100)
+    slug = models.SlugField()
+    objects = TagManager()
+    
+    class Meta:
+        ordering = ('title',)
     
     def __unicode__(self):
         return self.title
     
-    def __repr__(self):
-        return '<Tag: %s>' % self.title.encode("utf-8")
-    
+    @models.permalink
     def get_absolute_url(self):
-        return u'/tag/%s/page/1/' % self.slug
+        return ('tag-page', [self.slug, 1])
+    
+
 

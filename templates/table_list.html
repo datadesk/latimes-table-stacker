@@ -4,10 +4,7 @@
 {% block title %}{{ headline }} - {{ block.super }}{% endblock %}
 
 {% block headline %}
-<a href="/feeds/latest/">
-    <img src="/media/img/rss/rss_notext.gif" class="rss">
-</a>
-<h1>{{ headline|safe }}{% ifnotequal page_number 1 %}&nbsp;<span style="font-size:16px;">Page {{ page_number }}</span>{% endifnotequal %}</h1>
+<h1 style="font-size:28px;">{{ headline|safe }}{% ifnotequal page_number 1 %}&nbsp;<span style="font-size:16px;">Page {{ page_number }}</span>{% endifnotequal %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -16,8 +13,8 @@
             {% for obj in object_list %}
             <tr id="{{ obj.get_absolute_url }}">
                 <td style="{% if not forloop.first %}border-top: 1px dotted gray;{% endif %}{% if forloop.last %}border-bottom: 1px dotted gray;{% endif %}">
-                    <h2><a class="headline" href="{{ obj.get_absolute_url }}">{{ obj|safe }}</a></h2>
-                    <span class="pubdate">{{ obj.publication_date|date:"N j, Y" }}</span>
+                    <h2><a class="headline serif" href="{{ obj.get_absolute_url }}">{{ obj|safe }}</a></h2>
+                    <span class="pubdate">{{ obj.publication_date|date:"N j, Y" }},</span>
                     <span class="byline">{% if obj.byline %}&nbsp;By&nbsp;{{ obj.byline }}{% endif %}</span>
                     <p class="description">{% if obj.description %}{{ obj.description|trim_p:1|striptags|safe }}{% endif %}</p>
                 </td>
@@ -27,7 +24,7 @@
     </table>
     <div class="clear pad10vert"></div>
     {% if has_next %}
-        <a href="/page/{{ next_page_number }}/">
+        <a href="{% url table-page next_page_number %}">
             More Spreadsheets
         </a>
         <div class="clear pad5vert"></div>
