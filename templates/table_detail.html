@@ -21,9 +21,9 @@
 {% endif %}
 
 {% block extra-js %}
-    <script src='{{ MEDIA_URL }}js/jquery.tablesorter.js' type='text/javascript'></script>
-    <script src='{{ MEDIA_URL }}js/jquery.tablesorter.pager.js' type='text/javascript'></script>
-    <script src='{{ MEDIA_URL }}js/jquery.tablesorter.multipagefilter.js' type='text/javascript'></script>
+    <script src='{{ STATIC_URL }}js/jquery.tablesorter.js' type='text/javascript'></script>
+    <script src='{{ STATIC_URL }}js/jquery.tablesorter.pager.js' type='text/javascript'></script>
+    <script src='{{ STATIC_URL }}js/jquery.tablesorter.multipagefilter.js' type='text/javascript'></script>
     <script type="text/javascript">
         /* For picking out bits from the query string */
         var getParameterByName = function(name) {
@@ -64,12 +64,8 @@
     <div id="table_fu">
     <div class="clear"></div>
     
-    {% if object.similar_tables %}
-        <div id="similar">{% include "similar_tables.html" %}</div>
-    {% endif %}
-    
     {% if object.description %}
-        <div id="description" {% if object.similar_tables %}style="width:660px;"{% endif %}>{{ object.description|safe }}</div>
+        <div id="description">{{ object.description|safe }}</div>
     {% endif %}
     
     <div class="clear"></div>
@@ -94,11 +90,11 @@
             <div id="filter">Search: <input type="text"></div>
             <div id="pager" class="pager">
               <form {% ifequal table.total_pages 1 %}style="display:none !important;"{% endifequal %}>
-                <img src="{{ MEDIA_URL }}img/first.png" class="first">
-                <img src="{{ MEDIA_URL }}img/prev.png" class="prev">
+                <img src="{{ STATIC_URL }}img/first.png" class="first">
+                <img src="{{ STATIC_URL }}img/prev.png" class="prev">
                 <span class="pagedisplay"/>1/{{ table.total_pages }}</span>
-                <img src="{{ MEDIA_URL }}img/next.png" class="next">
-                <img src="{{ MEDIA_URL }}img/last.png" class="last">
+                <img src="{{ STATIC_URL }}img/next.png" class="next">
+                <img src="{{ STATIC_URL }}img/last.png" class="last">
                 <select class="pagesize">
                     {% for page_size in table.page_size_list %}
                     <option {% if forloop.first %}selected="selected"{% endif %} value="{{ page_size }}">{{ page_size }}</option>

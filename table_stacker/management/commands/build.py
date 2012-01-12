@@ -5,6 +5,7 @@ import shutil
 from table_stacker import views
 from django.http import Http404
 from django.conf import settings
+from django.core import management
 from django.shortcuts import render
 from table_stacker.models import Table, Tag
 from table_stacker.feeds import LatestTables
@@ -81,9 +82,11 @@ class Command(BaseCommand):
         # Then recreate it from scratch
         os.makedirs(settings.BUILD_DIR)
         
-        # Copy the media directory
-        self.stdout.write("Building media directory\n")
-        shutil.copytree(settings.MEDIA_ROOT, os.path.join( settings.BUILD_DIR, 'media'))
+        # Copy the static files
+        self.stdout.write("Building static files\n")
+        management.call_command("collectstatic", interactive=False, verbosity=0)
+        shutil.copytree(settings.STATIC_ROOT, os.path.join(settings.BUILD_DIR, 'static'))
+        shutil.copytree(settings.MEDIA_ROOT, os.path.join(settings.BUILD_DIR, 'media'))
         
         # Load all YAML files into the local database
         self.stdout.write("Building database\n")
