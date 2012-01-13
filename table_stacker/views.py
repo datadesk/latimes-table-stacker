@@ -4,7 +4,6 @@ from table_stacker.models import Table
 from django.test.client import RequestFactory
 from django.views.generic import ListView, DetailView
 from django.shortcuts import render, get_object_or_404
-from django.core.paginator import  InvalidPage, EmptyPage
 
 
 class TableListView(ListView):
