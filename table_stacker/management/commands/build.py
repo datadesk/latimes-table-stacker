@@ -97,7 +97,7 @@ class Command(BaseCommand):
         
         # Build index page
         self.stdout.write("Building table lists\n")
-        views.TableListView().build()
+        views.TableListView().build_queryset()
         
         # Build table detail pages
         self.stdout.write("Building table detail pages\n")

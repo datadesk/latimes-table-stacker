@@ -37,6 +37,11 @@ class TableBaseAPIView(DetailView):
     def build_queryset(self):
         """
         Build flat HTML files for all of the objects in the queryset.
+        
+        Example usage:
+            
+            TableDetailViewName().build_queryset()
+        
         """
         [self.build_object(obj) for obj in self.queryset]
 

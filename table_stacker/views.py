@@ -13,9 +13,14 @@ class TableListView(ListView):
     template_name = 'table_list.html'
     queryset = Table.live.all()
     
-    def build(self):
+    def build_queryset(self):
         """
         Build the view as a flat HTML file.
+        
+        Example usage:
+            
+            TableListView().build_queryset()
+        
         """
         # Make a fake request
         self.request = RequestFactory().get("/")
@@ -65,6 +70,11 @@ class TableDetailView(DetailView):
     def build_queryset(self):
         """
         Build flat HTML files for all of the objects in the queryset.
+        
+        Example usage:
+            
+            TableDetailView().build_queryset()
+        
         """
         [self.build_object(obj) for obj in self.queryset]
 
