@@ -97,28 +97,11 @@ class Command(BaseCommand):
         
         # Build index page
         self.stdout.write("Building table lists\n")
-        response = views.table_index(rf.get("/"))
-        self.write('index.html', response.content)
-        
-        # Build table list pagination
-        os.makedirs(os.path.join(settings.BUILD_DIR, 'page'))
-        pages = int(math.ceil(Table.objects.all().count() / 10.0))
-        for page in range(1, pages+1):
-            response = views.table_page(rf.get("/pages/%s/" % page), page)
-            path = os.path.join(settings.BUILD_DIR, 'page', str(page))
-            os.makedirs(path)
-            self.write(os.path.join(path, 'index.html'), response.content)
+        views.TableListView().build()
         
         # Build table detail pages
         self.stdout.write("Building table detail pages\n")
-        for table in Table.objects.all():
-            try:
-                response = views.table_detail(rf.get("/%s/" % table.slug), table.slug)
-            except Http404:
-                continue
-            path = os.path.join(settings.BUILD_DIR, table.slug)
-            os.makedirs(path)
-            self.write(os.path.join(path, 'index.html'), response.content)
+        views.TableDetailView().build_queryset()
         
         # JSON dumps of tables
         self.stdout.write("Building API dumps\n")

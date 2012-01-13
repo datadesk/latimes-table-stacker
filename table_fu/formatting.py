@@ -38,8 +38,8 @@ def ap_state(value):
         return value
 
 
-def bubble(value, yes_icon='/media/img/bubble_yes.png',
-    no_icon="/media/img/bubble_no.png", empty="&mdash;"):
+def bubble(value, yes_icon='/static/img/bubble_yes.png',
+    no_icon="/static/img/bubble_no.png", empty="&mdash;"):
     """
     Returns one of two "Consumer Reports" style bubbles that indicate:
     
@@ -58,8 +58,8 @@ def bubble(value, yes_icon='/media/img/bubble_yes.png',
 
 
 def checkbox(value,
-    yes_icon='/media/img/checkbox_yes.png',
-    no_icon='/media/img/checkbox_no.png',
+    yes_icon='/static/img/checkbox_yes.png',
+    no_icon='/static/img/checkbox_no.png',
     ):
     """
     Returns one of two icons:
@@ -274,9 +274,9 @@ def title(value):
     return re.sub("\d([A-Z])", lambda m: m.group(0).lower(), t)
 
 
-def tribubble(value, yes_icon='/media/img/tribubble_yes.png',
-    partly_icon='/media/img/tribubble_partly.png',
-    no_icon="/media/img/tribubble_no.png", empty="&mdash;"):
+def tribubble(value, yes_icon='/static/img/tribubble_yes.png',
+    partly_icon='/static/img/tribubble_partly.png',
+    no_icon="/static/img/tribubble_no.png", empty="&mdash;"):
     """
     Returns one of three "Consumer Reports" style bubbles that indicate:
     
@@ -298,8 +298,8 @@ def tribubble(value, yes_icon='/media/img/tribubble_yes.png',
 
 
 def vote(value,
-    yes_vote='/media/img/thumb_up.png',
-    no_vote='/media/img/thumb_down.png',
+    yes_vote='/static/img/thumb_up.png',
+    no_vote='/static/img/thumb_down.png',
     did_not_vote="<b style='font-size:130%;'>&mdash;</b>"
     ):
     """

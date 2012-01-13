@@ -76,4 +76,5 @@ class Table(models.Model):
         path = os.path.join(settings.CSV_DIR, self.csv_name)
         data = open(path, 'r')
         return TableFu(data, **self.get_tablefu_opts())
+    tablefu = property(get_tablefu)
 

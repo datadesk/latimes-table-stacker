@@ -2,11 +2,7 @@ body {font-size:14px;}
 .serif {font-family:Georgia, serif;}
 .sans {font-family:Arial, sans-serif;}
 .rss {position: absolute; right:0; top:45%;}
-#table_list h2 {margin:0; padding-top:10px; padding-bottom:0; font-size:18px;}
-#table_list .byline {font-size:12px;}
-#table_list .pubdate {font-size:12px;}
-#table_list .description {margin-top:1px; margin-bottom:10px;}
-#table_list tbody tr:nth-child(even) td, tbody tr.even td {background-color:white;}
+h1.index {font-size:28px;}
 #header {margin:15px 0 0 0;}
 #header div#share {float:right; position:relative;}
 #header div#share ul {margin-top:25px}
@@ -37,11 +33,11 @@ h1#title {margin:0 0 5px 0; font-size:28px;}
 #table_fu #data{border-collapse: collapse; margin:0 0 14px 0; width: 100%; font-family: Arial, sans serif;}
 #table_fu #data tbody tr:nth-child(even) td, tbody tr.even td {background-color:white;}
 #table_fu td, #table_fu th{padding: 7px; border-bottom: 1px dotted black; text-align: center;}
-#table_fu th{cursor: pointer; vertical-align: bottom; color: black; font-weight: bold; font-size: 13px !important; text-transform: none; letter-spacing: 0.5px; padding: 4px 14px 4px 7px; background: white url(/media/img/both.png) no-repeat 99% 50%;}
+#table_fu th{cursor: pointer; vertical-align: bottom; color: black; font-weight: bold; font-size: 13px !important; text-transform: none; letter-spacing: 0.5px; padding: 4px 14px 4px 7px; background: white url(/static/img/both.png) no-repeat 99% 50%;}
 #table_fu thead tr {border-top: 1px solid black;border-bottom: 1px solid black;}
 #table_fu th.sorted, td.sorted {background-color: #e5ecf9 !important;}
-#table_fu th.headerSortDown{background: #e5ecf9 url(/media/img/up.png) no-repeat 99% 50%;}
-#table_fu th.headerSortUp{background: #e5ecf9 url(/media/img/down.png) no-repeat 99% 50%;}
+#table_fu th.headerSortDown{background: #e5ecf9 url(/static/img/up.png) no-repeat 99% 50%;}
+#table_fu th.headerSortUp{background: #e5ecf9 url(/static/img/down.png) no-repeat 99% 50%;}
 #table_fu img.bubble {margin: auto;}
 #table_fu img.vote {margin:auto;}
 /* Bullet graphs */

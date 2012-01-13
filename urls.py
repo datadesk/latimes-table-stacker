@@ -1,14 +1,12 @@
 from django.conf.urls.defaults import patterns, include, url
 from table_stacker.feeds import LatestTables
+from table_stacker.models import Table
 from django.conf import settings
 from django.contrib.syndication.views import feed
-from django.contrib import admin
-admin.autodiscover()
+from table_stacker.views import TableListView, TableDetailView
 
 
 urlpatterns = patterns('',
-    # Admin
-    (r'^admin/', include(admin.site.urls)),
     # Dev static files, like admin media
     url(r'^static/(?P<path>.*)$', 'django.contrib.staticfiles.views.serve'),
     # Prod static files, like css and js that power the public-facing pages
@@ -19,10 +17,7 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns("table_stacker",
     # Homepage
-    url(r'^$', 'views.table_index', name='table-index'),
-    
-    # Pagination
-    url(r'^page/(?P<page>[0-9]+)/$', 'views.table_page', name='table-page'),
+    url(r'^$', TableListView.as_view(), name='table-list'),
     
     # Serialization
     url(r'^api/(?P<slug>[-\w]+).xls$', 'api.table_xls', name='table-xls'),
@@ -35,6 +30,6 @@ urlpatterns += patterns("table_stacker",
     url(r'^sitemap.xml$', 'views.sitemap', name='sitemap'),
     
     # Table detail
-    url(r'^(?P<slug>[-\w]+)/$', 'views.table_detail', name='table-detail'),
+    url(r'^(?P<slug>[-\w]+)/$', TableDetailView.as_view(), name='table-detail'),
 )
 
