@@ -6,10 +6,10 @@ Features
 ========
 
 * Convert a CSV file into an interactive HTML table that sorts, filters and paginates.
-* Quickly publish interactives tables to Google App Engine and serve them on the web.
+* Quickly publish as static files to serve on the web.
+* Sync static files against published data on `Amazon S3 <http://en.wikipedia.org/wiki/Amazon_S3>`_.
 * Instantly syndicate data as CSV, XLS and JSON.
 * Post an RSS feed and sitemap that promote the latest data.
-* Link similar datasets together with blog-style tagging.
 
 .. raw:: html
 
@@ -18,7 +18,7 @@ Features
 In the wild
 ===========
 
-* `White-label deployment <http://table-stacker.appspot.com>`_
+* `White-label deployment <http://table-stacker.s3-website-us-west-1.amazonaws.com/>`_
 * Everything at `spreadsheets.latimes.com <http://spreadsheets.latimes.com/>`_
 * `Census data <http://www.starledger.com/str/indexpage/project/2010-Census-populations-by-town.htm>`_ from The New Jersey Star Ledger
 
@@ -34,14 +34,9 @@ This tutorial will walk you through the process of installing Table Stacker and 
 **Requirements**
 
 * `git <http://git-scm.com/>`_
-* `python2.5 <http://www.python.org/download/releases/2.5.5/>`_
-* `virtualenv <http://pypi.python.org/pypi/virtualenv>`_
+* `python <http://www.python.org/>`_
 
-**01. Register a new application with Google App Engine**
-
-Go to `https://appengine.google.com/ <https://appengine.google.com/>`_. Don't download the SDK. Don't read the docs. Just create an account and mint a new application with a name like ``my-table-stacker``. It serves as the unique identifer for your app inside the Google system, and the namespace where it will first appear online (i.e. `http://my-table-stacker.appspot.com <http://my-table-stacker.appspot.com/>`_).
-
-**02. Install the code on your computer**
+**01. Install the code on your computer**
 
 It's not required, but I recommend creating a virtual environment to store your application. I like to do this with the Python module `virtualenv <http://pypi.python.org/pypi/virtualenv>`_, which creates a walled-off garden for the Python code to work without distraction from the outside world. If you don't have it, you'll need to install it now, which just might be as easy as
 
@@ -63,7 +58,7 @@ Now jump into the directory it creates.
 
 .. code-block:: bash
 
-    $ cd table-stacker
+    $ cd my-table-stacker
 
 Activate the private environment with virtualenv's custom command.
 
@@ -71,7 +66,7 @@ Activate the private environment with virtualenv's custom command.
 
     $ . bin/activate
 
-Download the latest version of the code repository into a directory called ``project``.
+Download the latest version of the code repository into a directory called ``project``. 
 
 .. code-block:: bash
 
@@ -83,59 +78,99 @@ And jump in and get ready to work.
 
     $ cd project
 
-**03. Set your application id**
-
-In the ``project`` folder you will find a file called ``app.yaml``. It contains the basic configuration for your Google App Engine site. You only need to make one little change: Replace ``my-table-stacker`` with the application id you registered in step one.
+Install our app's Python dependencies.
 
 .. code-block:: bash
 
-    application: my-table-stacker
+    $ pip install -r requirements.txt
 
-**04. Launch a test version of the site**
-
-You'll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the ``project`` directory and fire off the following. It is a `Django management command <http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port>`_ that will start a test version of the site on your machine.
-
-Note that you'll see me using ``python2.5`` throughout, instead of the usual ``python`` command. This is because I work in Ubuntu and I've found that Google App Engine `is not compatible with newer versions of Python <http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/>`_. I suspect is is the case with other operating systems, but I'm not sure. So, I'd recommend using ``python2.5`` but, as always, your mileage may vary. 
+Create the project's database
 
 .. code-block:: bash
 
-    $ python2.5 manage.py runserver
+    $ python manage.py syncdb
 
-**05. Load the example table**
+**02. Build the example tables**
 
-You'll learn how to layout your own data later, but for now we'll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our ``loadtable`` management command to follow instructions in the ``major-us-coal-mines-2009`` configuration file and create a new table in the test site we just launched at `http://localhost:8000 <http://localhost:8000>`_.
-
-.. code-block:: bash
-
-    $ python2.5 manage.py loadtable major-us-coal-mines-2009 --host=localhost:8000
-
-**06. Check it out**
-
-If everything clicked, you should see your demo site up and running with the coal mines table at `http://localhost:8000 <http://localhost:8000>`_.
-
-**07. Deploy your app**
-
-Once everything's set, deploying your application to Google App Engine only takes a single command. Here it is.
+You'll learn how to layout your own data later, but for now we'll work with the example files. Jump back to your first terminal shell and drop the following line, which instructs our ``build`` management command to bake out a static site using the instructions in ``settings.py`` and the table recipes in the ``yaml`` directory.
 
 .. code-block:: bash
 
-    $ python2.5 manage.py update
+    $ python manage.py build
 
-**08. Load the demo table on your live site**
+**03. Launch the static version of the site**
 
-You'll run the same ``loadtable`` command from step five, but drop the host option. It will post to your live site by default, so it's unnecessary this time around.
+You'll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the ``project`` directory and fire off the following. It is a Django management command that will start a test version of the site on your machine, tailored to serve the static files we used created.
 
 .. code-block:: bash
 
-    $ python2.5 manage.py loadtable major-us-coal-mines-2009 
+    $ python manage.py buildserver
 
-**09. Check it out**
+**04. Check it out**
 
-You should now see your starter site up and running at `http://my-table-stacker.appspot.com <http://my-table-stacker.appspot.com/>`_. You might draw errors for a few minutes as the app builds its indexes, but don't worry. It'll be ready after you have a cup of coffee.
+If everything clicked, you should see your demo site up and running with all the example tables at `http://localhost:8000 <http://localhost:8000>`_.
 
-**10. Publish you own data table**
+**05. Deploy your app**
 
-Before you can publish your own data table, you'll need to learn about our YAML-based configuration system. But don't worry, it's not that hard. You can read about it in the configuration section or school yourself by mimicking the examples files in the project's ``yaml`` subdirectory folder.
+The static files we've created in your ``build`` directory could probably be served from most common web servers. So, if you've already
+got yours worked out, you can just stop here and deploy that folder where you like. 
+
+However, the app is prepared to help you easily deploy to `Amazon S3 <http://en.wikipedia.org/wiki/Amazon_S3>`_. To make that happen, you'll need to do a little set up. First, go to `aws.amazon.com/s3 <http://aws.amazon.com/s3>`_ and set up an account. Then you'll need to create a bucket for storing our files. If you need help there are some basic instructions `here <http://docs.amazonwebservices.com/AmazonS3/latest/gsg/>`_.
+
+Next configure the bucket to act as a website. Amazon's official instructions say to do the following::
+
+    In the bucket Properties pane, click the Website configuration tab. 
+
+    Select the Enabled check box.
+
+    In the Index Document Suffix text box, add the required index document name (index.html).
+
+Before you leave that pane, note the URL at the bottom. This is where your site will be published.
+
+Now, set your bucket name in the `settings.py` file.::
+
+    AWS_BUCKET_NAME = 'table-stacker'
+
+Next, install `s3cmd <http://s3tools.org/s3cmd>`_, a utility we'll use to move files back and forth between your desktop and S3. In Ubuntu, that's as simple as:
+
+.. code-block:: bash
+
+    $ sudo apt-get install s3cmd
+
+If you're Mac or Windows, you'll need to `download the file <http://s3tools.org/download>`_ and follow the installation instructions you find there.
+
+Once it's installed, we need to configure s3cmd with your Amazon login credentials. Go to Amazon's `security credentials <http://aws-portal.amazon.com/gp/aws/developer/account/index.html?action=access-key>`_ page and get your access key and secret access key. Then, from your terminal, run
+
+.. code-block:: bash
+
+    $ s3cmd --configure
+
+Finally, now that everything is set up, publishing your files to s3 is as simple as:
+
+.. code-block:: bash
+
+    $ python manage.py publish
+
+Once you do that, your site should appear at the the link provided in your AWS console. If you want to bind that to a subdomain of your site, say, www.tablestacker.com, you need to create a new CNAME record in your domain's DNS registration. You also need the name of your bucket to line up with the subdomain. Don't take it from me. Read the detailed instructions provided by Amazon. 
+
+.. code-block:: text
+
+    For example, if you have registered domain, www.example-bucket.com, you 
+    could create a bucket www.example-bucket.com, and add a DNS CNAME entry 
+    pointing to www.example-bucket.com.s3-website-<region>.amazonaws.com. 
+    All requests to http://www.example-bucket.com will be routed to 
+    www.example-bucket.com.s3-website-<region>.amazonaws.com.
+
+More documentation on that is available `here <http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?WebsiteHosting.html>`_.
+
+**06. Publish you own data table**
+
+Before you can publish your own data table, you'll need to learn about our YAML-based configuration system. But don't worry, it's not that hard. You can read about it in the configuration section or school yourself by mimicking the examples files in the project's ``yaml`` subdirectory folder. Then, doing the following:
+
+.. code-block:: bash
+
+    $ python manage.py build
+    $ python manage.py publish
 
 .. raw:: html
 
@@ -428,7 +463,7 @@ The following YAML configuration options specify how to present the columns in t
                   yes_icon: "http://example.com/yes.png"
                   no_icon: "http://example.com/no.png"
     
-    .. method:: checkbox(value, yes_icon='<img class="vote" src="/media/img/checkbox_yes.png">',  no_icon='<img class="vote" src="/media/img/checkbox_no.png">')
+    .. method:: checkbox(value, yes_icon='/media/img/checkbox_yes.png',  no_icon='/media/img/checkbox_no.png')
         
         Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.
         
@@ -631,7 +666,7 @@ The following YAML configuration options specify how to present the columns in t
                   no_icon: "http://example.com/no.png"
                   partly_icon: "http://example.com/partly.png"
     
-    .. method:: vote(value, yes_vote='<img class="vote" src="/media/img/thumb_up.png">', no_vote='<img class="vote" src="/media/img/thumb_down.png">', did_not_vote="<b style='font-size:130%;'>&mdash;</b>")
+    .. method:: vote(value, yes_vote='/media/img/thumb_up.png', no_vote='/media/img/thumb_down.png', did_not_vote="<b style='font-size:130%;'>&mdash;</b>")
     
         Returns one of three icons representing the outcome a vote: Yes (thumbs up); No (thumbs down); Did not vote (Bolded emdash). The first letter of each type is what should be provided, i.e. Y, N, anything else.
         
@@ -664,84 +699,47 @@ Interactions with the Table Stacker database are handled using custom `Django ma
 
 Like other Django commands, they are run by interacting with the ``manage.py`` file in your project's root directory.
 
-.. attribute:: deletealltables <config_file_name> [options]
+.. attribute:: build [options]
+    
+    Builds a static site with all the tables okayed for publication
+    
+    .. code-block:: bash
+        
+        $ python manage.py build
 
-    Deletes all tables in the database
-
-    .. cmdoption:: --host=<host_address>
-
-        An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. `http://my-table-stacker.appspot.com <http://my-table-stacker.appspot.com/>`_).
-
-        .. code-block:: bash
-
-            # Clear the database in your live site
-            $ python2.5 manage.py deletealltables 
-            # Or for a test site running on your local machine
-            $ python2.5 manage.py deletealltables --host=localhost:8000
-
-.. attribute:: deletetable <config_file_name> [options]
-
+.. attribute:: buildserver [options]
+    
     Delete the table outlined in the configuration file provided by the first argument.
-
-    .. cmdoption:: --host=<host_address>
-
-        An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. `http://my-table-stacker.appspot.com <http://my-table-stacker.appspot.com/>`_).
-
-        .. code-block:: bash
-
-            $ python2.5 manage.py deletetable config-file-name --host=localhost:8000
-
-.. attribute:: listtables [options]
-
-    List all of the configuration files.
-
-    .. cmdoption:: --host=<host_address>
-
-        An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. `http://my-table-stacker.appspot.com <http://my-table-stacker.appspot.com/>`_).
-
-        .. code-block:: bash
-
-            $ python2.5 manage.py listtables --host=localhost:8000
-
-.. attribute:: loadalltables [options]
-
-    Create or update all tables outlined in the directory of configuration file.
-
-    .. cmdoption:: --host=<host_address>
-
-        An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. `http://my-table-stacker.appspot.com <http://my-table-stacker.appspot.com/>`_).
-
-        .. code-block:: bash
-
-            $ python2.5 manage.py loadalltables --host=localhost:8000
-
-.. attribute:: loadtable <config_file_name> [options]
-
-    Create or update the table outlined in the configuration file provided by the first argument.
-
-    .. cmdoption:: --host=<host_address>
-
-        An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. `http://my-table-stacker.appspot.com <http://my-table-stacker.appspot.com/>`_).
-
-        .. code-block:: bash
-
-            $ python2.5 manage.py loadtable config-file-name --host=localhost:8000
-
-.. attribute:: runserver
-
-    The built-in command for firing up the Django test server. You can read more about it in `the official Django docs <http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port>`_.
-
+    
     .. code-block:: bash
+        
+        $ python manage.py buildserver
+        # Optionally, set the port for the server.
+        $ python manage.py buildserver 8080
 
-        $ python2.5 manage.py runserver
-
-.. attribute:: update
-
-    A custom command design for Google App Engine that deploys the code base to the web. Read more about it in the `google-app-engine-helper <http://code.google.com/p/google-app-engine-django/source/browse/trunk/README>`_ documentation.
-
+.. attribute:: publish [options]
+    
+    Sync the build directory with the Amazon S3 bucket specified in settings.py
+    
     .. code-block:: bash
+    
+        $ python manage.py publish
 
-        $ python2.5 manage.py update
+.. attribute:: unbuild [options]
+    
+    Empties the build directory
+    
+    .. code-block:: bash
+    
+        $ python manage.py unbuild
+
+.. attribute:: unpublish [options]
+    
+   Empties the Amazon S3 bucket defined in settings.py
+    
+    .. code-block:: bash
+    
+        $ python manage.py unpublish
 
 .. raw:: html
 
@@ -751,6 +749,17 @@ Customization
 =============
 
 Table Stacker is published with `minimal styling <http://table-stacker.appspot.com/>`_. If you want to adapt it for your site, you'll probably want to change the appearance and layout. The CSS styles that regulate the appearance of Table Stacker are stored in the ``/media/css`` directory. Change them and you'll change the appearance of the site. Table Stacker's layout is managed using `Django's templating system <http://docs.djangoproject.com/en/dev/ref/templates/>`_ and configured through a series of files in the ``templates`` directory. Change them and you'll change the layout of the site.
+
+Global settings
+---------------
+
+.. attribute:: SITE_NAME
+
+    A ``settings.py`` configuration that sets the site's name in meta data around the site, like the title tag and Facebook open graph tags.
+
+.. attribute:: FACEBOOK_ADMINS
+
+    A list of Facebook user ids included in the open graph tags in each page's head. Useful for configuring the site's footprint on Facebook. Set in ``settings.py``.
 
 .. raw:: html
 
@@ -765,6 +774,5 @@ This project would not be possible without the generous work of people like:
 * `Chris Amico <https://github.com/eyeseast>`_, who did the noble work of porting table-fu to `Python <https://github.com/eyeseast/python-tablefu>`_.
 * Christian Bach, the man who gave us `tablesorter <http://tablesorter.com/docs/>`_.
 * Thomas Suh Lauder, who has suggested many style improvements and formatting options.
-* The army of people who make something like `google-app-engine-django <http://code.google.com/p/google-app-engine-django/>`_ possible.
 
 

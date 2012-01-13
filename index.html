@@ -47,16 +47,16 @@
 <h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li>Convert a CSV file into an interactive HTML table that sorts, filters and paginates.</li>
-<li>Quickly publish interactives tables to Google App Engine and serve them on the web.</li>
+<li>Quickly publish as static files to serve on the web.</li>
+<li>Sync static files against published data on <a class="reference external" href="http://en.wikipedia.org/wiki/Amazon_S3">Amazon S3</a>.</li>
 <li>Instantly syndicate data as CSV, XLS and JSON.</li>
 <li>Post an RSS feed and sitemap that promote the latest data.</li>
-<li>Link similar datasets together with blog-style tagging.</li>
 </ul>
 <hr></div>
 <div class="section" id="in-the-wild">
 <h1>In the wild<a class="headerlink" href="#in-the-wild" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><a class="reference external" href="http://table-stacker.appspot.com">White-label deployment</a></li>
+<li><a class="reference external" href="http://table-stacker.s3-website-us-west-1.amazonaws.com/">White-label deployment</a></li>
 <li>Everything at <a class="reference external" href="http://spreadsheets.latimes.com/">spreadsheets.latimes.com</a></li>
 <li><a class="reference external" href="http://www.starledger.com/str/indexpage/project/2010-Census-populations-by-town.htm">Census data</a> from The New Jersey Star Ledger</li>
 </ul>
@@ -67,12 +67,9 @@
 <p><strong>Requirements</strong></p>
 <ul class="simple">
 <li><a class="reference external" href="http://git-scm.com/">git</a></li>
-<li><a class="reference external" href="http://www.python.org/download/releases/2.5.5/">python2.5</a></li>
-<li><a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a></li>
+<li><a class="reference external" href="http://www.python.org/">python</a></li>
 </ul>
-<p><strong>01. Register a new application with Google App Engine</strong></p>
-<p>Go to <a class="reference external" href="https://appengine.google.com/">https://appengine.google.com/</a>. Don&#8217;t download the SDK. Don&#8217;t read the docs. Just create an account and mint a new application with a name like <tt class="docutils literal"><span class="pre">my-table-stacker</span></tt>. It serves as the unique identifer for your app inside the Google system, and the namespace where it will first appear online (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
-<p><strong>02. Install the code on your computer</strong></p>
+<p><strong>01. Install the code on your computer</strong></p>
 <p>It&#8217;s not required, but I recommend creating a virtual environment to store your application. I like to do this with the Python module <a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a>, which creates a walled-off garden for the Python code to work without distraction from the outside world. If you don&#8217;t have it, you&#8217;ll need to install it now, which just might be as easy as</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install virtualenv
 <span class="c"># Or maybe ...</span>
@@ -86,7 +83,7 @@
 </pre></div>
 </div>
 <p>Now jump into the directory it creates.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>table-stacker
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>my-table-stacker
 </pre></div>
 </div>
 <p>Activate the private environment with virtualenv&#8217;s custom command.</p>
@@ -101,38 +98,70 @@
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>project
 </pre></div>
 </div>
-<p><strong>03. Set your application id</strong></p>
-<p>In the <tt class="docutils literal"><span class="pre">project</span></tt> folder you will find a file called <tt class="docutils literal"><span class="pre">app.yaml</span></tt>. It contains the basic configuration for your Google App Engine site. You only need to make one little change: Replace <tt class="docutils literal"><span class="pre">my-table-stacker</span></tt> with the application id you registered in step one.</p>
-<div class="highlight-bash"><div class="highlight"><pre>application: my-table-stacker
+<p>Install our app&#8217;s Python dependencies.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install -r requirements.txt
 </pre></div>
 </div>
-<p><strong>04. Launch a test version of the site</strong></p>
-<p>You&#8217;ll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the <tt class="docutils literal"><span class="pre">project</span></tt> directory and fire off the following. It is a <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port">Django management command</a> that will start a test version of the site on your machine.</p>
-<p>Note that you&#8217;ll see me using <tt class="docutils literal"><span class="pre">python2.5</span></tt> throughout, instead of the usual <tt class="docutils literal"><span class="pre">python</span></tt> command. This is because I work in Ubuntu and I&#8217;ve found that Google App Engine <a class="reference external" href="http://www.codigomanso.com/en/2010/05/google-app-engine-en-ubuntu-10-4-lucid-lynx/">is not compatible with newer versions of Python</a>. I suspect is is the case with other operating systems, but I&#8217;m not sure. So, I&#8217;d recommend using <tt class="docutils literal"><span class="pre">python2.5</span></tt> but, as always, your mileage may vary.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py runserver
+<p>Create the project&#8217;s database</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py syncdb
 </pre></div>
 </div>
-<p><strong>05. Load the example table</strong></p>
-<p>You&#8217;ll learn how to layout your own data later, but for now we&#8217;ll work with an example file: a list of the largest coal mines active in the United States. Jump back to your first terminal shell and drop the following line, which instructs our <tt class="docutils literal"><span class="pre">loadtable</span></tt> management command to follow instructions in the <tt class="docutils literal"><span class="pre">major-us-coal-mines-2009</span></tt> configuration file and create a new table in the test site we just launched at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py loadtable major-us-coal-mines-2009 --host<span class="o">=</span>localhost:8000
+<p><strong>02. Build the example tables</strong></p>
+<p>You&#8217;ll learn how to layout your own data later, but for now we&#8217;ll work with the example files. Jump back to your first terminal shell and drop the following line, which instructs our <tt class="docutils literal"><span class="pre">build</span></tt> management command to bake out a static site using the instructions in <tt class="docutils literal"><span class="pre">settings.py</span></tt> and the table recipes in the <tt class="docutils literal"><span class="pre">yaml</span></tt> directory.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
 </pre></div>
 </div>
-<p><strong>06. Check it out</strong></p>
-<p>If everything clicked, you should see your demo site up and running with the coal mines table at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
-<p><strong>07. Deploy your app</strong></p>
-<p>Once everything&#8217;s set, deploying your application to Google App Engine only takes a single command. Here it is.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py update
+<p><strong>03. Launch the static version of the site</strong></p>
+<p>You&#8217;ll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the <tt class="docutils literal"><span class="pre">project</span></tt> directory and fire off the following. It is a Django management command that will start a test version of the site on your machine, tailored to serve the static files we used created.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py buildserver
 </pre></div>
 </div>
-<p><strong>08. Load the demo table on your live site</strong></p>
-<p>You&#8217;ll run the same <tt class="docutils literal"><span class="pre">loadtable</span></tt> command from step five, but drop the host option. It will post to your live site by default, so it&#8217;s unnecessary this time around.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py loadtable major-us-coal-mines-2009
+<p><strong>04. Check it out</strong></p>
+<p>If everything clicked, you should see your demo site up and running with all the example tables at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
+<p><strong>05. Deploy your app</strong></p>
+<p>The static files we&#8217;ve created in your <tt class="docutils literal"><span class="pre">build</span></tt> directory could probably be served from most common web servers. So, if you&#8217;ve already
+got yours worked out, you can just stop here and deploy that folder where you like.</p>
+<p>However, the app is prepared to help you easily deploy to <a class="reference external" href="http://en.wikipedia.org/wiki/Amazon_S3">Amazon S3</a>. To make that happen, you&#8217;ll need to do a little set up. First, go to <a class="reference external" href="http://aws.amazon.com/s3">aws.amazon.com/s3</a> and set up an account. Then you&#8217;ll need to create a bucket for storing our files. If you need help there are some basic instructions <a class="reference external" href="http://docs.amazonwebservices.com/AmazonS3/latest/gsg/">here</a>.</p>
+<p>Next configure the bucket to act as a website. Amazon&#8217;s official instructions say to do the following:</p>
+<div class="highlight-python"><pre>In the bucket Properties pane, click the Website configuration tab.
+
+Select the Enabled check box.
+
+In the Index Document Suffix text box, add the required index document name (index.html).</pre>
+</div>
+<p>Before you leave that pane, note the URL at the bottom. This is where your site will be published.</p>
+<p>Now, set your bucket name in the <cite>settings.py</cite> file.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">AWS_BUCKET_NAME</span> <span class="o">=</span> <span class="s">&#39;table-stacker&#39;</span>
 </pre></div>
 </div>
-<p><strong>09. Check it out</strong></p>
-<p>You should now see your starter site up and running at <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>. You might draw errors for a few minutes as the app builds its indexes, but don&#8217;t worry. It&#8217;ll be ready after you have a cup of coffee.</p>
-<p><strong>10. Publish you own data table</strong></p>
-<p>Before you can publish your own data table, you&#8217;ll need to learn about our YAML-based configuration system. But don&#8217;t worry, it&#8217;s not that hard. You can read about it in the configuration section or school yourself by mimicking the examples files in the project&#8217;s <tt class="docutils literal"><span class="pre">yaml</span></tt> subdirectory folder.</p>
+<p>Next, install <a class="reference external" href="http://s3tools.org/s3cmd">s3cmd</a>, a utility we&#8217;ll use to move files back and forth between your desktop and S3. In Ubuntu, that&#8217;s as simple as:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install s3cmd
+</pre></div>
+</div>
+<p>If you&#8217;re Mac or Windows, you&#8217;ll need to <a class="reference external" href="http://s3tools.org/download">download the file</a> and follow the installation instructions you find there.</p>
+<p>Once it&#8217;s installed, we need to configure s3cmd with your Amazon login credentials. Go to Amazon&#8217;s <a class="reference external" href="http://aws-portal.amazon.com/gp/aws/developer/account/index.html?action=access-key">security credentials</a> page and get your access key and secret access key. Then, from your terminal, run</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>s3cmd --configure
+</pre></div>
+</div>
+<p>Finally, now that everything is set up, publishing your files to s3 is as simple as:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py publish
+</pre></div>
+</div>
+<p>Once you do that, your site should appear at the the link provided in your AWS console. If you want to bind that to a subdomain of your site, say, www.tablestacker.com, you need to create a new CNAME record in your domain&#8217;s DNS registration. You also need the name of your bucket to line up with the subdomain. Don&#8217;t take it from me. Read the detailed instructions provided by Amazon.</p>
+<div class="highlight-text"><div class="highlight"><pre>For example, if you have registered domain, www.example-bucket.com, you
+could create a bucket www.example-bucket.com, and add a DNS CNAME entry
+pointing to www.example-bucket.com.s3-website-&lt;region&gt;.amazonaws.com.
+All requests to http://www.example-bucket.com will be routed to
+www.example-bucket.com.s3-website-&lt;region&gt;.amazonaws.com.
+</pre></div>
+</div>
+<p>More documentation on that is available <a class="reference external" href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?WebsiteHosting.html">here</a>.</p>
+<p><strong>06. Publish you own data table</strong></p>
+<p>Before you can publish your own data table, you&#8217;ll need to learn about our YAML-based configuration system. But don&#8217;t worry, it&#8217;s not that hard. You can read about it in the configuration section or school yourself by mimicking the examples files in the project&#8217;s <tt class="docutils literal"><span class="pre">yaml</span></tt> subdirectory folder. Then, doing the following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
+<span class="nv">$ </span>python manage.py publish
+</pre></div>
+</div>
 <hr></div>
 <div class="section" id="configuration">
 <h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
@@ -430,7 +459,7 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 
 <dl class="method">
 <dt id="checkbox">
-<tt class="descname">checkbox</tt><big>(</big><em>value</em>, <em>yes_icon='&lt;img class=&quot;vote&quot; src=&quot;/media/img/checkbox_yes.png&quot;&gt;'</em>, <em>no_icon='&lt;img class=&quot;vote&quot; src=&quot;/media/img/checkbox_no.png&quot;&gt;'</em><big>)</big><a class="headerlink" href="#checkbox" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">checkbox</tt><big>(</big><em>value</em>, <em>yes_icon='/media/img/checkbox_yes.png'</em>, <em>no_icon='/media/img/checkbox_no.png'</em><big>)</big><a class="headerlink" href="#checkbox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
@@ -633,7 +662,7 @@ you might need to specifiy the date format using <a class="reference external" h
 
 <dl class="method">
 <dt id="vote">
-<tt class="descname">vote</tt><big>(</big><em>value</em>, <em>yes_vote='&lt;img class=&quot;vote&quot; src=&quot;/media/img/thumb_up.png&quot;&gt;'</em>, <em>no_vote='&lt;img class=&quot;vote&quot; src=&quot;/media/img/thumb_down.png&quot;&gt;'</em>, <em>did_not_vote=&quot;&lt;b style='font-size:130%;'&gt;&amp;mdash;&lt;/b&gt;&quot;</em><big>)</big><a class="headerlink" href="#vote" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">vote</tt><big>(</big><em>value</em>, <em>yes_vote='/media/img/thumb_up.png'</em>, <em>no_vote='/media/img/thumb_down.png'</em>, <em>did_not_vote=&quot;&lt;b style='font-size:130%;'&gt;&amp;mdash;&lt;/b&gt;&quot;</em><big>)</big><a class="headerlink" href="#vote" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns one of three icons representing the outcome a vote: Yes (thumbs up); No (thumbs down); Did not vote (Bolded emdash). The first letter of each type is what should be provided, i.e. Y, N, anything else.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
@@ -662,114 +691,81 @@ you might need to specifiy the date format using <a class="reference external" h
 <p>Like other Django commands, they are run by interacting with the <tt class="docutils literal"><span class="pre">manage.py</span></tt> file in your project&#8217;s root directory.</p>
 <dl class="attribute">
 <dt>
-<tt class="descname">deletealltables &lt;config_file_name&gt; [options]</tt></dt>
-<dd><p>Deletes all tables in the database</p>
-<dl class="cmdoption">
-<dt id="cmdoption--host">
-<tt class="descname">--host</tt><tt class="descclassname">=&lt;host_address&gt;</tt><a class="headerlink" href="#cmdoption--host" title="Permalink to this definition">¶</a></dt>
-<dd><p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="c"># Clear the database in your live site</span>
-<span class="nv">$ </span>python2.5 manage.py deletealltables
-<span class="c"># Or for a test site running on your local machine</span>
-<span class="nv">$ </span>python2.5 manage.py deletealltables --host<span class="o">=</span>localhost:8000
+<tt class="descname">build [options]</tt></dt>
+<dd><p>Builds a static site with all the tables okayed for publication</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
 </pre></div>
 </div>
 </dd></dl>
 
-</dd></dl>
-
 <dl class="attribute">
 <dt>
-<tt class="descname">deletetable &lt;config_file_name&gt; [options]</tt></dt>
+<tt class="descname">buildserver [options]</tt></dt>
 <dd><p>Delete the table outlined in the configuration file provided by the first argument.</p>
-<dl class="cmdoption">
-<dt id="cmdoption--host">
-<tt class="descname">--host</tt><tt class="descclassname">=&lt;host_address&gt;</tt><a class="headerlink" href="#cmdoption--host" title="Permalink to this definition">¶</a></dt>
-<dd><p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py deletetable config-file-name --host<span class="o">=</span>localhost:8000
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py buildserver
+<span class="c"># Optionally, set the port for the server.</span>
+<span class="nv">$ </span>python manage.py buildserver 8080
 </pre></div>
 </div>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">listtables [options]</tt></dt>
-<dd><p>List all of the configuration files.</p>
-<dl class="cmdoption">
-<dt id="cmdoption--host">
-<tt class="descname">--host</tt><tt class="descclassname">=&lt;host_address&gt;</tt><a class="headerlink" href="#cmdoption--host" title="Permalink to this definition">¶</a></dt>
-<dd><p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py listtables --host<span class="o">=</span>localhost:8000
+<tt class="descname">publish [options]</tt></dt>
+<dd><p>Sync the build directory with the Amazon S3 bucket specified in settings.py</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py publish
 </pre></div>
 </div>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">loadalltables [options]</tt></dt>
-<dd><p>Create or update all tables outlined in the directory of configuration file.</p>
-<dl class="cmdoption">
-<dt id="cmdoption--host">
-<tt class="descname">--host</tt><tt class="descclassname">=&lt;host_address&gt;</tt><a class="headerlink" href="#cmdoption--host" title="Permalink to this definition">¶</a></dt>
-<dd><p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py loadalltables --host<span class="o">=</span>localhost:8000
+<tt class="descname">unbuild [options]</tt></dt>
+<dd><p>Empties the build directory</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py unbuild
 </pre></div>
 </div>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="attribute">
 <dt>
-<tt class="descname">loadtable &lt;config_file_name&gt; [options]</tt></dt>
-<dd><p>Create or update the table outlined in the configuration file provided by the first argument.</p>
-<dl class="cmdoption">
-<dt id="cmdoption--host">
-<tt class="descname">--host</tt><tt class="descclassname">=&lt;host_address&gt;</tt><a class="headerlink" href="#cmdoption--host" title="Permalink to this definition">¶</a></dt>
-<dd><p>An optional argument that specifies the host of the Google App Engine database you want to interact with. By default, it accesses the live site at the default address (i.e. <a class="reference external" href="http://my-table-stacker.appspot.com/">http://my-table-stacker.appspot.com</a>).</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py loadtable config-file-name --host<span class="o">=</span>localhost:8000
+<tt class="descname">unpublish [options]</tt></dt>
+<dd><p>Empties the Amazon S3 bucket defined in settings.py</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py unpublish
 </pre></div>
 </div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="attribute">
-<dt id="runserver">
-<tt class="descname">runserver</tt><a class="headerlink" href="#runserver" title="Permalink to this definition">¶</a></dt>
-<dd><p>The built-in command for firing up the Django test server. You can read more about it in <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/django-admin/#runserver-port-or-address-port">the official Django docs</a>.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py runserver
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="update">
-<tt class="descname">update</tt><a class="headerlink" href="#update" title="Permalink to this definition">¶</a></dt>
-<dd><p>A custom command design for Google App Engine that deploys the code base to the web. Read more about it in the <a class="reference external" href="http://code.google.com/p/google-app-engine-django/source/browse/trunk/README">google-app-engine-helper</a> documentation.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python2.5 manage.py update
-</pre></div>
-</div>
+</div></blockquote>
 </dd></dl>
 
 <hr></div>
 <div class="section" id="customization">
 <h1>Customization<a class="headerlink" href="#customization" title="Permalink to this headline">¶</a></h1>
 <p>Table Stacker is published with <a class="reference external" href="http://table-stacker.appspot.com/">minimal styling</a>. If you want to adapt it for your site, you&#8217;ll probably want to change the appearance and layout. The CSS styles that regulate the appearance of Table Stacker are stored in the <tt class="docutils literal"><span class="pre">/media/css</span></tt> directory. Change them and you&#8217;ll change the appearance of the site. Table Stacker&#8217;s layout is managed using <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/templates/">Django&#8217;s templating system</a> and configured through a series of files in the <tt class="docutils literal"><span class="pre">templates</span></tt> directory. Change them and you&#8217;ll change the layout of the site.</p>
+<div class="section" id="global-settings">
+<h2>Global settings<a class="headerlink" href="#global-settings" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="SITE_NAME">
+<tt class="descname">SITE_NAME</tt><a class="headerlink" href="#SITE_NAME" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <tt class="docutils literal"><span class="pre">settings.py</span></tt> configuration that sets the site&#8217;s name in meta data around the site, like the title tag and Facebook open graph tags.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FACEBOOK_ADMINS">
+<tt class="descname">FACEBOOK_ADMINS</tt><a class="headerlink" href="#FACEBOOK_ADMINS" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of Facebook user ids included in the open graph tags in each page&#8217;s head. Useful for configuring the site&#8217;s footprint on Facebook. Set in <tt class="docutils literal"><span class="pre">settings.py</span></tt>.</p>
+</dd></dl>
+
 <hr></div>
-<div class="section" id="id9">
-<h1>Credits<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="id3">
+<h1>Credits<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
 <p>This project would not be possible without the generous work of people like:</p>
 <ul class="simple">
 <li><a class="reference external" href="http://www.propublica.org/nerds">ProPublica&#8217;s News Application Desk</a>, and particularly <a class="reference external" href="https://github.com/thejefflarson">Jeff Larson</a>, who developed the Ruby libraries <a class="reference external" href="https://github.com/propublica/table-fu">table-fu</a> and <a class="reference external" href="https://github.com/propublica/table-setter">table-setter</a>.</li>
 <li><a class="reference external" href="https://github.com/eyeseast">Chris Amico</a>, who did the noble work of porting table-fu to <a class="reference external" href="https://github.com/eyeseast/python-tablefu">Python</a>.</li>
 <li>Christian Bach, the man who gave us <a class="reference external" href="http://tablesorter.com/docs/">tablesorter</a>.</li>
 <li>Thomas Suh Lauder, who has suggested many style improvements and formatting options.</li>
-<li>The army of people who make something like <a class="reference external" href="http://code.google.com/p/google-app-engine-django/">google-app-engine-django</a> possible.</li>
 </ul>
 </div>
 
@@ -791,8 +787,11 @@ you might need to specifiy the date format using <a class="reference external" h
 </ul>
 </li>
 <li><a class="reference internal" href="#management-commands">Management commands</a></li>
-<li><a class="reference internal" href="#customization">Customization</a></li>
-<li><a class="reference internal" href="#id9">Credits</a></li>
+<li><a class="reference internal" href="#customization">Customization</a><ul>
+<li><a class="reference internal" href="#global-settings">Global settings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">Credits</a></li>
 </ul>
 
   <h3>This Page</h3>
@@ -822,21 +821,5 @@ you might need to specifiy the date format using <a class="reference external" h
           Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
         </div>     
     </div>
-
-
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-24991388-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
   </body>
 </html>

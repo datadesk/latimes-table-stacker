@@ -69,7 +69,7 @@ hr {
 }
 
 div.banner {
-    background-color: #496777;
+    background-color:#496777;
     color:white;
     padding: 15px 0 15px 0;
     margin:0;
@@ -324,7 +324,7 @@ table {
 }
 
 table th, td {
-    padding: 7px 14px;
+    padding: 7px;
 }
 
 table th {
