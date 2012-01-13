@@ -8,6 +8,7 @@ from datetime import datetime
 from toolbox import statestyle
 from toolbox.dateutil.parser import parse as dateparse
 from django.template.defaultfilters import date as dateformater
+from django.template.defaultfilters import capfirst as djcapfirst
 
 
 def _saferound(value, decimal_places):
@@ -57,6 +58,13 @@ def bubble(value, yes_icon='/static/img/bubble_yes.png',
         return empty
 
 
+def capfirst(value):
+    try:
+        return djcapfirst(value.lower())
+    except:
+        return 'N/A'
+
+
 def checkbox(value,
     yes_icon='/static/img/checkbox_yes.png',
     no_icon='/static/img/checkbox_no.png',
@@ -78,6 +86,17 @@ def checkbox(value,
         return img % dict(name='No', icon=no_icon)
     else:
         return ''
+
+
+def datetime(value, formatting="N j, Y, h:i a"):
+    """
+    Reformats a date string in a humanized format, AP style by default.
+    """
+    try:
+        dt = dateparse(value)
+    except ValueError:
+        return value
+    return dateformater(dt, formatting)
 
 
 def dollar_signs(value):
@@ -323,7 +342,9 @@ def vote(value,
 DEFAULT_FORMATTERS = {
     'ap_state': ap_state,
     'bubble': bubble,
+    'capfirst': capfirst,
     'checkbox': checkbox,
+    'datetime': datetime,
     'dollar_signs': dollar_signs,
     'dollars': dollars,
     'link': link,

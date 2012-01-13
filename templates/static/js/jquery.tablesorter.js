@@ -787,6 +787,50 @@
     });
 
     ts.addParser({
+        id: "ApDatetime",
+        is: function(s) {
+            return /^[A-Za-z]{3}\.{0,1}\s\d{1,2}\,{1}\s\d{4}\,{1}\s\d{1,2}:?\d{0,2}\s(a\.m\.|p\.m\.)$/.test(s);
+        },
+        format: function(s) {
+            // Month definitions we'll need later
+            var months = {
+                'Jan': 0, 
+                'Feb': 1, 
+                'Mar': 2, 
+                'Apr': 3, 
+                'May': 4, 
+                'Jun': 5,
+                'Jul': 6,
+                'Aug': 7,
+                'Sep': 8,
+                'Oct': 9,
+                'Nov': 10,
+                'Dec': 11
+            };
+            // Parse out the month, day and year
+            var sParts = s.split(" ");
+            var month = months[sParts[0].replace(".", "")];
+            var day = parseInt(sParts[1].replace(",", ""));
+            var year = parseInt(sParts[2].replace(",", ""));
+            var time = sParts[3]
+            var tParts = time.split(":")
+            var hour = parseInt(tParts[0]);
+            if (tParts.length > 1) {
+                var minutes = parseInt(tParts[1]);
+            } else {
+                var minutes = 0;
+            }
+            if (sParts[sParts.length-1] === 'p.m.') {
+                var hour = hour + 12;
+            }
+            // Convert it to a date object
+            var date = new Date(year, month, day, hour, minutes);
+            return $.tablesorter.formatFloat(date.getTime());
+        },
+        type: "numeric"
+    });
+
+    ts.addParser({
         id: "usLongDate",
         is: function(s) {
             return s.match(new RegExp(/^[A-Za-z]{3,10}\.? [0-9]{1,2}, ([0-9]{4}|'?[0-9]{2}) (([0-2]?[0-9]:[0-5][0-9])|([0-1]?[0-9]:[0-5][0-9]\s(AM|PM)))$/));
