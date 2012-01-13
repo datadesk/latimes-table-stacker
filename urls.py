@@ -1,10 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
-from table_stacker.feeds import LatestTables
-from table_stacker.models import Table
 from django.conf import settings
-from django.contrib.syndication.views import feed
-from table_stacker.views import TableListView, TableDetailView
-from table_stacker import api
+from table_stacker.models import Table
+from table_stacker import views, api, feeds, sitemaps
 
 
 urlpatterns = patterns('',
@@ -16,9 +13,9 @@ urlpatterns = patterns('',
     }),
 )
 
-urlpatterns += patterns("table_stacker",
+urlpatterns += patterns("",
     # Homepage
-    url(r'^$', TableListView.as_view(), name='table-list'),
+    url(r'^$', views.TableListView.as_view(), name='table-list'),
     
     # Serialization
     url(r'^api/(?P<slug>[-\w]+).xls$', api.TableDetailXLSView.as_view(),
@@ -29,11 +26,11 @@ urlpatterns += patterns("table_stacker",
         name='table-csv'),
     
     # Extras
-    url(r'^feeds/(?P<url>.*).xml$', feed,
-        {'feed_dict': dict(latest=LatestTables)}, name='feeds'),
-    url(r'^sitemap.xml$', 'views.sitemap', name='sitemap'),
+    url(r'^feeds/latest/$', feeds.LatestTables(), name="table-feed"),
+    
+    url(r'^sitemap.xml$', sitemaps.SitemapView.as_view(), name='sitemap'),
     
     # Table detail
-    url(r'^(?P<slug>[-\w]+)/$', TableDetailView.as_view(), name='table-detail'),
+    url(r'^(?P<slug>[-\w]+)/$', views.TableDetailView.as_view(), name='table-detail'),
 )
 

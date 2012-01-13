@@ -79,16 +79,5 @@ class TableDetailView(DetailView):
         [self.build_object(obj) for obj in self.queryset]
 
 
-def sitemap(request):
-    """
-    A sitemap.xml file for Google and other search engines.
-    """
-    table_list = Table.live.all()
-    context = {
-        'table_list': table_list,
-    }
-    response = render(request, 'sitemap.xml', context)
-    response.mimetype='text/xml'
-    return response
 
 

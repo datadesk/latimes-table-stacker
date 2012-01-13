@@ -6,13 +6,13 @@ from django.http import Http404
 from django.conf import settings
 from django.core import management
 from django.shortcuts import render
-from table_stacker import views, api
 from table_stacker.models import Table
 from table_stacker.feeds import LatestTables
 from toolbox.FileIterator import FileIterator
 from django.test.client import RequestFactory
-from django.contrib.syndication.views import feed
 from django.core.management.base import BaseCommand
+from table_stacker import views, api, feeds, sitemaps
+
 
 
 class YAMLDoesNotExistError(Exception):
@@ -111,8 +111,7 @@ class Command(BaseCommand):
         
         # Sitemap
         self.stdout.write("Building sitemap\n")
-        response = views.sitemap(rf.get("/sitemap.xml"))
-        self.write('sitemap.xml', response.content)
+        sitemaps.SitemapView().build_queryset()
         
         # Build 404 page
         self.stdout.write("Building 404 page\n")
@@ -121,9 +120,5 @@ class Command(BaseCommand):
         
         # RSS feeds
         self.stdout.write("Building RSS feeds\n")
-        os.makedirs(os.path.join(settings.BUILD_DIR, 'feeds'))
-        response = feed(rf.get("/feeds/latest.xml"), url='latest',
-            feed_dict=dict(latest=LatestTables))
-        self.write(os.path.join(settings.BUILD_DIR, 'feeds', 'latest.xml'),
-            response.content)
+        feeds.LatestTables().build()
 

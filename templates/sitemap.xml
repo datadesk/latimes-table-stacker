@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-{% for obj in table_list %}
+{% for obj in object_list %}
   <url> 
     <loc>http://spreadsheets.latimes.com{{ obj.get_absolute_url }}</loc> 
   </url>
