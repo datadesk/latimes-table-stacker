@@ -768,6 +768,29 @@ Like other Django commands, they are run by interacting with the ``manage.py`` f
 
    <hr>
 
+Overriding the sort with a query string
+=======================================
+
+You can override the default sorting order of a table by appending a query string argument that provides an alternative. There are two required parameters. 
+
+.. attribute:: sortColumn
+
+    The index of the column that the table should sort by. Starts with zero from the left. So to sort by the first column, you would provide ``0``.
+
+.. attribute:: sortOrder
+
+    The direction the column should sort in. ``0`` will sort in the ascending. ``1`` will sort in the descending.
+
+Here is an example of resorting a table by the first column in ascending order.
+
+.. code-block:: text
+
+    http://table-stacker.s3-website-us-west-1.amazonaws.com/california-layoffs-december-2010/?sortColumn=0&sortOrder=0
+
+.. raw:: html
+
+   <hr>
+
 Customization
 =============
 

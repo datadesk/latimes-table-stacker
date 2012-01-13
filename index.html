@@ -763,6 +763,26 @@ you might need to specifiy the date format using <a class="reference external" h
 </dd></dl>
 
 <hr></div>
+<div class="section" id="overriding-the-sort-with-a-query-string">
+<h1>Overriding the sort with a query string<a class="headerlink" href="#overriding-the-sort-with-a-query-string" title="Permalink to this headline">¶</a></h1>
+<p>You can override the default sorting order of a table by appending a query string argument that provides an alternative. There are two required parameters.</p>
+<dl class="attribute">
+<dt id="sortColumn">
+<tt class="descname">sortColumn</tt><a class="headerlink" href="#sortColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>The index of the column that the table should sort by. Starts with zero from the left. So to sort by the first column, you would provide <tt class="docutils literal"><span class="pre">0</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sortOrder">
+<tt class="descname">sortOrder</tt><a class="headerlink" href="#sortOrder" title="Permalink to this definition">¶</a></dt>
+<dd><p>The direction the column should sort in. <tt class="docutils literal"><span class="pre">0</span></tt> will sort in the ascending. <tt class="docutils literal"><span class="pre">1</span></tt> will sort in the descending.</p>
+</dd></dl>
+
+<p>Here is an example of resorting a table by the first column in ascending order.</p>
+<div class="highlight-text"><div class="highlight"><pre>http://table-stacker.s3-website-us-west-1.amazonaws.com/california-layoffs-december-2010/?sortColumn=0&amp;sortOrder=0
+</pre></div>
+</div>
+<hr></div>
 <div class="section" id="customization">
 <h1>Customization<a class="headerlink" href="#customization" title="Permalink to this headline">¶</a></h1>
 <p>Table Stacker is published with <a class="reference external" href="http://table-stacker.appspot.com/">minimal styling</a>. If you want to adapt it for your site, you&#8217;ll probably want to change the appearance and layout. The CSS styles that regulate the appearance of Table Stacker are stored in the <tt class="docutils literal"><span class="pre">/static/css</span></tt> directory. Change them and you&#8217;ll change the appearance of the site. Table Stacker&#8217;s layout is managed using <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/templates/">Django&#8217;s templating system</a> and configured through a series of files in the <tt class="docutils literal"><span class="pre">templates</span></tt> directory. Change them and you&#8217;ll change the layout of the site.</p>
@@ -811,6 +831,7 @@ you might need to specifiy the date format using <a class="reference external" h
 </ul>
 </li>
 <li><a class="reference internal" href="#management-commands">Management commands</a></li>
+<li><a class="reference internal" href="#overriding-the-sort-with-a-query-string">Overriding the sort with a query string</a></li>
 <li><a class="reference internal" href="#customization">Customization</a><ul>
 <li><a class="reference internal" href="#global-settings">Global settings</a></li>
 </ul>
