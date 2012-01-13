@@ -446,6 +446,16 @@ The following YAML configuration options specify how to present the columns in t
                   yes_icon: "http://example.com/yes.png"
                   no_icon: "http://example.com/no.png"
     
+    .. method:: capfirst(value)
+        
+        Changes a string so that only the first character is capitalized.
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: capfirst
+
     .. method:: checkbox(value, yes_icon='/static/img/checkbox_yes.png',  no_icon='/static/img/checkbox_no.png')
         
         Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.
@@ -466,6 +476,26 @@ The following YAML configuration options specify how to present the columns in t
                 options:
                   yes_icon: "<img src='http://example.com/yes.png'>"
                   no_icon: "<img src='http://example.com/no.png'>"
+    
+    .. method:: date_and_time(value, formatting="N j, Y, h:i a")
+    
+        Reformats a date string in a humanized format, AP style by default.
+        
+        .. code-block:: yaml
+            
+            formatting:
+              ColumnName:
+                method: date_and_time
+                
+        You can override the output format by specifying an alternative in the formatting in the options. You must use `Django's datetime formatting style <https://docs.djangoproject.com/en/dev/ref/templates/builtins/?from=olddocs#date>`_.
+        
+        .. code-block:: yaml
+        
+            formatting:
+              ColumnName:
+                method: date_and_time
+                options:
+                  formatting: "Y-m-d P"
     
     .. method:: dollar_signs(value)
     

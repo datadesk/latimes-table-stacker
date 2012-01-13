@@ -441,6 +441,17 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 </dd></dl>
 
 <dl class="method">
+<dt id="capfirst">
+<tt class="descname">capfirst</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#capfirst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes a string so that only the first character is capitalized.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">capfirst</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="checkbox">
 <tt class="descname">checkbox</tt><big>(</big><em>value</em>, <em>yes_icon='/static/img/checkbox_yes.png'</em>, <em>no_icon='/static/img/checkbox_no.png'</em><big>)</big><a class="headerlink" href="#checkbox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.</p>
@@ -456,6 +467,25 @@ followed by a dictionary requesting a particular method and, if necessary, custo
     <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
       <span class="l-Scalar-Plain">yes_icon</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;img</span><span class="nv"> </span><span class="s">src=&#39;http://example.com/yes.png&#39;&gt;&quot;</span>
       <span class="l-Scalar-Plain">no_icon</span><span class="p-Indicator">:</span> <span class="s">&quot;&lt;img</span><span class="nv"> </span><span class="s">src=&#39;http://example.com/no.png&#39;&gt;&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="date_and_time">
+<tt class="descname">date_and_time</tt><big>(</big><em>value</em>, <em>formatting=&quot;N j</em>, <em>Y</em>, <em>h:i a&quot;</em><big>)</big><a class="headerlink" href="#date_and_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reformats a date string in a humanized format, AP style by default.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">date_and_time</span>
+</pre></div>
+</div>
+<p>You can override the output format by specifying an alternative in the formatting in the options. You must use <a class="reference external" href="https://docs.djangoproject.com/en/dev/ref/templates/builtins/?from=olddocs#date">Django&#8217;s datetime formatting style</a>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">method</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">date_and_time</span>
+    <span class="l-Scalar-Plain">options</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span> <span class="s">&quot;Y-m-d</span><span class="nv"> </span><span class="s">P&quot;</span>
 </pre></div>
 </div>
 </dd></dl>
