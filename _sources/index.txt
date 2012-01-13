@@ -768,8 +768,8 @@ Like other Django commands, they are run by interacting with the ``manage.py`` f
 
    <hr>
 
-Overriding the sort with a query string
-=======================================
+Override sort with URL
+======================
 
 You can override the default sorting order of a table by appending a query string argument that provides an alternative. There are two required parameters. 
 
