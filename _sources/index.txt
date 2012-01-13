@@ -6,9 +6,9 @@ Features
 ========
 
 * Convert a CSV file into an interactive HTML table that sorts, filters and paginates.
-* Quickly publish as static files to serve on the web.
-* Sync static files against published data on `Amazon S3 <http://en.wikipedia.org/wiki/Amazon_S3>`_.
-* Instantly syndicate data as CSV, XLS and JSON.
+* Quickly create as static files to serve on the web.
+* Sync static files with `Amazon S3 <http://en.wikipedia.org/wiki/Amazon_S3>`_ for instant publishing
+* Syndicate data as CSV, XLS and JSON.
 * Post an RSS feed and sitemap that promote the latest data.
 
 .. raw:: html
@@ -425,7 +425,7 @@ The following YAML configuration options specify how to present the columns in t
               ColumnName:
                 method: ap_state
     
-    .. method:: bubble(value, yes_icon="/media/img/bubble_yes.png", no_icon="/media/img/bubble_no.png", empty="&mdash;")
+    .. method:: bubble(value, yes_icon="/static/img/bubble_yes.png", no_icon="/static/img/bubble_no.png", empty="&mdash;")
     
         Returns one of two "Consumer Reports" style bubbles that indicate yes (a filled bubble) or no (an empty bubble). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made the empty argument is returned.
         
@@ -446,7 +446,7 @@ The following YAML configuration options specify how to present the columns in t
                   yes_icon: "http://example.com/yes.png"
                   no_icon: "http://example.com/no.png"
     
-    .. method:: checkbox(value, yes_icon='/media/img/checkbox_yes.png',  no_icon='/media/img/checkbox_no.png')
+    .. method:: checkbox(value, yes_icon='/static/img/checkbox_yes.png',  no_icon='/static/img/checkbox_no.png')
         
         Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.
         
@@ -627,7 +627,7 @@ The following YAML configuration options specify how to present the columns in t
                   ColumnName:
                     method: title
     
-    .. method:: tribubble(value, yes_icon='/media/img/tribubble_yes.png', partly_icon='/media/img/tribubble_partly.png', no_icon="/media/img/tribubble_no.png", empty="&mdash;")
+    .. method:: tribubble(value, yes_icon='/static/img/tribubble_yes.png', partly_icon='/static/img/tribubble_partly.png', no_icon="/static/img/tribubble_no.png", empty="&mdash;")
     
         Returns one of three "Consumer Reports" style bubbles that indicate yes (filled bubble), partly (half-filled bubble), no (empty bubble). The first letter of each type is what should be provided (i.e. Y, N, P). If a match cannot be made the empty argument is returned.
     
@@ -649,7 +649,7 @@ The following YAML configuration options specify how to present the columns in t
                   no_icon: "http://example.com/no.png"
                   partly_icon: "http://example.com/partly.png"
     
-    .. method:: vote(value, yes_vote='/media/img/thumb_up.png', no_vote='/media/img/thumb_down.png', did_not_vote="<b style='font-size:130%;'>&mdash;</b>")
+    .. method:: vote(value, yes_vote='/static/img/thumb_up.png', no_vote='/static/img/thumb_down.png', did_not_vote="<b style='font-size:130%;'>&mdash;</b>")
     
         Returns one of three icons representing the outcome a vote: Yes (thumbs up); No (thumbs down); Did not vote (Bolded emdash). The first letter of each type is what should be provided, i.e. Y, N, anything else.
         
@@ -731,7 +731,7 @@ Like other Django commands, they are run by interacting with the ``manage.py`` f
 Customization
 =============
 
-Table Stacker is published with `minimal styling <http://table-stacker.appspot.com/>`_. If you want to adapt it for your site, you'll probably want to change the appearance and layout. The CSS styles that regulate the appearance of Table Stacker are stored in the ``/media/css`` directory. Change them and you'll change the appearance of the site. Table Stacker's layout is managed using `Django's templating system <http://docs.djangoproject.com/en/dev/ref/templates/>`_ and configured through a series of files in the ``templates`` directory. Change them and you'll change the layout of the site.
+Table Stacker is published with `minimal styling <http://table-stacker.appspot.com/>`_. If you want to adapt it for your site, you'll probably want to change the appearance and layout. The CSS styles that regulate the appearance of Table Stacker are stored in the ``/static/css`` directory. Change them and you'll change the appearance of the site. Table Stacker's layout is managed using `Django's templating system <http://docs.djangoproject.com/en/dev/ref/templates/>`_ and configured through a series of files in the ``templates`` directory. Change them and you'll change the layout of the site.
 
 Global settings
 ---------------

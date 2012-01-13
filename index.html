@@ -47,9 +47,9 @@
 <h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li>Convert a CSV file into an interactive HTML table that sorts, filters and paginates.</li>
-<li>Quickly publish as static files to serve on the web.</li>
-<li>Sync static files against published data on <a class="reference external" href="http://en.wikipedia.org/wiki/Amazon_S3">Amazon S3</a>.</li>
-<li>Instantly syndicate data as CSV, XLS and JSON.</li>
+<li>Quickly create as static files to serve on the web.</li>
+<li>Sync static files with <a class="reference external" href="http://en.wikipedia.org/wiki/Amazon_S3">Amazon S3</a> for instant publishing</li>
+<li>Syndicate data as CSV, XLS and JSON.</li>
 <li>Post an RSS feed and sitemap that promote the latest data.</li>
 </ul>
 <hr></div>
@@ -422,7 +422,7 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 
 <dl class="method">
 <dt id="bubble">
-<tt class="descname">bubble</tt><big>(</big><em>value</em>, <em>yes_icon=&quot;/media/img/bubble_yes.png&quot;</em>, <em>no_icon=&quot;/media/img/bubble_no.png&quot;</em>, <em>empty=&quot;&amp;mdash;&quot;</em><big>)</big><a class="headerlink" href="#bubble" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">bubble</tt><big>(</big><em>value</em>, <em>yes_icon=&quot;/static/img/bubble_yes.png&quot;</em>, <em>no_icon=&quot;/static/img/bubble_no.png&quot;</em>, <em>empty=&quot;&amp;mdash;&quot;</em><big>)</big><a class="headerlink" href="#bubble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns one of two &#8220;Consumer Reports&#8221; style bubbles that indicate yes (a filled bubble) or no (an empty bubble). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made the empty argument is returned.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
@@ -442,7 +442,7 @@ followed by a dictionary requesting a particular method and, if necessary, custo
 
 <dl class="method">
 <dt id="checkbox">
-<tt class="descname">checkbox</tt><big>(</big><em>value</em>, <em>yes_icon='/media/img/checkbox_yes.png'</em>, <em>no_icon='/media/img/checkbox_no.png'</em><big>)</big><a class="headerlink" href="#checkbox" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">checkbox</tt><big>(</big><em>value</em>, <em>yes_icon='/static/img/checkbox_yes.png'</em>, <em>no_icon='/static/img/checkbox_no.png'</em><big>)</big><a class="headerlink" href="#checkbox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns one of two checkbox images that indicate yes (a checked box) or no (an empty box). The first letter of each type is what should be provided (i.e. Y, N). If a match cannot be made an empty string is returned.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
@@ -624,7 +624,7 @@ you might need to specifiy the date format using <a class="reference external" h
 
 <dl class="method">
 <dt id="tribubble">
-<tt class="descname">tribubble</tt><big>(</big><em>value</em>, <em>yes_icon='/media/img/tribubble_yes.png'</em>, <em>partly_icon='/media/img/tribubble_partly.png'</em>, <em>no_icon=&quot;/media/img/tribubble_no.png&quot;</em>, <em>empty=&quot;&amp;mdash;&quot;</em><big>)</big><a class="headerlink" href="#tribubble" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">tribubble</tt><big>(</big><em>value</em>, <em>yes_icon='/static/img/tribubble_yes.png'</em>, <em>partly_icon='/static/img/tribubble_partly.png'</em>, <em>no_icon=&quot;/static/img/tribubble_no.png&quot;</em>, <em>empty=&quot;&amp;mdash;&quot;</em><big>)</big><a class="headerlink" href="#tribubble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns one of three &#8220;Consumer Reports&#8221; style bubbles that indicate yes (filled bubble), partly (half-filled bubble), no (empty bubble). The first letter of each type is what should be provided (i.e. Y, N, P). If a match cannot be made the empty argument is returned.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
@@ -645,7 +645,7 @@ you might need to specifiy the date format using <a class="reference external" h
 
 <dl class="method">
 <dt id="vote">
-<tt class="descname">vote</tt><big>(</big><em>value</em>, <em>yes_vote='/media/img/thumb_up.png'</em>, <em>no_vote='/media/img/thumb_down.png'</em>, <em>did_not_vote=&quot;&lt;b style='font-size:130%;'&gt;&amp;mdash;&lt;/b&gt;&quot;</em><big>)</big><a class="headerlink" href="#vote" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">vote</tt><big>(</big><em>value</em>, <em>yes_vote='/static/img/thumb_up.png'</em>, <em>no_vote='/static/img/thumb_down.png'</em>, <em>did_not_vote=&quot;&lt;b style='font-size:130%;'&gt;&amp;mdash;&lt;/b&gt;&quot;</em><big>)</big><a class="headerlink" href="#vote" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns one of three icons representing the outcome a vote: Yes (thumbs up); No (thumbs down); Did not vote (Bolded emdash). The first letter of each type is what should be provided, i.e. Y, N, anything else.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">formatting</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ColumnName</span><span class="p-Indicator">:</span>
@@ -724,7 +724,7 @@ you might need to specifiy the date format using <a class="reference external" h
 <hr></div>
 <div class="section" id="customization">
 <h1>Customization<a class="headerlink" href="#customization" title="Permalink to this headline">¶</a></h1>
-<p>Table Stacker is published with <a class="reference external" href="http://table-stacker.appspot.com/">minimal styling</a>. If you want to adapt it for your site, you&#8217;ll probably want to change the appearance and layout. The CSS styles that regulate the appearance of Table Stacker are stored in the <tt class="docutils literal"><span class="pre">/media/css</span></tt> directory. Change them and you&#8217;ll change the appearance of the site. Table Stacker&#8217;s layout is managed using <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/templates/">Django&#8217;s templating system</a> and configured through a series of files in the <tt class="docutils literal"><span class="pre">templates</span></tt> directory. Change them and you&#8217;ll change the layout of the site.</p>
+<p>Table Stacker is published with <a class="reference external" href="http://table-stacker.appspot.com/">minimal styling</a>. If you want to adapt it for your site, you&#8217;ll probably want to change the appearance and layout. The CSS styles that regulate the appearance of Table Stacker are stored in the <tt class="docutils literal"><span class="pre">/static/css</span></tt> directory. Change them and you&#8217;ll change the appearance of the site. Table Stacker&#8217;s layout is managed using <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/templates/">Django&#8217;s templating system</a> and configured through a series of files in the <tt class="docutils literal"><span class="pre">templates</span></tt> directory. Change them and you&#8217;ll change the layout of the site.</p>
 <div class="section" id="global-settings">
 <h2>Global settings<a class="headerlink" href="#global-settings" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
