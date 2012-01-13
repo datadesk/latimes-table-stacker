@@ -213,11 +213,6 @@ Here is an example YAML configuration that specifies how to layout `this demonst
       publication_date: 2011-01-12
       sources: <a href="http://www.eia.doe.gov/cneaf/coal/page/acr/acr_sum.html">U.S. Energy Information Administration</a>
       credits: <a href="mailto:ben.welsh@latimes.com">Ben Welsh</a>
-      tags:
-        - Coal
-        - Energy
-        - Mines
-        - Business
 
 Metadata Options
 -----------------
@@ -322,22 +317,9 @@ The following YAML configuration options detail how to present a number of attri
           # Or ...
           credits: Bob Woodward and Carl Bernstein
 
-.. attribute:: tags
-
-    A list of blog-style tags that apply to the table. Will appear in a list at the bottom of the table's detail page and be used to generate lists that connect this table to similar tables. Optional.
-
-    .. code-block:: yaml
-
-          tags:
-            - Coal
-            - Energy
-            - Mines
-            - Business
-
-
 .. attribute:: per_page
 
-    How many records should appear in each page of the data table. 20 by default. Optional.
+    How many records should appear in each page of the data table. 50 by default. Optional.
 
     .. code-block:: yaml
 
