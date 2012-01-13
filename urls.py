@@ -4,6 +4,7 @@ from table_stacker.models import Table
 from django.conf import settings
 from django.contrib.syndication.views import feed
 from table_stacker.views import TableListView, TableDetailView
+from table_stacker import api
 
 
 urlpatterns = patterns('',
@@ -20,9 +21,12 @@ urlpatterns += patterns("table_stacker",
     url(r'^$', TableListView.as_view(), name='table-list'),
     
     # Serialization
-    url(r'^api/(?P<slug>[-\w]+).xls$', 'api.table_xls', name='table-xls'),
-    url(r'^api/(?P<slug>[-\w]+).json$', 'api.table_json', name='table-json'),
-    url(r'^api/(?P<slug>[-\w]+).csv$', 'api.table_csv', name='table-csv'),
+    url(r'^api/(?P<slug>[-\w]+).xls$', api.TableDetailXLSView.as_view(),
+        name='table-xls'),
+    url(r'^api/(?P<slug>[-\w]+).json$', api.TableDetailJSONView.as_view(),
+        name='table-json'),
+    url(r'^api/(?P<slug>[-\w]+).csv$', api.TableDetailCSVView.as_view(),
+        name='table-csv'),
     
     # Extras
     url(r'^feeds/(?P<url>.*).xml$', feed,

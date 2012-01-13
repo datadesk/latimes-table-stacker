@@ -103,29 +103,11 @@ class Command(BaseCommand):
         self.stdout.write("Building table detail pages\n")
         views.TableDetailView().build_queryset()
         
-        # JSON dumps of tables
+        # API dumps of tables
         self.stdout.write("Building API dumps\n")
-        path = os.path.join(settings.BUILD_DIR, "api")
-        os.makedirs(path)
-        for table in Table.objects.all():
-            # JSON
-            try:
-                response = api.table_json(rf.get("/api/%s.json" % table.slug), table.slug)
-            except Http404:
-                continue
-            self.write(os.path.join(path, '%s.json' % table.slug), response.content)
-            # XLS
-            try:
-                response = api.table_xls(rf.get("/api/%s.xls" % table.slug), table.slug)
-            except Http404:
-                continue
-            self.write(os.path.join(path, '%s.xls' % table.slug), response.content)
-            # CSV
-            try:
-                response = api.table_csv(rf.get("/api/%s.csv" % table.slug), table.slug)
-            except Http404:
-                continue
-            self.write(os.path.join(path, '%s.csv' % table.slug), response.content)
+        api.TableDetailCSVView().build_queryset()
+        api.TableDetailXLSView().build_queryset()
+        api.TableDetailJSONView().build_queryset()
         
         # Sitemap
         self.stdout.write("Building sitemap\n")
