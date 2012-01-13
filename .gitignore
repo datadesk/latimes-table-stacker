@@ -1,1 +1,5 @@
+*.db
+build/*
+static/*
+media/*
 *.pyc
