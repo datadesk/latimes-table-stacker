@@ -381,6 +381,16 @@ The following YAML configuration options specify how to present the columns in t
         sorted_by:
           - Production (Short tons): descending
 
+.. attribute:: sorters
+
+    A dictionary that specifies how to properly sort columns in the interactive table. The JavaScript library that crafts the table attempts to guess the proper sorting method for each column, but sometimes it is wrong. Other times you might not want to sort a column at all, which can be done by setting the value to ``false``. You can use these options to declare what you'd like it do. A full list of the available sorters can be found `here <https://github.com/datadesk/latimes-table-stacker/blob/master/templates/static/js/jquery.tablesorter.js#L696>`_. Optional. 
+
+    .. code-block:: yaml
+
+        sorters:
+          Production (Short tons): fancyNumber
+          Name: false
+
 .. attribute:: formatting
 
     A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column's name, 

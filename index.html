@@ -381,6 +381,17 @@ www.example-bucket.com.s3-website-&lt;region&gt;.amazonaws.com.
 </dd></dl>
 
 <dl class="attribute">
+<dt id="sorters">
+<tt class="descname">sorters</tt><a class="headerlink" href="#sorters" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary that specifies how to properly sort columns in the interactive table. The JavaScript library that crafts the table attempts to guess the proper sorting method for each column, but sometimes it is wrong. Other times you might not want to sort a column at all, which can be done by setting the value to <tt class="docutils literal"><span class="pre">false</span></tt>. You can use these options to declare what you&#8217;d like it do. A full list of the available sorters can be found <a class="reference external" href="https://github.com/datadesk/latimes-table-stacker/blob/master/templates/static/js/jquery.tablesorter.js#L696">here</a>. Optional.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">sorters</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">Production (Short tons)</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">fancyNumber</span>
+  <span class="l-Scalar-Plain">Name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="formatting">
 <tt class="descname">formatting</tt><a class="headerlink" href="#formatting" title="Permalink to this definition">¶</a></dt>
 <dd><p>A dictionary that specifies formatting methods to be applied to all rows in a particular column. Each entry should include the column&#8217;s name,
@@ -771,8 +782,8 @@ you might need to specifiy the date format using <a class="reference external" h
 
 <hr></div>
 </div>
-<div class="section" id="id3">
-<h1>Credits<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id4">
+<h1>Credits<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
 <p>This project would not be possible without the generous work of people like:</p>
 <ul class="simple">
 <li><a class="reference external" href="http://www.propublica.org/nerds">ProPublica&#8217;s News Application Desk</a>, and particularly <a class="reference external" href="https://github.com/thejefflarson">Jeff Larson</a>, who developed the Ruby libraries <a class="reference external" href="https://github.com/propublica/table-fu">table-fu</a> and <a class="reference external" href="https://github.com/propublica/table-setter">table-setter</a>.</li>
@@ -804,7 +815,7 @@ you might need to specifiy the date format using <a class="reference external" h
 <li><a class="reference internal" href="#global-settings">Global settings</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id3">Credits</a></li>
+<li><a class="reference internal" href="#id4">Credits</a></li>
 </ul>
 
   <h3>This Page</h3>
