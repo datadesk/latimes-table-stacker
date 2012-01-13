@@ -6,9 +6,9 @@ Features
 ========
 
 * Convert a CSV file into an interactive HTML table that sorts, filters and paginates.
-* Quickly publish as static files to serve on the web.
-* Sync static files against published data on `Amazon S3 <http://en.wikipedia.org/wiki/Amazon_S3>`_.
-* Instantly syndicate data as CSV, XLS and JSON.
+* Quickly create as static files to serve on the web.
+* Sync static files with `Amazon S3 <http://en.wikipedia.org/wiki/Amazon_S3>`_ for instant publishing
+* Syndicate data as CSV, XLS and JSON.
 * Post an RSS feed and sitemap that promote the latest data.
 
 .. raw:: html
