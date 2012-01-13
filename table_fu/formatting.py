@@ -88,7 +88,7 @@ def checkbox(value,
         return ''
 
 
-def datetime(value, formatting="N j, Y, h:i a"):
+def date_and_time(value, formatting="N j, Y, h:i a"):
     """
     Reformats a date string in a humanized format, AP style by default.
     """
@@ -344,7 +344,7 @@ DEFAULT_FORMATTERS = {
     'bubble': bubble,
     'capfirst': capfirst,
     'checkbox': checkbox,
-    'datetime': datetime,
+    'date_and_time': date_and_time,
     'dollar_signs': dollar_signs,
     'dollars': dollars,
     'link': link,
