@@ -22,6 +22,7 @@ In the wild
 * Everything at `spreadsheets.latimes.com <http://spreadsheets.latimes.com/>`_
 * Numerous tables published by the `Orlando Sentinel <http://www.orlandosentinel.com/features/education/os-gfx-per-pupil-spending-database-20120111,0,769147.htmlstory>`_
 * `Census data <http://www.starledger.com/str/indexpage/project/2010-Census-populations-by-town.htm>`_ from The New Jersey Star Ledger
+* `Campaign contributions <http://www.minnpost.com/severnsguntzel/mnbachmanncontributorsq3/>`_ at MinnPost.com
 
 .. raw:: html
 
