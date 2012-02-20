@@ -166,6 +166,11 @@ def image(value, width='', height=''):
 
 
 def link(title, url):
+    """
+    Wrap the text in a hyperlink, if the link exists.
+    """
+    if not url:
+        return title
     return '<a target="_blank" href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
 
 
