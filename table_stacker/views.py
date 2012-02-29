@@ -1,43 +1,18 @@
-import os
-from django.conf import settings
 from table_stacker.models import Table
-from django.test.client import RequestFactory
-from django.views.generic import ListView, DetailView
-from django.shortcuts import render, get_object_or_404
+from bakery.views import BuildableDetailView, BuildableListView
 
 
-class TableListView(ListView):
+class TableListView(BuildableListView):
     """
     A list of all tables.
     """
-    template_name = 'table_list.html'
     queryset = Table.live.all()
-    
-    def build_queryset(self):
-        """
-        Build the view as a flat HTML file.
-        
-        Example usage:
-            
-            TableListView().build_queryset()
-        
-        """
-        # Make a fake request
-        self.request = RequestFactory().get("/")
-        # Render the list page as HTML
-        html = self.get(self.request).render().content
-        # Write it out to the appointed flat file
-        path = os.path.join(settings.BUILD_DIR, 'index.html')
-        outfile = open(path, 'w')
-        outfile.write(html)
-        outfile.close()
 
 
-class TableDetailView(DetailView):
+class TableDetailView(BuildableDetailView):
     """
     All about one table.
     """
-    template_name = 'table_detail.html'
     queryset = Table.live.all()
     
     def get_context_data(self, **kwargs):
@@ -47,37 +22,3 @@ class TableDetailView(DetailView):
             'table': context['object'].get_tablefu(),
         })
         return context
-    
-    def build_object(self, obj):
-        """
-        Build a detail page as a flat HTML file.
-        """
-        # Make a fake request
-        self.request = RequestFactory().get("/%s/" % obj.slug)
-        # Set the kwargs to fetch this particular object
-        self.kwargs = dict(slug=obj.slug)
-        # Render the detail page HTML
-        html = self.get(self.request).render().content
-        # Create the path to save the flat file
-        path = os.path.join(settings.BUILD_DIR, obj.slug)
-        os.path.exists(path) or os.makedirs(path)
-        path = os.path.join(path, 'index.html')
-        # Write out the data
-        outfile = open(path, 'w')
-        outfile.write(html)
-        outfile.close()
-    
-    def build_queryset(self):
-        """
-        Build flat HTML files for all of the objects in the queryset.
-        
-        Example usage:
-            
-            TableDetailView().build_queryset()
-        
-        """
-        [self.build_object(obj) for obj in self.queryset]
-
-
-
-

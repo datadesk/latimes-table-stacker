@@ -9,6 +9,11 @@ TEMPLATE_DIRS = (
 YAML_DIR = os.path.join(ROOT_PATH, 'yaml')
 CSV_DIR = os.path.join(ROOT_PATH, 'csv')
 BUILD_DIR = os.path.join(ROOT_PATH, 'build')
+BAKERY_VIEWS = [
+    'table_stacker.views.TableDetailView',
+    'table_stacker.views.TableListView',
+    'table_stacker.sitemaps.SitemapView',
+]
 SITE_NAME = 'TableStacker Demonstration'
 FACEBOOK_ADMINS = ['foo','bar']
 
@@ -136,8 +141,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'table_stacker',
     'toolbox',
+    'bakery',
+    'table_stacker',
 )
 
 # A sample logging configuration. The only tangible logging
