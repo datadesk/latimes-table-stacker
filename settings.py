@@ -13,6 +13,7 @@ BAKERY_VIEWS = [
     'table_stacker.views.TableDetailView',
     'table_stacker.views.TableListView',
     'table_stacker.sitemaps.SitemapView',
+    'table_stacker.feeds.LatestTablesFeed',
 ]
 SITE_NAME = 'TableStacker Demonstration'
 FACEBOOK_ADMINS = ['foo','bar']

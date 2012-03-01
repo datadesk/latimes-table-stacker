@@ -11,5 +11,7 @@ class SitemapView(BuildableListView):
     queryset = Table.live.all()
     
     def render_to_response(self, context):
-        return super(SitemapView, self).render_to_response(context,
-            content_type='text/xml')
+        return super(SitemapView, self).render_to_response(
+            context,
+            content_type='text/xml'
+        )

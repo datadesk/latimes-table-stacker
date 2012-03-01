@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+    <title>Latest spreadsheets</title>
+    <link>/feeds/latest.xml</link>
+    {% for obj in object_list %}
+    <item>
+        <title>{{ obj }}</title>
+        <description>{{ obj.description }}</description>
+        <link>{{ obj.get_share_url }}</link>
+        <guid>{{ obj.get_share_url }}</guid>
+        <pubDate>{{ obj.publication_date|date:"c" }}T00:00:00</pubDate>
+    </item>
+    {% endfor %}
+</channel>
+</rss>

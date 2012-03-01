@@ -1,4 +1,4 @@
 Django==1.3
 PyYAML==3.10
 wsgiref==0.1.2
--e git+ssh://git@github.com/datadesk/django-bakery.git@a5f9d7c8bffe767512006b6e92593da3bb3ec16d#egg=django-bakery
+-e git+ssh://git@github.com/datadesk/django-bakery.git@b467f7d44dbf8c8b2c20392daebe33a0487a77fb#egg=django-bakery
