@@ -5,56 +5,40 @@ from django.conf import settings
 from django.shortcuts import render
 from django.utils import simplejson
 from django.http import HttpResponse
-from django.views.generic import DetailView
-from django.test.client import RequestFactory
+from bakery.views import BuildableDetailView, BuildableListView
 
 
-class TableBaseAPIView(DetailView):
+class TableBaseAPIView(BuildableDetailView):
     """
     The basics necessary to publish a table outside of HTML.
     """
     queryset = Table.live.all()
     
-    def build_object(self, obj):
-        """
-        Build a detail page as a flat HTML file.
-        """
-        # Make a fake request
-        self.request = RequestFactory().get("/api/%s.%s" % (obj.slug, self.response_type))
-        # Set the kwargs to fetch this particular object
-        self.kwargs = dict(slug=obj.slug)
-        # Render the detail page HTML
-        html = self.get(self.request).content
-        # Create the path to save the flat file
-        path = os.path.join(settings.BUILD_DIR, "api")
-        os.path.exists(path) or os.makedirs(path)
-        path = os.path.join(path, '%s.%s' % (obj.slug, self.response_type))
-        # Write out the data
-        outfile = open(path, 'w')
-        outfile.write(html)
-        outfile.close()
+    def get_csv_data(self, obj):
+        path = os.path.join(settings.CSV_DIR, obj.csv_name)
+        return open(path, 'r')
     
-    def build_queryset(self):
-        """
-        Build flat HTML files for all of the objects in the queryset.
-        
-        Example usage:
-            
-            TableDetailViewName().build_queryset()
-        
-        """
-        [self.build_object(obj) for obj in self.queryset]
+    def get_html(self):
+        return self.get(self.request).content
+    
+    def get_build_path(self, obj):
+        api_dir = os.path.join(
+            settings.BUILD_DIR,
+            'api',
+        )
+        os.path.exists(api_dir) or os.mkdir(api_dir)
+        return os.path.join(settings.BUILD_DIR, self.get_url(obj)[1:])
 
 
 class TableDetailCSVView(TableBaseAPIView):
     """
     Publish a table as CSV.
     """
-    response_type = 'csv'
+    def get_url(self, obj):
+        return obj.get_csv_url()
     
     def render_to_response(self, context):
-        path = os.path.join(settings.CSV_DIR, context['object'].csv_name)
-        data = open(path, 'r').read()
+        data = self.get_csv_data(context['object']).read()
         response = HttpResponse(unicode(data), mimetype='text/csv')
         response['Content-Disposition'] = 'attachment; filename=%s.csv' % context['object'].slug
         return response
@@ -64,11 +48,12 @@ class TableDetailXLSView(TableBaseAPIView):
     """
     Publish a table as XLS.
     """
-    response_type = 'xls'
+    def get_url(self, obj):
+        return obj.get_xls_url()
     
     def render_to_response(self, context):
-        path = os.path.join(settings.CSV_DIR, context['object'].csv_name)
-        context['csv'] = csv.reader(open(path, 'r'))
+        data = self.get_csv_data(context['object'])
+        context['csv'] = csv.reader(data)
         response = render(self.request, "table.xls.txt", context)
         response['Content-Disposition'] = 'attachment; filename=%s.xls' % context['object'].slug
         response['Content-Type'] = 'application/vnd.ms-excel; charset=utf-8'
@@ -79,11 +64,12 @@ class TableDetailJSONView(TableBaseAPIView):
     """
     Publish a table as JSON.
     """
-    response_type = 'json'
+    def get_url(self, obj):
+        return obj.get_json_url()
     
     def render_to_response(self, context):
-        path = os.path.join(settings.CSV_DIR, context['object'].csv_name)
-        data = list(csv.reader(open(path, 'r')))
+        data = self.get_csv_data(context['object'])
+        data = list(csv.reader(data))
         headers = data.pop(0)
         dict_list = []
         for row in data:
@@ -91,6 +77,8 @@ class TableDetailJSONView(TableBaseAPIView):
             for i, h in enumerate(headers):
                 col_dict[h] = row[i]
             dict_list.append(col_dict)
-        return HttpResponse(simplejson.dumps(dict_list),
-            mimetype="text/javascript")
+        return HttpResponse(
+            simplejson.dumps(dict_list),
+            mimetype="text/javascript"
+        )
 
