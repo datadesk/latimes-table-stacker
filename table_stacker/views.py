@@ -1,5 +1,5 @@
 from table_stacker.models import Table
-from bakery.views import BuildableDetailView, BuildableListView
+from bakery.views import BuildableDetailView, BuildableListView, BuildableTemplateView
 
 
 class TableListView(BuildableListView):
