@@ -94,7 +94,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(ROOT_PATH, 'templates', 'static'),
+    # os.path.join(ROOT_PATH, 'templates', 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -126,7 +126,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
-    os.path.join(ROOT_PATH, 'templates'),
+    #os.path.join(ROOT_PATH, 'templates'),
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
