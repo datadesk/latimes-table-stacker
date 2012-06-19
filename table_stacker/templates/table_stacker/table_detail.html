@@ -83,7 +83,9 @@
         </div>
         
         <div id="controls">
+            {% if object.show_search_field %}
             <div id="filter">Search: <input type="text"></div>
+            {% endif %}
             <div id="pager" class="pager">
               <form {% ifequal table.total_pages 1 %}style="display:none !important;"{% endifequal %}>
                 <img src="{{ STATIC_URL }}img/first.png" class="first">

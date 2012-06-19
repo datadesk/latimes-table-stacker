@@ -31,6 +31,7 @@ class Table(models.Model):
     sources = models.TextField(blank=True)
     credits = models.TextField(blank=True)
     show_download_links = models.BooleanField(default=True)
+    show_search_field = models.BooleanField(default=True)
     # The meta
     is_published = models.BooleanField()
     show_in_feeds = models.BooleanField(default=True)

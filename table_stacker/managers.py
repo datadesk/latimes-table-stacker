@@ -42,6 +42,7 @@ class TableManager(models.Manager):
             obj.credits=yaml_data.get('credits', '')
             obj.is_published=yaml_data.get('is_published', False)
             obj.show_download_links=yaml_data.get("show_download_links", True)
+            obj.show_search_field=yaml_data.get("show_search_field", True)
             obj.show_in_feeds=yaml_data.get("show_in_feeds", True)
             created = False
         else:
@@ -61,6 +62,7 @@ class TableManager(models.Manager):
                 credits=yaml_data.get('credits', ''),
                 is_published=yaml_data.get('is_published', False),
                 show_download_links=yaml_data.get("show_download_links", True),
+                show_search_field=yaml_data.get("show_search_field", True),
                 show_in_feeds=yaml_data.get("show_in_feeds", True),
             )
             created = True

@@ -28,6 +28,7 @@ table:
             - Career high
           options:
               max: 60
+  show_search_field: false
   is_published: true
   publication_date: 2011-08-02
   sources: Baseball Reference
