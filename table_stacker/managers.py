@@ -35,6 +35,7 @@ class TableManager(models.Manager):
             obj.kicker=yaml_data.get('kicker', '')
             obj.byline=yaml_data.get("byline", '')
             obj.publication_date=yaml_data['publication_date']
+            obj.publication_time=yaml_data.get("publication_time", None)
             obj.legend=yaml_data.get('legend', '')
             obj.description=yaml_data.get('description', '')
             obj.footer=yaml_data.get('footer', '')
@@ -55,6 +56,7 @@ class TableManager(models.Manager):
                 kicker=yaml_data.get("kicker", ""),
                 byline=yaml_data.get("byline", ""),
                 publication_date=yaml_data['publication_date'],
+                publication_time=yaml_data.get("publication_time", None),
                 legend=yaml_data.get('legend', ''),
                 description=yaml_data.get('description', ''),
                 footer=yaml_data.get('footer', ''),

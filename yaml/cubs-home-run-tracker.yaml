@@ -31,5 +31,6 @@ table:
   show_search_field: false
   is_published: true
   publication_date: 2011-08-02
+  publication_time: '11:58:00'
   sources: Baseball Reference
   credits: 'Ben Welsh'
