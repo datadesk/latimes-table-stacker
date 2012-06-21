@@ -301,6 +301,14 @@ The following YAML configuration options detail how to present a number of attri
 
         publication_date: 2011-01-12
 
+.. attribute:: publication_time
+
+    The time that will appear alongside the date with the byline. Should be provided in ``HH:MM:SS`` format. Optional.
+
+    .. code-block:: yaml
+
+        publication_time: "11:58:00"
+
 .. attribute:: sources
 
     A block of text describing where the data came from. Will appear at the bottom of the table detail page after the phrase ``Sources:``. HTML can and should be included. Optional.
@@ -334,6 +342,14 @@ The following YAML configuration options detail how to present a number of attri
     .. code-block:: yaml
 
         show_download_links: false
+
+.. attribute:: show_search_field
+
+   Whether or not to show a search box on the table detail page that filters the table. The default is true, so you only need to include it when you want to turn the search off.
+
+    .. code-block:: yaml
+
+        show_search_field: false
 
 .. attribute:: show_in_feeds
 
