@@ -149,6 +149,7 @@ INSTALLED_APPS = (
     'toolbox',
     'bakery',
     'table_stacker',
+    'south',
 )
 
 # A sample logging configuration. The only tangible logging
