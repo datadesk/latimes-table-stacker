@@ -26,12 +26,12 @@ def _saferound(value, decimal_places):
 def ap_state(value):
     """
     Converts a state's name or postal abbreviation to .A.P. style.
-    
+
     Example usage:
-    
+
         >> ap_state("California")
         'Calif.'
-    
+
     """
     try:
         return statestyle.get(value.lower()).ap
@@ -43,10 +43,10 @@ def bubble(value, yes_icon='/static/img/bubble_yes.png',
     no_icon="/static/img/bubble_no.png", empty="&mdash;"):
     """
     Returns one of two "Consumer Reports" style bubbles that indicate:
-    
+
         - Yes (Filled bubble)
         - No (Empty bubble)
-    
+
     The first letter of each type is what should be provided, i.e. Y, N.
     """
     img = "<img alt='%(name)s' title='%(name)s' class='bubble' src='%(icon)s'>"
@@ -71,12 +71,12 @@ def checkbox(value,
     ):
     """
     Returns one of two icons:
-    
+
         - Yes (checked box)
         - No (empty box)
-    
+
     Or, if a match can't be made, an empty string.
-    
+
     The first letter of each type is what should be provided, i.e. Y, N, anything else.
     """
     img = "<img alt='%(name)s' title='%(name)s' class='vote' src='%(icon)s'>"
@@ -102,7 +102,7 @@ def date_and_time(value, formatting="N j, Y, h:i a"):
 def dollar_signs(value):
     """
     Converts an integer into the corresponding number of dollar sign symbols.
-    
+
     Meant to emulate the illustration of price range on Yelp.
     """
     try:
@@ -118,8 +118,8 @@ def dollar_signs(value):
 def dollars(value, decimal_places=2):
     """
     Converts a number in a dollar figure, with commas after ever three digits.
-    
-    The number of decimal places can be configured via the keyword argument. 
+
+    The number of decimal places can be configured via the keyword argument.
     The default is 2.
     """
     if not value:
@@ -135,10 +135,19 @@ def dollars(value, decimal_places=2):
     return format % intcomma(safevalue)
 
 
+def email_address(title, address):
+    """
+    Wrap the email address in mailto: tag, if the link exists.
+    """
+    if not address:
+        return title
+    return '<a target="_blank" href="mailto:%(address)s" title="%(title)s">%(title)s</a>' % {'address': address, 'title': title}
+
+
 def intcomma(value):
     """
     Borrowed from django.contrib.humanize
-    
+
     Converts an integer to a string containing commas every three digits.
     For example, 3000 becomes '3,000' and 45000 becomes '45,000'.
     """
@@ -153,7 +162,7 @@ def intcomma(value):
 def image(value, width='', height=''):
     """
     Accepts a URL and returns an HTML image tag ready to be displayed.
-    
+
     Optionally, you can set the height and width with keyword arguments.
     """
     style = ""
@@ -177,9 +186,9 @@ def link(title, url):
 def percentage(value, decimal_places=1, multiply=True):
     """
     Converts a floating point value into a percentage value.
-    
+
     Number of decimal places set by the `decimal_places` kwarg. Default is one.
-    
+
     By default the number is multiplied by 100. You can prevent it from doing
     that by setting the `multiply` keyword argument to False.
     """
@@ -192,12 +201,12 @@ def percentage(value, decimal_places=1, multiply=True):
 def percent_change(value, decimal_places=1, multiply=True):
     """
     Converts a floating point value into a percentage change value.
-    
+
     Number of decimal places set by the `decimal_places` kwarg. Default is one.
-    
+
     By default the number is multiplied by 100. You can prevent it from doing
     that by setting the `multiply` keyword argument to False.
-    
+
     Non-floats are assumed to be zero division errors and are presented as
     'N/A' in the output.
     """
@@ -217,12 +226,12 @@ def percent_change(value, decimal_places=1, multiply=True):
 def short_ap_date(value, date_format=None):
     """
     Reformats a date string as in an abbreviated AP format.
-    
+
         Example:
-        
+
              >> short_ap_date('2010-04-03')
             'Apr. 2, 2011'
-    
+
     If the date format cannot be automatically detected, you can specify it
     with the keyword argument.
     """
@@ -257,7 +266,7 @@ def simple_bullet_graph(actual, target, width='95%', max=None):
     """
     Renders a simple bullet graph that compares a target line against
     an actual value.
-    
+
     Unlike a conventional bullet graph, it does not shade the background
     into groups. Instead, it's all one solid color.
     """
@@ -303,11 +312,11 @@ def tribubble(value, yes_icon='/static/img/tribubble_yes.png',
     no_icon="/static/img/tribubble_no.png", empty="&mdash;"):
     """
     Returns one of three "Consumer Reports" style bubbles that indicate:
-    
+
         - Yes (Filled bubble)
         - Partly (Half-filled bubble)
         - No (Empty bubble)
-    
+
     The first letter of each type is what should be provided, i.e. Y, P, N.
     """
     img = "<img alt='%(name)s' title='%(name)s' class='bubble' src='%(icon)s'>"
@@ -328,11 +337,11 @@ def vote(value,
     ):
     """
     Returns one of three icons:
-    
+
         - Yes (Thumbs up)
         - Partly (Thumbs down)
         - No (Bolded em dash)
-    
+
     The first letter of each type is what should be provided, i.e. Y, N, anything else.
     """
     img = "<img alt='%(name)s' title='%(name)s' class='vote' src='%(icon)s'>"
@@ -352,6 +361,7 @@ DEFAULT_FORMATTERS = {
     'date_and_time': date_and_time,
     'dollar_signs': dollar_signs,
     'dollars': dollars,
+    'email_address': email_address,
     'link': link,
     'image': image,
     'intcomma': intcomma,
@@ -369,35 +379,35 @@ class Formatter(object):
     A formatter is a function (or any callable, really)
     that takes a value and returns a nicer-looking value,
     most likely a sting.
-    
+
     Formatter stores and calls those functions, keeping
     the namespace uncluttered.
-    
+
     Formatting functions should take a value as the first
     argument--usually the value of the Datum on which the
     function is called--followed by any number of positional
     arguments.
-    
+
     In the context of TableFu, those arguments may refer to
     other columns in the same row.
-    
+
     >>> formatter = Formatter()
     >>> formatter(1200, 'intcomma')
     '1,200'
     >>> formatter(1200, 'dollars')
     '$1,200'
     """
-    
+
     def __init__(self):
         self._filters = {}
         for name, func in DEFAULT_FORMATTERS.items():
             self.register(name, func)
-    
+
     def __call__(self, value, func, *args, **kwargs):
         if not callable(func):
             func = self._filters[func]
         return func(value, *args, **kwargs)
-    
+
     def register(self, name=None, func=None):
         if not func and not name:
             return
@@ -407,20 +417,20 @@ class Formatter(object):
             name = func.__name__
         elif func and not name:
             name = func.__name__
-        
+
         self._filters[name] = func
-    
+
     def unregister(self, name=None, func=None):
         if not func and not name:
             return
         if not name:
             name = func.__name__
-        
+
         if name not in self._filters:
             return
-        
+
         del self._filters[name]
-        
+
 
 # Unless you need to subclass or keep formatting functions
 # isolated, you can just import this instance.
