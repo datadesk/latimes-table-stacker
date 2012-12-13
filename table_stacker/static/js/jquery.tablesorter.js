@@ -909,7 +909,7 @@
     ts.addParser({
       id: "fancyNumber",
       is: function(s) {
-        return /^[0-9]?[0-9,\.]*$/.test(s);
+        return /^[0-9]?[\-0-9,\.]*$/.test(s);
       },
       format: function(s) {
         return $.tablesorter.formatFloat( s.replace(/,/g,'') );
