@@ -9,7 +9,7 @@ class SitemapView(BuildableListView):
     build_path = 'sitemap.xml'
     template_name = 'sitemap.xml'
     queryset = Table.live.all()
-    
+
     def render_to_response(self, context):
         return super(SitemapView, self).render_to_response(
             context,
