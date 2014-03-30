@@ -1,0 +1,208 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting started &mdash; latimes-table-stacker v0.3 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="latimes-table-stacker v0.3 documentation" href="index.html" />
+    <link rel="next" title="Configuration" href="configuration.html" />
+    <link rel="prev" title="latimes-table-stacker" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="latimes-table-stacker"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">latimes-table-stacker v0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial will walk you through the process of installing Table Stacker and publishing an example.</p>
+<p><strong>Requirements</strong></p>
+<ul class="simple">
+<li><a class="reference external" href="http://git-scm.com/">git</a></li>
+<li><a class="reference external" href="http://www.python.org/">python</a></li>
+</ul>
+<p><strong>01. Install the code on your computer</strong></p>
+<p>It&#8217;s not required, but I recommend creating a virtual environment to store your application. I like to do this with the Python module <a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a>, which creates a walled-off garden for the Python code to work without distraction from the outside world. If you don&#8217;t have it, you&#8217;ll need to install it now, which just might be as easy as</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install virtualenv
+<span class="c"># Or maybe ...</span>
+<span class="nv">$ </span>sudo easy_install install virtualenv
+<span class="c"># Or, if you&#39;re in Ubuntu ...</span>
+<span class="nv">$ </span>sudo apt-get install python-virtualenv
+</pre></div>
+</div>
+<p>Once you have virtualenv installed, make it happen by navigating to wherever you keep your code and firing off the following. I&#8217;m going to call this project <tt class="docutils literal"><span class="pre">my-table-stacker</span></tt>, but you should substitute whatever you&#8217;re calling your version.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>virtualenv --no-site-packages my-table-stacker
+</pre></div>
+</div>
+<p>Now jump into the directory it creates.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>my-table-stacker
+</pre></div>
+</div>
+<p>Activate the private environment with virtualenv&#8217;s custom command.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>. bin/activate
+</pre></div>
+</div>
+<p>Download the latest version of the code repository into a directory called <tt class="docutils literal"><span class="pre">project</span></tt>.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git clone git://github.com/datadesk/latimes-table-stacker.git project
+</pre></div>
+</div>
+<p>And jump in and get ready to work.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>project
+</pre></div>
+</div>
+<p>Install our app&#8217;s Python dependencies.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install -r requirements.txt
+</pre></div>
+</div>
+<p>Create the project&#8217;s database</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py syncdb
+</pre></div>
+</div>
+<p><strong>02. Build the example tables</strong></p>
+<p>You&#8217;ll learn how to layout your own data later, but for now we&#8217;ll work with the example files. Jump back to your first terminal shell and drop the following line, which instructs our <tt class="docutils literal"><span class="pre">build</span></tt> management command to bake out a static site using the instructions in <tt class="docutils literal"><span class="pre">settings.py</span></tt> and the table recipes in the <tt class="docutils literal"><span class="pre">yaml</span></tt> directory.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
+</pre></div>
+</div>
+<p><strong>03. Launch the static version of the site</strong></p>
+<p>You&#8217;ll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the <tt class="docutils literal"><span class="pre">project</span></tt> directory and fire off the following. It is a Django management command that will start a test version of the site on your machine, tailored to serve the static files we used created.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py buildserver
+</pre></div>
+</div>
+<p><strong>04. Check it out</strong></p>
+<p>If everything clicked, you should see your demo site up and running with all the example tables at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
+<p><strong>05. Deploy your app</strong></p>
+<p>The static files we&#8217;ve created in your <tt class="docutils literal"><span class="pre">build</span></tt> directory could probably be served from most common web servers. So, if you&#8217;ve already
+got yours worked out, you can just stop here and deploy that folder where you like.</p>
+<p>However, the app is prepared to help you easily deploy to <a class="reference external" href="http://en.wikipedia.org/wiki/Amazon_S3">Amazon S3</a>. To make that happen, you&#8217;ll need to do a little set up. First, go to <a class="reference external" href="http://aws.amazon.com/s3">aws.amazon.com/s3</a> and set up an account. Then you&#8217;ll need to create a bucket for storing our files. If you need help there are some basic instructions <a class="reference external" href="http://docs.amazonwebservices.com/AmazonS3/latest/gsg/">here</a>.</p>
+<p>Next configure the bucket to act as a website. Amazon&#8217;s official instructions say to do the following:</p>
+<div class="highlight-python"><pre>In the bucket Properties pane, click the Website configuration tab.
+
+Select the Enabled check box.
+
+In the Index Document Suffix text box, add the required index document name (index.html).</pre>
+</div>
+<p>Before you leave that pane, note the URL at the bottom. This is where your site will be published.</p>
+<p>Now, set your bucket name in the <cite>settings.py</cite> file.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">AWS_BUCKET_NAME</span> <span class="o">=</span> <span class="s">&#39;table-stacker&#39;</span>
+</pre></div>
+</div>
+<p>Next, install <a class="reference external" href="http://s3tools.org/s3cmd">s3cmd</a>, a utility we&#8217;ll use to move files back and forth between your desktop and S3. In Ubuntu, that&#8217;s as simple as:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install s3cmd
+</pre></div>
+</div>
+<p>If you&#8217;re Mac or Windows, you&#8217;ll need to <a class="reference external" href="http://s3tools.org/download">download the file</a> and follow the installation instructions you find there.</p>
+<p>Once it&#8217;s installed, we need to configure s3cmd with your Amazon login credentials. Go to Amazon&#8217;s <a class="reference external" href="http://aws-portal.amazon.com/gp/aws/developer/account/index.html?action=access-key">security credentials</a> page and get your access key and secret access key. Then, from your terminal, run</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>s3cmd --configure
+</pre></div>
+</div>
+<p>Finally, now that everything is set up, publishing your files to s3 is as simple as:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py publish
+</pre></div>
+</div>
+<p>Once you do that, your site should appear at the the link provided in your AWS console. If you want to bind that to a subdomain of your site, say, www.tablestacker.com, you need to create a new CNAME record in your domain&#8217;s DNS registration. You also need the name of your bucket to line up with the subdomain. Don&#8217;t take it from me. Read the detailed instructions provided by Amazon.</p>
+<div class="highlight-text"><div class="highlight"><pre>For example, if you have registered domain, www.example-bucket.com, you
+could create a bucket www.example-bucket.com, and add a DNS CNAME entry
+pointing to www.example-bucket.com.s3-website-&lt;region&gt;.amazonaws.com.
+All requests to http://www.example-bucket.com will be routed to
+www.example-bucket.com.s3-website-&lt;region&gt;.amazonaws.com.
+</pre></div>
+</div>
+<p>More documentation on that is available <a class="reference external" href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?WebsiteHosting.html">here</a>.</p>
+<p><strong>06. Publish you own data table</strong></p>
+<p>Before you can publish your own data table, you&#8217;ll need to learn about our YAML-based configuration system. But don&#8217;t worry, it&#8217;s not that hard. You can read about it in the configuration section or school yourself by mimicking the examples files in the project&#8217;s <tt class="docutils literal"><span class="pre">yaml</span></tt> subdirectory folder. Then, doing the following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
+<span class="nv">$ </span>python manage.py publish
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">latimes-table-stacker</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="configuration.html"
+                        title="next chapter">Configuration</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/gettingstarted.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="latimes-table-stacker"
+             >previous</a> |</li>
+        <li><a href="index.html">latimes-table-stacker v0.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Los Angeles Times Data Desk.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
