@@ -18,10 +18,5 @@ h2. Features
 
 h2. Resources
 
-* Documentation at "http://datadesk.github.com/latimes-table-stacker":http://datadesk.github.com/latimes-table-stacker
-* Working demonstration at "http://table-stacker.s3-website-us-west-1.amazonaws.com/":http://table-stacker.s3-website-us-west-1.amazonaws.com/
-
-
-
-
-
+* Documentation at [http://latimes-table-stacker.rtfd.org](http://latimes-table-stacker.rtfd.org)
+* Working demonstration at [http://table-stacker.s3-website-us-west-1.amazonaws.com/](http://table-stacker.s3-website-us-west-1.amazonaws.com/)
