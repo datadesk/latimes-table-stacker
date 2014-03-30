@@ -63,6 +63,7 @@ Create the project's database
 .. code-block:: bash
 
     $ python manage.py syncdb
+    $ python manage.py migrate
 
 02. Build the example tables
 ----------------------------
