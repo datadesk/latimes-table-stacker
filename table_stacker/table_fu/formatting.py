@@ -39,8 +39,11 @@ def ap_state(value):
         return value
 
 
-def bubble(value, yes_icon='/static/img/bubble_yes.png',
-    no_icon="/static/img/bubble_no.png", empty="&mdash;"):
+def bubble(
+        value,
+        yes_icon='/static/img/bubble_yes.png',
+        no_icon="/static/img/bubble_no.png", empty="&mdash;"
+        ):
     """
     Returns one of two "Consumer Reports" style bubbles that indicate:
 
@@ -65,10 +68,11 @@ def capfirst(value):
         return 'N/A'
 
 
-def checkbox(value,
-    yes_icon='/static/img/checkbox_yes.png',
-    no_icon='/static/img/checkbox_no.png',
-    ):
+def checkbox(
+        value,
+        yes_icon='/static/img/checkbox_yes.png',
+        no_icon='/static/img/checkbox_no.png',
+        ):
     """
     Returns one of two icons:
 
@@ -77,7 +81,8 @@ def checkbox(value,
 
     Or, if a match can't be made, an empty string.
 
-    The first letter of each type is what should be provided, i.e. Y, N, anything else.
+    The first letter of each type is what should be provided, i.e. Y, N,
+    anything else.
     """
     img = "<img alt='%(name)s' title='%(name)s' class='vote' src='%(icon)s'>"
     if value.lower() == 'y':
@@ -141,7 +146,8 @@ def email_address(title, address):
     """
     if not address:
         return title
-    return '<a target="_blank" href="mailto:%(address)s" title="%(title)s">%(title)s</a>' % {'address': address, 'title': title}
+    return '<a target="_blank" href="mailto:%(address)s" \
+        title="%(title)s">%(title)s</a>' % {'address': address, 'title': title}
 
 
 def intcomma(value):
@@ -180,7 +186,8 @@ def link(title, url):
     """
     if not url:
         return title
-    return '<a target="_blank" href="%(url)s" title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
+    return '<a target="_blank" href="%(url)s" \
+        title="%(title)s">%(title)s</a>' % {'url': url, 'title': title}
 
 
 def percentage(value, decimal_places=1, multiply=True):
@@ -215,7 +222,7 @@ def percent_change(value, decimal_places=1, multiply=True):
         if multiply:
             f = f * 100
     except ValueError:
-       return  'N/A'
+        return 'N/A'
     s = _saferound(f, decimal_places)
     if f > 0:
         return '+' + s + '%'
@@ -271,12 +278,12 @@ def simple_bullet_graph(actual, target, width='95%', max=None):
     into groups. Instead, it's all one solid color.
     """
     html = """
-        <div class="bullet-graph-wrap" style="width:%(width)s; margin: 6px auto;">
-            <div class="bullet-graph-box2" style="left:0; width:%(width)s;"></div>
-            <div data="%(sort)s" class="bullet-graph-sort" style="display:none;"></div>
-            <div class="bullet-graph-target" style="left: %(target)s%%;"></div>
-            <div class="bullet-graph-actual" style="width: %(actual)s%%"></div>
-        </div>
+<div class="bullet-graph-wrap" style="width:%(width)s; margin: 6px auto;">
+    <div class="bullet-graph-box2" style="left:0; width:%(width)s;"></div>
+    <div data="%(sort)s" class="bullet-graph-sort" style="display:none;"></div>
+    <div class="bullet-graph-target" style="left: %(target)s%%;"></div>
+    <div class="bullet-graph-actual" style="width: %(actual)s%%"></div>
+</div>
     """
     if not max:
         raise ValueError("Max keyword argument must be provided.")
@@ -307,9 +314,12 @@ def title(value):
     return re.sub("\d([A-Z])", lambda m: m.group(0).lower(), t)
 
 
-def tribubble(value, yes_icon='/static/img/tribubble_yes.png',
-    partly_icon='/static/img/tribubble_partly.png',
-    no_icon="/static/img/tribubble_no.png", empty="&mdash;"):
+def tribubble(
+        value,
+        yes_icon='/static/img/tribubble_yes.png',
+        partly_icon='/static/img/tribubble_partly.png',
+        no_icon="/static/img/tribubble_no.png", empty="&mdash;"
+        ):
     """
     Returns one of three "Consumer Reports" style bubbles that indicate:
 
@@ -330,11 +340,12 @@ def tribubble(value, yes_icon='/static/img/tribubble_yes.png',
         return empty
 
 
-def vote(value,
-    yes_vote='/static/img/thumb_up.png',
-    no_vote='/static/img/thumb_down.png',
-    did_not_vote="<b style='font-size:130%;'>&mdash;</b>"
-    ):
+def vote(
+        value,
+        yes_vote='/static/img/thumb_up.png',
+        no_vote='/static/img/thumb_down.png',
+        did_not_vote="<b style='font-size:130%;'>&mdash;</b>"
+        ):
     """
     Returns one of three icons:
 
@@ -342,7 +353,8 @@ def vote(value,
         - Partly (Thumbs down)
         - No (Bolded em dash)
 
-    The first letter of each type is what should be provided, i.e. Y, N, anything else.
+    The first letter of each type is what should be provided, i.e. Y, N,
+    anything else.
     """
     img = "<img alt='%(name)s' title='%(name)s' class='vote' src='%(icon)s'>"
     if value.lower() == 'y':
@@ -373,6 +385,7 @@ DEFAULT_FORMATTERS = {
     'tribubble': tribubble,
     'vote': vote,
 }
+
 
 class Formatter(object):
     """
