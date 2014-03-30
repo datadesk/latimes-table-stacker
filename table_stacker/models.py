@@ -2,11 +2,11 @@
 import os
 import csv
 import yaml
+import json as simplejson
 from table_fu import TableFu
 from django.db import models
 from datetime import datetime
 from django.conf import settings
-from django.utils import simplejson
 from django.contrib.sites.models import Site
 from managers import TableLiveManager, TableManager
 

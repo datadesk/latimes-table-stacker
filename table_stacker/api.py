@@ -1,9 +1,9 @@
 import os
 import csv
 from models import Table
+import json as simplejson
 from django.conf import settings
 from django.shortcuts import render
-from django.utils import simplejson
 from django.http import HttpResponse
 from bakery.views import BuildableDetailView, BuildableListView
 
@@ -39,7 +39,7 @@ class TableDetailCSVView(TableBaseAPIView):
     
     def render_to_response(self, context):
         data = self.get_csv_data(context['object']).read()
-        response = HttpResponse(unicode(data), mimetype='text/csv')
+        response = HttpResponse(unicode(data), content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=%s.csv' % context['object'].slug
         return response
 
@@ -79,6 +79,5 @@ class TableDetailJSONView(TableBaseAPIView):
             dict_list.append(col_dict)
         return HttpResponse(
             simplejson.dumps(dict_list),
-            mimetype="text/javascript"
+            content_type="text/javascript"
         )
-
