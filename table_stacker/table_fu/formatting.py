@@ -358,9 +358,9 @@ def vote(
     """
     img = "<img alt='%(name)s' title='%(name)s' class='vote' src='%(icon)s'>"
     if value.lower() == 'y':
-        return img % dict(name='Yes', icon=yes_icon)
+        return img % dict(name='Yes', icon=yes_vote)
     elif value.lower() == 'n':
-        return img % dict(name='No', icon=no_icon)
+        return img % dict(name='No', icon=no_vote)
     else:
         return did_not_vote
 

@@ -12,7 +12,6 @@ __author__ = "Chris Amico (eyeseast@gmail.com)"
 
 import csv
 import math
-import urllib2
 from formatting import format
 
 

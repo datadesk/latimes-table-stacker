@@ -5,7 +5,7 @@ import json as simplejson
 from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse
-from bakery.views import BuildableDetailView, BuildableListView
+from bakery.views import BuildableDetailView
 
 
 class TableBaseAPIView(BuildableDetailView):
