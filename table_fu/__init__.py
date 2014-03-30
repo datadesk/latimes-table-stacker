@@ -56,7 +56,7 @@ class TableFu(object):
             self.table = [row for row in reader]
         else:
             self.table = table
-        self.default_columns = self.table.pop(0)
+        self.default_columns = [i.strip() for i in self.table.pop(0)]
         self._columns = options.get('columns', [])
         self.deleted_rows = []
         self.faceted_on = None
@@ -95,31 +95,31 @@ class TableFu(object):
     
     def count(self):
         return len(self)
-    
+
     @property
     def rows(self):
         return [Row(row, i, self) for i, row in enumerate(self.table)]
-    
+
     @property
     def headers(self):
         if self._columns:
             return [Header(col, i, self) for i, col in enumerate(self._columns)]
         else:
             return [Header(col, i, self) for i, col in enumerate(self.default_columns)]
-    
+
     def _get_columns(self):
         if self._columns:
             return self._columns
         return self.default_columns
-    
+
     def _set_columns(self, columns):
         self._columns = self.options['columns'] = list(columns)
-    
+
     columns = property(_get_columns, _set_columns)
-    
+
     def delete_row(self, row_num):
         self.deleted_rows.append(self.table.rows.pop(row_num))
-    
+
     def sort(self, column_name=None, reverse=False):
         """
         Sort rows in this table, preserving a record of how that
@@ -132,13 +132,13 @@ class TableFu(object):
         index = self.default_columns.index(column_name)
         self.table.sort(key = lambda row: row[index], reverse=reverse)
         self.options['sorted_by'] = {column_name: {'reverse': reverse}}
-    
+
     def values(self, column_name):
         if column_name not in self.default_columns:
             raise ValueError("%s isn't a column in this table" % column_name)
         index = self.default_columns.index(column_name)
         return [row[index] for row in self.table]
-    
+
     def total(self, column_name):
         if column_name not in self.default_columns:
             raise ValueError("%s isn't a column in this table" % column_name)
@@ -147,7 +147,7 @@ class TableFu(object):
         except ValueError:
             raise ValueError('Column %s contains non-numeric values' % column_name)
         return sum(values)
-    
+
     def html(self):
         table = '<table>\n%s\n%s\n</table>'
         thead = '<thead>\n<tr>%s</tr>\n</thead>' % ''.join(['<th>%s</th>' % col for col in self.columns])
@@ -229,7 +229,7 @@ class TableFu(object):
             sort_direction = 0
         # Then nest that in a list to the tablesorter standard
         return [[column_index, sort_direction]]
-    
+
     def get_sorter_config(self):
         """
         Prepare the parser config for usage in tablesorter's initilization.
@@ -240,7 +240,7 @@ class TableFu(object):
             js_dict[col_list.index(key)] = value
         return js_dict
     sorter_config = property(get_sorter_config)
-    
+
     @property
     def total_pages(self):
         """
@@ -249,7 +249,7 @@ class TableFu(object):
         """
         row_count = len(self.rows)
         return int(math.ceil(row_count / float(self.per_page)))
-    
+
     @property
     def page_size_list(self):
         """

@@ -98,4 +98,3 @@ class Table(models.Model):
                 self.publication_time
             )
     publication_datetime = property(get_publication_datetime)
-
