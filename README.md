@@ -8,7 +8,8 @@
 
 Publish spreadsheets as interactive tables. And do it on deadline.
 
-h2. Features
+Features
+--------
 
 * Convert a CSV file into an interactive HTML table that sorts, filters and paginates.
 * Quickly publish as static files.
@@ -16,7 +17,8 @@ h2. Features
 * Instantly syndicate data as CSV, XLS and JSON.
 * Post an RSS feed and sitemap that promote the latest data.
 
-h2. Resources
+Contributing
+------------
 
 * Documentation at [http://latimes-table-stacker.rtfd.org](http://latimes-table-stacker.rtfd.org)
 * Working demonstration at [http://table-stacker.s3-website-us-west-1.amazonaws.com/](http://table-stacker.s3-website-us-west-1.amazonaws.com/)
