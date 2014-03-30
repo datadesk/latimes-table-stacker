@@ -51,12 +51,15 @@
   <div class="section" id="getting-started">
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>This tutorial will walk you through the process of installing Table Stacker and publishing an example.</p>
-<p><strong>Requirements</strong></p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="http://git-scm.com/">git</a></li>
 <li><a class="reference external" href="http://www.python.org/">python</a></li>
 </ul>
-<p><strong>01. Install the code on your computer</strong></p>
+</div>
+<div class="section" id="install-the-code-on-your-computer">
+<h2>01. Install the code on your computer<a class="headerlink" href="#install-the-code-on-your-computer" title="Permalink to this headline">¶</a></h2>
 <p>It&#8217;s not required, but I recommend creating a virtual environment to store your application. I like to do this with the Python module <a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a>, which creates a walled-off garden for the Python code to work without distraction from the outside world. If you don&#8217;t have it, you&#8217;ll need to install it now, which just might be as easy as</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install virtualenv
 <span class="c"># Or maybe ...</span>
@@ -93,19 +96,27 @@
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py syncdb
 </pre></div>
 </div>
-<p><strong>02. Build the example tables</strong></p>
+</div>
+<div class="section" id="build-the-example-tables">
+<h2>02. Build the example tables<a class="headerlink" href="#build-the-example-tables" title="Permalink to this headline">¶</a></h2>
 <p>You&#8217;ll learn how to layout your own data later, but for now we&#8217;ll work with the example files. Jump back to your first terminal shell and drop the following line, which instructs our <tt class="docutils literal"><span class="pre">build</span></tt> management command to bake out a static site using the instructions in <tt class="docutils literal"><span class="pre">settings.py</span></tt> and the table recipes in the <tt class="docutils literal"><span class="pre">yaml</span></tt> directory.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
 </pre></div>
 </div>
-<p><strong>03. Launch the static version of the site</strong></p>
+</div>
+<div class="section" id="launch-the-static-version-of-the-site">
+<h2>03. Launch the static version of the site<a class="headerlink" href="#launch-the-static-version-of-the-site" title="Permalink to this headline">¶</a></h2>
 <p>You&#8217;ll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the <tt class="docutils literal"><span class="pre">project</span></tt> directory and fire off the following. It is a Django management command that will start a test version of the site on your machine, tailored to serve the static files we used created.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py buildserver
 </pre></div>
 </div>
-<p><strong>04. Check it out</strong></p>
+</div>
+<div class="section" id="check-it-out">
+<h2>04. Check it out<a class="headerlink" href="#check-it-out" title="Permalink to this headline">¶</a></h2>
 <p>If everything clicked, you should see your demo site up and running with all the example tables at <a class="reference external" href="http://localhost:8000">http://localhost:8000</a>.</p>
-<p><strong>05. Deploy your app</strong></p>
+</div>
+<div class="section" id="deploy-your-app">
+<h2>05. Deploy your app<a class="headerlink" href="#deploy-your-app" title="Permalink to this headline">¶</a></h2>
 <p>The static files we&#8217;ve created in your <tt class="docutils literal"><span class="pre">build</span></tt> directory could probably be served from most common web servers. So, if you&#8217;ve already
 got yours worked out, you can just stop here and deploy that folder where you like.</p>
 <p>However, the app is prepared to help you easily deploy to <a class="reference external" href="http://en.wikipedia.org/wiki/Amazon_S3">Amazon S3</a>. To make that happen, you&#8217;ll need to do a little set up. First, go to <a class="reference external" href="http://aws.amazon.com/s3">aws.amazon.com/s3</a> and set up an account. Then you&#8217;ll need to create a bucket for storing our files. If you need help there are some basic instructions <a class="reference external" href="http://docs.amazonwebservices.com/AmazonS3/latest/gsg/">here</a>.</p>
@@ -143,11 +154,14 @@ www.example-bucket.com.s3-website-&lt;region&gt;.amazonaws.com.
 </pre></div>
 </div>
 <p>More documentation on that is available <a class="reference external" href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?WebsiteHosting.html">here</a>.</p>
-<p><strong>06. Publish you own data table</strong></p>
+</div>
+<div class="section" id="publish-you-own-data-table">
+<h2>06. Publish you own data table<a class="headerlink" href="#publish-you-own-data-table" title="Permalink to this headline">¶</a></h2>
 <p>Before you can publish your own data table, you&#8217;ll need to learn about our YAML-based configuration system. But don&#8217;t worry, it&#8217;s not that hard. You can read about it in the configuration section or school yourself by mimicking the examples files in the project&#8217;s <tt class="docutils literal"><span class="pre">yaml</span></tt> subdirectory folder. Then, doing the following:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python manage.py build
 <span class="nv">$ </span>python manage.py publish
 </pre></div>
+</div>
 </div>
 </div>
 
@@ -157,6 +171,20 @@ www.example-bucket.com.s3-website-&lt;region&gt;.amazonaws.com.
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting started</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#install-the-code-on-your-computer">01. Install the code on your computer</a></li>
+<li><a class="reference internal" href="#build-the-example-tables">02. Build the example tables</a></li>
+<li><a class="reference internal" href="#launch-the-static-version-of-the-site">03. Launch the static version of the site</a></li>
+<li><a class="reference internal" href="#check-it-out">04. Check it out</a></li>
+<li><a class="reference internal" href="#deploy-your-app">05. Deploy your app</a></li>
+<li><a class="reference internal" href="#publish-you-own-data-table">06. Publish you own data table</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">latimes-table-stacker</a></p>

@@ -3,12 +3,14 @@ Getting started
 
 This tutorial will walk you through the process of installing Table Stacker and publishing an example.
 
-**Requirements**
+Requirements
+------------
 
 * `git <http://git-scm.com/>`_
 * `python <http://www.python.org/>`_
 
-**01. Install the code on your computer**
+01. Install the code on your computer
+-------------------------------------
 
 It's not required, but I recommend creating a virtual environment to store your application. I like to do this with the Python module `virtualenv <http://pypi.python.org/pypi/virtualenv>`_, which creates a walled-off garden for the Python code to work without distraction from the outside world. If you don't have it, you'll need to install it now, which just might be as easy as
 
@@ -62,7 +64,8 @@ Create the project's database
 
     $ python manage.py syncdb
 
-**02. Build the example tables**
+02. Build the example tables
+----------------------------
 
 You'll learn how to layout your own data later, but for now we'll work with the example files. Jump back to your first terminal shell and drop the following line, which instructs our ``build`` management command to bake out a static site using the instructions in ``settings.py`` and the table recipes in the ``yaml`` directory.
 
@@ -70,7 +73,8 @@ You'll learn how to layout your own data later, but for now we'll work with the 
 
     $ python manage.py build
 
-**03. Launch the static version of the site**
+03. Launch the static version of the site
+-----------------------------------------
 
 You'll want to run this step in a new terminal shell. So open up a new window or tab, navigate to the ``project`` directory and fire off the following. It is a Django management command that will start a test version of the site on your machine, tailored to serve the static files we used created.
 
@@ -78,11 +82,13 @@ You'll want to run this step in a new terminal shell. So open up a new window or
 
     $ python manage.py buildserver
 
-**04. Check it out**
+04. Check it out
+----------------
 
 If everything clicked, you should see your demo site up and running with all the example tables at `http://localhost:8000 <http://localhost:8000>`_.
 
-**05. Deploy your app**
+05. Deploy your app
+-------------------
 
 The static files we've created in your ``build`` directory could probably be served from most common web servers. So, if you've already
 got yours worked out, you can just stop here and deploy that folder where you like. 
@@ -135,7 +141,8 @@ Once you do that, your site should appear at the the link provided in your AWS c
 
 More documentation on that is available `here <http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?WebsiteHosting.html>`_.
 
-**06. Publish you own data table**
+06. Publish you own data table
+------------------------------
 
 Before you can publish your own data table, you'll need to learn about our YAML-based configuration system. But don't worry, it's not that hard. You can read about it in the configuration section or school yourself by mimicking the examples files in the project's ``yaml`` subdirectory folder. Then, doing the following:
 
