@@ -13,7 +13,7 @@ __author__ = "Chris Amico (eyeseast@gmail.com)"
 import csv
 import math
 import urllib2
-from table_fu.formatting import format
+from formatting import format
 
 
 class TableFu(object):
