@@ -4,6 +4,6 @@ PyYAML==3.10
 Pygments==1.4
 South==0.7.5
 Sphinx==1.0.7
-argparse==1.2.1
+argparse
 django-bakery==0.3.0
 docutils==0.7
