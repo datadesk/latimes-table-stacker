@@ -8,6 +8,8 @@
 
 Publish spreadsheets as interactive tables. And do it on deadline.
 
+[![Build Status](https://travis-ci.org/datadesk/latimes-table-stacker.svg?branch=master)](https://travis-ci.org/datadesk/latimes-table-stacker)
+
 Features
 --------
 
