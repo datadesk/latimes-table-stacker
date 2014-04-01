@@ -8,3 +8,6 @@ script:
  - python manage.py syncdb --noinput
  - python manage.py migrate
  - python manage.py build
+ - coverage run manage.py test table_stacker
+after_success:
+ - coveralls
