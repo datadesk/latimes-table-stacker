@@ -9,9 +9,9 @@ django-bakery==0.3.0
 docutils==0.7
 flake8==2.1.0
 mccabe==0.2.1
-pep8==1.5.1
-pyflakes==0.8.1
-python-coveralls==2.4.2
+pep8>=1.5.1
+pyflakes>=0.8.1
+python-coveralls>=2.4.2
 requests==2.2.1
 sh==1.09
 six==1.5.2
