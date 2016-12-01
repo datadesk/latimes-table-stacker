@@ -16,7 +16,7 @@ class TableBaseAPIView(BuildableDetailView):
 
     def get_csv_data(self, obj):
         path = os.path.join(settings.CSV_DIR, obj.csv_name)
-        return open(path, 'r')
+        return open(path, 'rU')
 
     def get_html(self):
         return self.get(self.request).content
@@ -29,6 +29,9 @@ class TableBaseAPIView(BuildableDetailView):
         os.path.exists(api_dir) or os.mkdir(api_dir)
         return os.path.join(settings.BUILD_DIR, self.get_url(obj)[1:])
 
+    def build_file(self, path, html):
+        self.write_file(path, html)
+
 
 class TableDetailCSVView(TableBaseAPIView):
     """
@@ -39,7 +42,7 @@ class TableDetailCSVView(TableBaseAPIView):
 
     def render_to_response(self, context):
         data = self.get_csv_data(context['object']).read()
-        response = HttpResponse(unicode(data), content_type='text/csv')
+        response = HttpResponse(data, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=%s.csv' % (
             context['object'].slug
         )
