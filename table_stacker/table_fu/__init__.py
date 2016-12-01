@@ -375,6 +375,7 @@ class Row(object):
 
     @property
     def data(self):
+        print [self[col] for col in self.table.columns]
         return [self[col] for col in self.table.columns]
 
 
@@ -392,20 +393,29 @@ class Datum(object):
         return "<%s: %s>" % (self.column_name, self.value)
 
     def __str__(self):
+        return self.__unicode__().encode("utf-8")
+
+    def __unicode__(self):
         """
-        Calling str(datum) should check first for a formatted
-        version of value, then fall back to the default value
-        if there's no set formatting.
+        Check first for a formatted version of value, then fall back to the
+        default value if there's no set formatting.
         """
-        if self.column_name in list(self.table.formatting.keys()):
+        # Unicode or bust
+        value = self.value
+        if isinstance(self.value, basestring):
+            if not isinstance(self.value, unicode):
+                value = unicode(self.value, 'utf-8')
+        # Apply any formatting
+        if self.table.formatting.has_key(self.column_name):
             func = self.table.formatting[self.column_name].get('method', None)
             args = self.table.formatting[self.column_name].get('arguments', [])
             kwargs = self.table.formatting[self.column_name].get('options', {})
             if func:
                 row = self.table[self.row_num]
                 args = [row[arg].value for arg in args]
-                return format(self.value, func, *args, **kwargs)
-        return self.value.encode('utf-8')
+                return format(value, func, *args, **kwargs)
+        else:
+            return value
 
     def __eq__(self, other):
         if type(other) == type(self):
